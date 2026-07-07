@@ -56,9 +56,11 @@ repositories {
         setUrl("https://thedarkcolour.github.io/KotlinForForge/")
     }
 
+    maven("https://maven.terraformersmc.com/releases")
+
     exclusiveContent {
         forRepository { maven("https://jitpack.io") }
-        filter { includeGroupByRegex("com\\.github\\.filloax.*") }
+        filter { includeGroupByRegex("com\\.github\\.(stuhlmeier|filloax).*") }
     }
 
     exclusiveContent {
