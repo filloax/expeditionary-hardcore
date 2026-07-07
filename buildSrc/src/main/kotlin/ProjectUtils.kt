@@ -1,0 +1,69 @@
+package com.filloax.gradle
+
+import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.plugins.ExtraPropertiesExtension
+
+fun Project.utils(versionCatalogs: VersionCatalogsExtension, ext: ExtraPropertiesExtension)
+    = ProjectUtils(this, versionCatalogs, ext)
+
+/**
+ * Wrapper around some gradle stuff as there's no sane way to make utils that use
+ * Gradle Kotlin DSL extension methods
+ */
+class ProjectUtils(
+    private val project: Project,
+    versionCatalogs: VersionCatalogsExtension,
+    private val ext: ExtraPropertiesExtension,
+) {
+    private val libs = versionCatalogs.find("libs").get()
+
+    fun getFilloaxlib(loader: String = "common"): String {
+        val useLocalJarFilloaxLib = (project.property("useLocalJarFilloaxLib") as String).toBoolean()
+        val alwaysUseLocalMavenFilloaxLib = (project.property("alwaysUseLocalMavenFilloaxLib")!! as String).toBoolean()
+
+        val filloaxlibVersion = if (loader == "common")
+            libs.findVersion("filloaxlibCommon").map { it.toString() }.orElse(libs.findVersion("filloaxlib").get().toString())
+        else
+            libs.findVersion("filloaxlib").get().toString()
+        val useLocalMavenFilloaxLib = alwaysUseLocalMavenFilloaxLib || filloaxlibVersion.contains(Regex("rev\\d+"))
+
+        val versionString = if (useLocalJarFilloaxLib)
+            ":filloaxlib-${filloaxlibVersion}-${loader}"
+        else if (useLocalMavenFilloaxLib)
+            "com.filloax.filloaxlib:filloaxlib-${loader}:${filloaxlibVersion}"
+        else if (loader == "common")
+            "com.github.filloax.filloaxlib:filloaxlib-${loader}:${filloaxlibVersion}"
+        else
+            "maven.modrinth:filloaxlib:${filloaxlibVersion}-${loader}"
+
+        println("Using fxlib $versionString")
+
+        return versionString
+    }
+
+    fun getApibalego(loader: String = "base"): String {
+        val version = libs.findVersion("apibalego").get().toString()
+        val versionString = "com.github.filloax.apibalego:apibalego-${loader}:${version}"
+
+        println("Using apibalego $versionString")
+
+        return versionString
+    }
+
+    fun addExtraResourceProp(key: String, value: String) {
+        val extraProps = if (ext.has("extraProps")) {
+
+            @Suppress("UNCHECKED_CAST")
+            ext["extraProps"] as MutableMap<String, String>
+        } else {
+            mutableMapOf<String, String>().also { this.ext["extraProps"] = it }
+        }
+        extraProps[key] = value
+    }
+
+    val extraResourceProps: Map<String, String> get() {
+        @Suppress("UNCHECKED_CAST")
+        return "extraProps".let{ if (ext.has(it)) this.ext[it] as Map<String, String> else mapOf() }
+    }
+}
