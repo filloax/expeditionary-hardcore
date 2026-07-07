@@ -1,0 +1,1 @@
+- [ ] Chat message for usage of Respawn Anchors

@@ -3,6 +3,9 @@
   "package": "com.filloax.expeditionaryhardcore.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "RespawnPointMixin",
+    "SetSpawnCommandMixin",
+    "PlayerRespawnMixin"
   ],
   "client": [
   ],

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "expeditionaryhardcore_test",
+  "version": "1.0.0",
+  "name": "Expeditionary Hardcore GameTest",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "com.filloax.expeditionaryhardcore.gametest.ExpeditionaryHardcoreFabricGameTests"
+    ]
+  },
+  "depends": {
+    "expeditionaryhardcore": "*"
+  }
+}
