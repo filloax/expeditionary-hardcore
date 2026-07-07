@@ -29,12 +29,3 @@ listOf(
     "neoforge",
     "fabric",
 ).forEach { include(it) }
-
-// until published properly, use apibalego from local workspace
-includeBuild("../apibalego") {
-    dependencySubstitution {
-        substitute(module("com.github.filloax.apibalego:apibalego-base")).using(project(":base"))
-        substitute(module("com.github.filloax.apibalego:apibalego-fabric")).using(project(":fabric"))
-        substitute(module("com.github.filloax.apibalego:apibalego-neoforge")).using(project(":neoforge"))
-    }
-}

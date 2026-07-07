@@ -30,7 +30,9 @@ dependencies {
 	compileOnly( libs.jsr305 )
 	compileOnly( libs.log4j )
 	compileOnly( libs.ow.asm )
+
 	compileOnly( libs.mixin )
+	compileOnly( libs.mixinextras.common )
 
 	compileOnly( libs.kotlin.stdlib )
 	compileOnly( libs.kotlin.reflect )
