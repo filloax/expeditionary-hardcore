@@ -4,7 +4,7 @@ import com.filloax.expeditionaryhardcore.config.ExpeditionaryHardcoreConfigHandl
 import org.apache.logging.log4j.LogManager
 
 object ExpeditionaryHardcore {
-    const val MOD_ID = "expeditionaryhardcore"
+    const val MOD_ID = "exphardcore"
     const val MOD_NAME = "Expeditionary Hardcore"
 
     @JvmField
@@ -22,6 +22,8 @@ object ExpeditionaryHardcore {
         LOGGER.info("Initializing")
 
         ExpeditionaryHardcoreConfigHandler.initConfig()
+
+        ExpeditionaryHardcoreModEvents.get().initCallbacks()
 
         LOGGER.info("Initialized!")
     }

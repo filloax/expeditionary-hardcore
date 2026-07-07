@@ -1,3 +1,9 @@
 {
-  "commands.expeditionaryhardcore.spawnpoint.disabled": "Setting a respawn point is disabled."
+  "exphardcore.commands.exphardcore.info_no_life": "No Expeditionary Hardcore character found.",
+  "exphardcore.commands.exphardcore.info_name": "Current name: §l%s§r.",
+  "exphardcore.commands.exphardcore.name_set_personal": "Set current name to %s.",
+  "exphardcore.commands.exphardcore.name_set": "Set current name for user %s to %s.",
+  "exphardcore.commands.exphardcore.name_change_refuse": "You do not have permission to change your name after you have set it.",
+  "exphardcore.commands.exphardcore.name_set_refuse": "You do not have permission to set another player's name.",
+  "exphardcore.commands.spawnpoint.disabled": "Setting a respawn point is disabled."
 }

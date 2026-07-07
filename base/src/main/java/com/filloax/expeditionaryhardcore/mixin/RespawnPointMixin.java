@@ -1,6 +1,6 @@
 package com.filloax.expeditionaryhardcore.mixin;
 
-import com.filloax.expeditionaryhardcore.logic.RespawnPositionOverride;
+import com.filloax.expeditionaryhardcore.respawn.RespawnPositionOverride;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

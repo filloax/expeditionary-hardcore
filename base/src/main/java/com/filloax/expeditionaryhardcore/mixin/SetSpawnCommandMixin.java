@@ -25,7 +25,7 @@ public abstract class SetSpawnCommandMixin {
             Coordinates rotation,
             CallbackInfoReturnable<Integer> cir
     ) {
-        source.sendFailure(Component.translatable("commands.expeditionaryhardcore.spawnpoint.disabled"));
+        source.sendFailure(Component.translatable("exphardcore.commands.spawnpoint.disabled"));
         cir.setReturnValue(0);
     }
 }

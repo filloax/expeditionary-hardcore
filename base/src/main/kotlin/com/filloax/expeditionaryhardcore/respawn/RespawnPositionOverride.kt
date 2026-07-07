@@ -1,7 +1,6 @@
-package com.filloax.expeditionaryhardcore.logic
+package com.filloax.expeditionaryhardcore.respawn
 
 import com.filloax.expeditionaryhardcore.ExpeditionaryHardcore
-import com.jcraft.jorbis.Block
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -9,7 +8,6 @@ import net.minecraft.util.Mth
 import java.util.Optional
 import java.util.Optional.*
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 object RespawnPositionOverride {
     /**

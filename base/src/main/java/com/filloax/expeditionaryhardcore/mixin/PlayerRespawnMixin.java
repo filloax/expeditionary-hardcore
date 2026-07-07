@@ -1,13 +1,13 @@
 package com.filloax.expeditionaryhardcore.mixin;
 
 import com.filloax.expeditionaryhardcore.ExpeditionaryHardcore;
+import com.filloax.expeditionaryhardcore.character.LifeHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.llamalad7.mixinextras.sugar.Local;
 
@@ -23,7 +23,8 @@ public abstract class PlayerRespawnMixin {
             CallbackInfoReturnable<ServerPlayer> cir,
             @Local(name = "player") ServerPlayer player
     ) {
-        // TODO: all the things that trigger on respawn
-        ExpeditionaryHardcore.LOGGER.info("Player respawned {} at {}", player, player.blockPosition());
+        ExpeditionaryHardcore.LOGGER.debug("Player respawned {} at {}", player, player.blockPosition());
+
+        LifeHandler.newLife(player, player.blockPosition());
     }
 }
