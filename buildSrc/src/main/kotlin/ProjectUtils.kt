@@ -51,6 +51,17 @@ class ProjectUtils(
         return versionString
     }
 
+    // neoforge doesn't have mapping issues
+    fun getResourcefulConfig(loader: String = "neoforge"): String {
+        val mcVersion = libs.findVersion("minecraft").get().toString()
+        val rmcVersion = libs.findVersion("rconfigMc").get().toString()
+        val version = libs.findVersion("rconfig").get().toString()
+
+        return "com.teamresourceful.resourcefulconfig" +
+                ":resourcefulconfig-${loader}-${if (rmcVersion == "") mcVersion else rmcVersion}" +
+                ":$version"
+    }
+
     fun addExtraResourceProp(key: String, value: String) {
         val extraProps = if (ext.has("extraProps")) {
 

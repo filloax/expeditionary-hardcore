@@ -1,5 +1,6 @@
 package com.filloax.expeditionaryhardcore
 
+import com.filloax.expeditionaryhardcore.config.ExpeditionaryHardcoreConfigHandler
 import org.apache.logging.log4j.LogManager
 
 object ExpeditionaryHardcore {
@@ -19,6 +20,8 @@ object ExpeditionaryHardcore {
         initialized = true
 
         LOGGER.info("Initializing")
+
+        ExpeditionaryHardcoreConfigHandler.initConfig()
 
         LOGGER.info("Initialized!")
     }

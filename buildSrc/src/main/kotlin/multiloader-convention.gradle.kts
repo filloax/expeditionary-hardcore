@@ -60,6 +60,16 @@ repositories {
         forRepository { maven("https://jitpack.io") }
         filter { includeGroupByRegex("com\\.github\\.filloax.*") }
     }
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Team Resourceful Maven"
+                url = uri("https://maven.teamresourceful.com/repository/maven-public/")
+            }
+        }
+        filter { includeGroup("com.teamresourceful.resourcefulconfig") }
+    }
 }
 
 //region Libs and props

@@ -13,6 +13,8 @@
     # optional: separate version for filloaxlib common, defaults to filloaxlib version if unset
     filloaxlibCommon = "0.38.0a-26.2"
     apibalego = "0.1.0-26.2"
+    rconfig = "5.0.0"
+    rconfigMc = "26.2"
 
 # Kotlin
     kotlin = "2.4.0"

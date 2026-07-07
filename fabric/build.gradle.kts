@@ -71,6 +71,7 @@ dependencies {
 
 	listOf(
 		libs.fabric.kotlin,
+		utils.getResourcefulConfig("fabric"),
 	).forEach {
 		implementation(it)
 		if (includeDeps)

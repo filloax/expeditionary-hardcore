@@ -38,6 +38,7 @@ dependencies {
 
 	compileOnly(utils.getFilloaxlib())
 	compileOnly(utils.getApibalego())
+	compileOnly(utils.getResourcefulConfig())
 
     //#region Test deps
 

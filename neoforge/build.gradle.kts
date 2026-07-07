@@ -56,6 +56,7 @@ dependencies {
 
     listOf(
         libs.kotlinforge,
+        utils.getResourcefulConfig("neoforge"),
     ).forEach {
         implementation(it)
         if (includeDeps)
