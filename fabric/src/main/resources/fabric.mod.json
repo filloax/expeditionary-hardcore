@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "expeditionaryhardcore",
+  "id": "exphardcore",
   "version": "${version_prefix}-fabric",
   "name": "${mod_name}",
   "description": "Expeditionary Hardcore.",
@@ -13,21 +13,22 @@
     "source": "https://github.com/filloax/expeditionary-hardcore"
   },
   "license": "MIT",
-  "icon": "assets/expeditionaryhardcore/icon.png",
+  "icon": "assets/exphardcore/icon.png",
   "environment": "*",
   "mixins": [
-    "expeditionaryhardcore.mixins.json"
+    "exphardcore.mixins.json",
+    "exphardcore-fabric.mixins.json"
   ],
   "entrypoints": {
     "main": [
       {
-        "value": "com.filloax.expeditionaryhardcore.ExpeditionaryHardcoreFabric",
+        "value": "com.filloax.exphardcore.ExpeditionaryHardcoreFabric",
         "adapter": "kotlin"
       }
     ],
     "client": [
       {
-        "value": "com.filloax.expeditionaryhardcore.ExpeditionaryHardcoreFabricClient",
+        "value": "com.filloax.exphardcore.ExpeditionaryHardcoreFabricClient",
         "adapter": "kotlin"
       }
     ]

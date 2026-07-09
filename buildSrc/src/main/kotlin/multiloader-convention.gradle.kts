@@ -89,6 +89,9 @@ val versionType: String? by project
 
 val versionSuffix = if (versionType?.isBlank() == true) "" else "-$versionType"
 
+val cydoniaMode = (property("cydoniaMode") as String).toBoolean()
+if (cydoniaMode) println("Cydonia mode enabled")
+
 // Main versions
 val minecraftVersion = libs.findVersion("minecraft").get()
 val minecraftVersionRange = libs.findVersion("minecraft.range").get()
@@ -182,7 +185,17 @@ tasks.withType<ProcessResources>().configureEach {
         expand(metaProps + project.utils(versionCatalogs, ext).extraResourceProps)
     }
 
+    val cydoniaProps = mapOf(
+        // non-meta, functional config, read at runtime
+        "cydoniaMode" to cydoniaMode,
+    )
+
+    filesMatching(listOf("cydonia.properties")) {
+        expand(cydoniaProps)
+    }
+
     inputs.properties(metaProps)
+    inputs.properties(cydoniaProps)
 }
 //endregion
 

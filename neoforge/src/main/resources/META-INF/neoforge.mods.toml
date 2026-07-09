@@ -5,7 +5,7 @@ license="${license}"
 issueTrackerURL="https://github.com/filloax/expeditionary-hardcore/issues"
 
 [[mixins]]
-    config="expeditionaryhardcore.mixins.json"
+    config="exphardcore.mixins.json"
 
 [[mods]]
     modId="${mod_id}"
