@@ -1,1 +1,2 @@
 - [ ] Chat message for usage of Respawn Anchors
+- [ ] Implement "not in ocean" option

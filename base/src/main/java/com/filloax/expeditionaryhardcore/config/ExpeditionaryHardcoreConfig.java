@@ -6,7 +6,12 @@ import com.teamresourceful.resourcefulconfig.api.annotations.ConfigInfo;
 
 import static com.filloax.expeditionaryhardcore.ExpeditionaryHardcore.MOD_ID;
 
-@Config(MOD_ID)
+@Config(
+        value = MOD_ID,
+        categories = {
+                RespawnConfig.class
+        }
+)
 @ConfigInfo(
         title = "Expeditionary Hardcore",
         description = "Expeditionary Hardcore settings"

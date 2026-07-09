@@ -19,6 +19,7 @@ import java.util.*
 fun ServerPlayer.getExpeditionLife() = PlayerLifeData.getCurrentForPlayer(this)
 fun ServerPlayer.getExpeditionLifeOrNull() = PlayerLifeData.getCurrentForPlayerOrNull(this)
 fun ServerPlayer.newExpeditionLife() = PlayerLifeData.createNewForPlayer(this)
+fun ServerPlayer.getAllExpeditionLives() = PlayerLifeData.getAllLives(this)
 
 /**
  * Per the mod's concept, every new "life" (respawn) is a

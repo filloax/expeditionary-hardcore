@@ -5,5 +5,15 @@
   "exphardcore.commands.exphardcore.name_set": "Set current name for user %s to %s.",
   "exphardcore.commands.exphardcore.name_change_refuse": "You do not have permission to change your name after you have set it.",
   "exphardcore.commands.exphardcore.name_set_refuse": "You do not have permission to set another player's name.",
-  "exphardcore.commands.spawnpoint.disabled": "Setting a respawn point is disabled."
+  "exphardcore.commands.spawnpoint.disabled": "Setting a respawn point is disabled.",
+
+  "exphardcore.config.respawn.respawnRadiusMin.name": "Minimum respawn radius",
+  "exphardcore.config.respawn.respawnRadiusMax.name": "Maximum respawn radius",
+  "exphardcore.config.respawn.minDistanceFromLastRespawn.name": "Min distance from last respawn",
+  "exphardcore.config.respawn.minDistanceFromLastRespawn.comment": "Only used if respawnCenter is not set to LAST_RESPAWN_POINT",
+  "exphardcore.config.respawn.respawnCenter.name": "Respawn center",
+  "exphardcore.config.respawn.respawnDistribution.name": "Respawn distribution",
+  "exphardcore.config.respawn.respawnDistributionMidpoint.name": "Distribution midpoint",
+  "exphardcore.config.respawn.respawnDistributionMidpoint.comment": "Only used if respawnDistribution is set to MIDPOINT_MORE_LIKELY. Distance from the center where respawns are more likely to happen. Set to -1 to use the halfway point between respawnRadiusMin and respawnRadiusMax.",
+  "exphardcore.config.respawn.avoidOceans.name": "Avoid oceans"
 }
