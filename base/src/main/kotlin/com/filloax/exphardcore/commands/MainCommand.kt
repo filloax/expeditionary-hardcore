@@ -1,5 +1,6 @@
 package com.filloax.exphardcore.commands
 
+import com.filloax.exphardcore.character.getAllExpeditionLives
 import com.filloax.exphardcore.character.getExpeditionLife
 import com.filloax.exphardcore.character.getExpeditionLifeOrNull
 import com.filloax.exphardcore.character.refreshExpeditionName
@@ -37,6 +38,14 @@ object MainCommand {
                 )
                 .then(literal("info")
                     .executes { ctx -> showInfo(ctx.source) }
+                )
+                .then(literal("history")
+                    .then(literal("player")
+                        .then(argument("player", EntityArgument.player())
+                            .executes { ctx -> showHistory(ctx.source, EntityArgument.getPlayer(ctx, "player")) }
+                        )
+                    )
+                    .executes { ctx -> showHistory(ctx.source, null) }
                 )
         )
     }
@@ -90,5 +99,33 @@ object MainCommand {
         ))
 
         return 1
+    }
+
+    private fun showHistory(source: CommandSourceStack, player: ServerPlayer?): Int {
+        val sourcePlayer = source.playerOrException
+        val targetPlayer = player ?: sourcePlayer
+        val isPersonal = targetPlayer == sourcePlayer
+
+        if (!isPersonal && !source.permissions().hasPermission(Permissions.COMMANDS_MODERATOR)) {
+            source.sendFailure(Component.translatable("exphardcore.commands.exphardcore.history_refuse"))
+            return 0
+        }
+
+        val lives = targetPlayer.getAllExpeditionLives()
+
+        if (lives.isEmpty()) {
+            source.sendFailure(Component.translatable("exphardcore.commands.exphardcore.info_no_life"))
+            return 0
+        }
+
+        lives.forEachIndexed { index, life ->
+            val pos = life.spawnPoint
+            source.sendSystemMessage(Component.translatable(
+                "exphardcore.commands.exphardcore.history_entry",
+                index + 1, life.name ?: "?", pos.x, pos.y, pos.z,
+            ))
+        }
+
+        return lives.size
     }
 }

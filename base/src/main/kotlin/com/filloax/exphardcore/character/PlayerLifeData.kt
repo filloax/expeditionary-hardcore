@@ -81,8 +81,9 @@ data class PlayerLifeData(
             ?.map { finalize(it, player.level().server) }
             ?: emptyList()
 
-        private fun finalize(data: PlayerLifeData, server: MinecraftServer) {
+        private fun finalize(data: PlayerLifeData, server: MinecraftServer): PlayerLifeData {
             data.server = server
+            return data
         }
 
     }

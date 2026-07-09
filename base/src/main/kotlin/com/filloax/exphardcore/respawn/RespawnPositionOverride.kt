@@ -7,7 +7,9 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.Registries
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.tags.BiomeTags
 import net.minecraft.util.Mth
+import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.structure.BuiltinStructureSets
 import net.minecraft.world.level.levelgen.structure.placement.ConcentricRingsStructurePlacement
 import java.util.Optional
@@ -197,7 +199,7 @@ class RespawnPositionProvider(
  * or skip the underlying provider altogether
  */
 class RespawnPositionConditionsProvider(
-    level: ServerLevel,
+    val level: ServerLevel,
     val player: ServerPlayer,
     val baseProvider: IRespawnPositionProvider,
     val maxAttempts: Int = 20,
@@ -224,12 +226,18 @@ class RespawnPositionConditionsProvider(
     }
 
     private fun matchesConfig(pos: BlockPos): Boolean {
-        // TODO: not in ocean check
+        if (config.avoidOceans && isOcean(pos)) return false
 
         val lastRespawn = player.getExpeditionLifeOrNull()?.spawnPoint
         val lastRespawnDistance = lastRespawn?.distSqr(pos) ?: Double.MAX_VALUE
 
         return lastRespawnDistance > config.minDistanceFromLastRespawn
+    }
+
+    private fun isOcean(pos: BlockPos): Boolean {
+        val surfaceY = level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.x, pos.z)
+        val surfacePos = BlockPos(pos.x, surfaceY, pos.z)
+        return level.getBiome(surfacePos).`is`(BiomeTags.IS_OCEAN)
     }
 }
 

@@ -1,6 +1,7 @@
 package com.filloax.exphardcore
 
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfigHandler
+import com.filloax.exphardcore.respawn.RespawnConfigResolver
 import com.filloax.exphardcore.utils.loadPropertiesFile
 import org.apache.logging.log4j.LogManager
 
@@ -26,6 +27,8 @@ object ExpeditionaryHardcore {
         LOGGER.info("Initializing")
 
         ExpeditionaryHardcoreConfigHandler.initConfig()
+
+        RespawnConfigResolver.init()
 
         ExpeditionaryHardcoreModEvents.get().initCallbacks()
 

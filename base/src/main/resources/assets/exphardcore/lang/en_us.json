@@ -5,7 +5,12 @@
   "exphardcore.commands.exphardcore.name_set": "Set current name for user %s to %s.",
   "exphardcore.commands.exphardcore.name_change_refuse": "You do not have permission to change your name after you have set it.",
   "exphardcore.commands.exphardcore.name_set_refuse": "You do not have permission to set another player's name.",
+  "exphardcore.commands.exphardcore.history_refuse": "You do not have permission to view another player's respawn history.",
+  "exphardcore.commands.exphardcore.history_entry": "#%s - %s: (%s, %s, %s)",
   "exphardcore.commands.spawnpoint.disabled": "Setting a respawn point is disabled.",
+
+  "exphardcore.screen.name_entry.title": "Set Character Name",
+  "exphardcore.screen.name_entry.label": "Name",
 
   "exphardcore.config.respawn.respawnRadiusMin.name": "Minimum respawn radius",
   "exphardcore.config.respawn.respawnRadiusMax.name": "Maximum respawn radius",
