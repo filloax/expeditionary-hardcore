@@ -9,12 +9,15 @@
     neoform = "26.2-1" # vanilla neoforge configuration
 
 # Mod dependencies
-    filloaxlib = "0.39.0-26.2"
+    filloaxlib = "0.39.1-26.2"
     # optional: separate version for filloaxlib common, defaults to filloaxlib version if unset
 #    filloaxlibCommon = "0.38.0a-26.2"
     apibalego = "0.1.0-26.2"
     rconfig = "5.0.0"
     rconfigMc = "26.2"
+
+# Dev runtime dependencies
+    modmenu = "20.0.1" # 26.2
 
 # Kotlin
     kotlin = "2.4.0"
@@ -68,6 +71,9 @@
     fabric-kotlin = { group = "net.fabricmc", name = "fabric-language-kotlin", version.ref = "fabric-language-kotlin" }
     kotlinforge = { group = "thedarkcolour", name = "kotlinforforge-neoforge", version.ref = "kotlinforge" }
     minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
+
+# Dev runtime dependencies
+    modmenu = { group = "com.terraformersmc", name = "modmenu", version.ref = "modmenu" }
 
 # Misc
     jsr305 = { group = "com.google.code.findbugs", name = "jsr305", version.ref = "jsr305" }

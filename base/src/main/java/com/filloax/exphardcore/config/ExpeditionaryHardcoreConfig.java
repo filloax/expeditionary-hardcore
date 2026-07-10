@@ -9,7 +9,7 @@ import static com.filloax.exphardcore.ExpeditionaryHardcore.MOD_ID;
 @Config(
         value = MOD_ID,
         categories = {
-                RespawnConfig.class
+            RespawnConfig.class
         }
 )
 @ConfigInfo(
@@ -21,4 +21,7 @@ public final class ExpeditionaryHardcoreConfig {
 
     @ConfigEntry(id = "allowChangingName", translation = T_PREF + "allowChangingName")
     public static boolean allowChangingName = false;
+
+    @ConfigEntry(id = "preventLogbookDrop", translation = T_PREF + "preventLogbookDrop")
+    public static boolean preventLogbookDrop = true;
 }

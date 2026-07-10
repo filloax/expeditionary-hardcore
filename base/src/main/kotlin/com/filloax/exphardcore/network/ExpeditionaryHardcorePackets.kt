@@ -1,7 +1,7 @@
 package com.filloax.exphardcore.network
 
 import com.filloax.exphardcore.character.CharacterCreationData
-import com.filloax.exphardcore.character.LifeHandler
+import com.filloax.exphardcore.character.LifeHandler.createExpeditionCharacter
 import com.filloax.exphardcore.character.PlayerLifeData
 import com.filloax.exphardcore.client.clientPlayerLifeData
 import com.filloax.exphardcore.utils.id
@@ -61,7 +61,7 @@ class ServerboundCharacterCreationPacket(
 private object ServerPacketHandlers {
     fun handleCharacterCreation(packet: ServerboundCharacterCreationPacket, context: ToServerContext) {
         val player = context.player
-        LifeHandler.createCharacter(player, packet)
+        player.createExpeditionCharacter(packet)
     }
 }
 

@@ -3,13 +3,18 @@
   "package": "com.filloax.exphardcore.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "RespawnPointMixin",
-    "SetSpawnCommandMixin",
-    "PlayerRespawnMixin",
+    "AbstractContainerMenuDropMixin",
+    "ItemEntityDespawnMixin",
+    "OnEditBookMixin",
     "PlayerDisplayNameMixin",
-    "ServerPlayerTabListMixin"
+    "PlayerDropItemMixin",
+    "PlayerRespawnMixin",
+    "RespawnPointMixin",
+    "ServerPlayerTabListMixin",
+    "SetSpawnCommandMixin"
   ],
   "client": [
+    "client.ClientPlayerDropItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

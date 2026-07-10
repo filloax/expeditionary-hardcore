@@ -1,5 +1,6 @@
 package com.filloax.exphardcore
 
+import com.filloax.exphardcore.item.ExpeditionaryHardcoreDataComponents
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents
@@ -14,7 +15,10 @@ object ExpeditionaryHardcoreFabric : ModInitializer, ExpeditionaryHardcore() {
     }
 
     override fun initRegistries() {
-        ExpeditionaryHardcoreItems.registerItems{ id, value -> Registry.register(BuiltInRegistries.ITEM, id, value) }
+        ExpeditionaryHardcoreItems.registerItems { id, value -> Registry.register(BuiltInRegistries.ITEM, id, value) }
+        ExpeditionaryHardcoreDataComponents.registerDataComponents { id, value ->
+            Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id, value)
+        }
     }
 
     override fun initItemGroups() {

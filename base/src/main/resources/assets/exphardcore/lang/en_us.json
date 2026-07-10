@@ -5,6 +5,7 @@
   "exphardcore.character.creation.success": "%s's expedition has begun...",
 
   "item.exphardcore.expeditioner_logbook": "Expeditioner's Logbook",
+  "item.exphardcore.expeditioner_logbook.desc": "Belongs to %s",
 
   "exphardcore.commands.exphardcore.info_no_life": "No Expeditionary Hardcore character found.",
   "exphardcore.commands.exphardcore.info_name": "Current name: §l%s§r.",
@@ -13,7 +14,7 @@
   "exphardcore.commands.exphardcore.name_change_refuse": "You do not have permission to change your name after you have set it.",
   "exphardcore.commands.exphardcore.name_set_refuse": "You do not have permission to set another player's name.",
   "exphardcore.commands.exphardcore.history_refuse": "You do not have permission to view another player's respawn history.",
-  "exphardcore.commands.exphardcore.history_entry": "#%s - %s: (%s, %s, %s)",
+  "exphardcore.commands.exphardcore.history_entry": "#%s - %s: ",
   "exphardcore.commands.spawnpoint.disabled": "Setting a respawn point is disabled.",
 
   "exphardcore.config.respawn.respawnRadiusMin.name": "Minimum respawn radius",

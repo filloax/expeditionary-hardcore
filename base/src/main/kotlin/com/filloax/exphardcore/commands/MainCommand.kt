@@ -12,7 +12,9 @@ import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands.*
 import net.minecraft.commands.arguments.EntityArgument
+import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.HoverEvent
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.permissions.Permissions
 
@@ -120,10 +122,18 @@ object MainCommand {
 
         lives.forEachIndexed { index, life ->
             val pos = life.spawnPoint
-            source.sendSystemMessage(Component.translatable(
+            val coordComponent = Component.translatable("chat.coordinates", pos.x, pos.y, pos.z)
+                .withStyle { style ->
+                    style
+                        .withColor(ChatFormatting.GREEN)
+                        .withClickEvent(ClickEvent.SuggestCommand("/tp @s ${pos.x} ${pos.y} ${pos.z}"))
+                        .withHoverEvent(HoverEvent.ShowText(Component.translatable("chat.coordinates.tooltip")))
+                }
+            val message = Component.translatable(
                 "exphardcore.commands.exphardcore.history_entry",
-                index + 1, life.name ?: "?", pos.x, pos.y, pos.z,
-            ))
+                index + 1, life.name ?: "?",
+            ).append(coordComponent)
+            source.sendSystemMessage(message)
         }
 
         return lives.size
