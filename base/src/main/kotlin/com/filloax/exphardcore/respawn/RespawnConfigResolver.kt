@@ -16,24 +16,26 @@ object RespawnConfigResolver {
         get() = getRespawnConfig()
 
     fun init() {
-        ApiEntryRegistry.register(
-            id("respawn_config"),
-            RespawnConfigDto.serializer(),
-            object : ApiEntryHandler<RespawnConfigDto> {
-                override fun handleApiUpdate(
-                    server: MinecraftServer,
-                    entries: Collection<ApiEntry<RespawnConfigDto>>
-                ) {
-                    if (entries.isEmpty()) return
-                    if (entries.size > 1) {
-                        ExpeditionaryHardcore.LOGGER.warn("Received multiple respawn config entries!")
-                    }
-                    val lastEntry = entries.last()
+        if (ExpeditionaryHardcore.modCompat.isApibalegoLoaded) {
+            ApiEntryRegistry.register(
+                id("respawn_config"),
+                RespawnConfigDto.serializer(),
+                object : ApiEntryHandler<RespawnConfigDto> {
+                    override fun handleApiUpdate(
+                        server: MinecraftServer,
+                        entries: Collection<ApiEntry<RespawnConfigDto>>
+                    ) {
+                        if (entries.isEmpty()) return
+                        if (entries.size > 1) {
+                            ExpeditionaryHardcore.LOGGER.warn("Received multiple respawn config entries!")
+                        }
+                        val lastEntry = entries.last()
 
-                    remoteConfig = lastEntry.details
+                        remoteConfig = lastEntry.details
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     fun getRespawnConfig(): RespawnConfigDef {

@@ -1,9 +1,11 @@
 package com.filloax.exphardcore
 
+import com.filloax.exphardcore.compat.ModCompatChecker
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfigHandler
 import com.filloax.exphardcore.network.ExpeditionaryHardcorePackets
 import com.filloax.exphardcore.respawn.RespawnConfigResolver
 import com.filloax.exphardcore.utils.loadPropertiesFile
+import com.filloax.fxlib.api.platform.ServiceUtil
 import org.apache.logging.log4j.LogManager
 
 abstract class ExpeditionaryHardcore {
@@ -15,6 +17,8 @@ abstract class ExpeditionaryHardcore {
         val LOGGER = LogManager.getLogger(MOD_NAME)
 
         var isNeoforge = false
+
+        val modCompat: ModCompatChecker = ServiceUtil.findService(ModCompatChecker::class.java)
 
         @JvmField
         val cydoniaMode: Boolean = loadPropertiesFile("cydonia.properties")["cydoniaMode"]!!.toBoolean()
