@@ -14,7 +14,8 @@ val modid: String by project
 val modVersion: String by project
 val versionType: String? by project
 val minecraftVersion = libs.versions.minecraft.asProvider().get()
-val includeDeps = (property("includeDeps") as String).toBoolean()
+val cydoniaMode = (property("cydoniaMode") as String).toBoolean()
+val includeDeps = (property("includeDeps") as String).toBoolean() || cydoniaMode
 
 val versionSuffix = if (versionType?.isBlank() == true) "" else "-$versionType"
 
@@ -97,7 +98,8 @@ dependencies {
 		include(it)
 	}
 	utils.getApibalego("fabric").let{
-		implementation(it) { exclude(module = "kotlin-stdlib") }
-		include(it)
+		compileOnly(it) { exclude(module = "kotlin-stdlib") }
+		if (includeDeps)
+			include(it)
 	}
 }

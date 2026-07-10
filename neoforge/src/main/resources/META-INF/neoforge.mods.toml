@@ -30,3 +30,8 @@ issueTrackerURL="https://github.com/filloax/expeditionary-hardcore/issues"
     modId="filloaxlib"
     type="required"
     versionRange="[${filloaxlib_version},)"
+
+[[dependencies]]
+    modId="apibalego"
+    type="optional"
+    versionRange="[${apibalego_version},)"

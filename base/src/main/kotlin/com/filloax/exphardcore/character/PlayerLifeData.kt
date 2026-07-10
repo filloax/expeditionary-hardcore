@@ -7,9 +7,9 @@ import com.filloax.fxlib.api.json.BlockPosSerializer
 import com.filloax.fxlib.api.json.UUIDSerializer
 import com.filloax.fxlib.api.networking.sendPacket
 import com.filloax.fxlib.api.savedata.FxSavedData
+import com.filloax.exphardcore.utils.id
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import com.ruslan.apibalego.utils.id
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.core.BlockPos

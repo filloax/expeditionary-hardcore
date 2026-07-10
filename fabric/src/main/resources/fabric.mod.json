@@ -45,5 +45,8 @@
     "fabricloader": ">=${fabric_loader_version}",
     "fabric-api": ">=${fapi_version}",
     "minecraft": "${fabric_minecraft_version_range}"
+  },
+  "suggests": {
+    "apibalego": ">=${apibalego_version}"
   }
 }
