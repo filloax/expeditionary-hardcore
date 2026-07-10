@@ -47,6 +47,18 @@ loom {
             server()
             generateRunConfig = true
         }
+
+        create("data") {
+            displayName = "Expeditionary Hardcore - Data Generation"
+            appendProjectPathToDisplayName.set(false)
+
+            client()
+            vmArg("-Dfabric-api.datagen")
+            vmArg("-Dfabric-api.datagen.output-dir=${file("../base/src/generated/resources")}")
+            vmArg("-Dfabric-api.datagen.modid=${modid}")
+
+            runDir("build/datagen")
+        }
     }
 }
 

@@ -64,6 +64,9 @@ tasks.test {
 	jvmArgs("-Dnet.bytebuddy.experimental=true")
 }
 
+// Datagen resources
+sourceSets.main.get().resources.srcDir(project(":base").file("src/generated/resources"))
+
 configurations {
 	create(COMMON_JAVA) {
 		isCanBeResolved = false

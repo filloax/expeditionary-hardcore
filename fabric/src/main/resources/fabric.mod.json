@@ -31,6 +31,12 @@
         "value": "com.filloax.exphardcore.ExpeditionaryHardcoreFabricClient",
         "adapter": "kotlin"
       }
+    ],
+    "fabric-datagen": [
+      {
+        "value": "com.filloax.exphardcore.data.ExpeditionaryHardcoreDataGenerator",
+        "adapter": "kotlin"
+      }
     ]
   },
   "depends": {

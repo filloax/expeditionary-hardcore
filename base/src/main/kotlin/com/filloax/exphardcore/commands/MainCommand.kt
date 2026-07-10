@@ -3,7 +3,7 @@ package com.filloax.exphardcore.commands
 import com.filloax.exphardcore.character.getAllExpeditionLives
 import com.filloax.exphardcore.character.getExpeditionLife
 import com.filloax.exphardcore.character.getExpeditionLifeOrNull
-import com.filloax.exphardcore.character.refreshExpeditionName
+import com.filloax.exphardcore.character.refreshExpeditionData
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfig
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
@@ -70,7 +70,7 @@ object MainCommand {
         }
 
         playerLifeData.name = name
-        player.refreshExpeditionName()
+        player.refreshExpeditionData()
 
         source.sendSuccess(
             {
