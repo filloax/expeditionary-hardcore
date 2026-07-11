@@ -22,6 +22,8 @@ object LifeHandler {
         player.refreshExpeditionData()
 
         ExpeditionaryHardcore.LOGGER.info("New life for player {}: {}", player, newLifeData)
+
+        ApibalegoInfoSender.onUpdateLives(player)
     }
 
     fun ServerPlayer.createExpeditionCharacter(data: CharacterCreationData) {

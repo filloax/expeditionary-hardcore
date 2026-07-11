@@ -2,6 +2,7 @@ package com.filloax.exphardcore.cydonia
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.character.PlayerLifeData
+import com.filloax.exphardcore.character.getAllExpeditionLives
 import com.filloax.exphardcore.character.getExpeditionLifeOrNull
 import com.filloax.exphardcore.config.CydoniaModeConfig
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
@@ -52,12 +53,25 @@ object ApibalegoInfoSender {
 
     fun onSaveCharacter(player: ServerPlayer, lifeData: PlayerLifeData) {
         sendLogbookAndCharacterContents(player, lifeData, listOf(), null)
+        onUpdateLives(player)
+    }
+
+    fun onUpdateLives(player: ServerPlayer) {
+        val allLives = player.getAllExpeditionLives()
+        val request = ApibalegoPlayerLifeHistory(
+            player.uuid,
+            allLives.map(ApibalegoPlayerLifeData::fromLifeData),
+            allLives.size - 1,
+        )
+
+        sendDataAsync("info/player_life_history", request, ApibalegoPlayerLifeHistory.serializer())
     }
 
 
     private fun sendLogbookAndCharacterContents(player: ServerPlayer, currentLife: PlayerLifeData?, pages: List<String>, title: String?) {
         val currentLife = player.getExpeditionLifeOrNull()
         val body = ApibalegoLogbookCharacterData(
+            player.uuid,
             currentLife?.let(ApibalegoPlayerLifeData::fromLifeData),
             diaryPages = pages,
             diaryTitle = title,

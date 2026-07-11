@@ -20,6 +20,12 @@ import net.minecraft.world.level.Level
 import java.util.function.Consumer
 
 class ExpeditionersLogbookItem(properties: Properties) : WritableBookItem(properties) {
+    override fun isFoil(stack: ItemStack): Boolean {
+        val owner = stack.get(ExpeditionaryHardcoreDataComponents.LOGBOOK_OWNER)
+            ?: return clientPlayerLifeData?.didCreation != true
+        return clientPlayerLifeData?.id == owner.lifeId
+    }
+
     // Likely to be removed when MC changes how tooltips are done again
     override fun appendHoverText(
         stack: ItemStack,

@@ -14,7 +14,8 @@
     "SetSpawnCommandMixin"
   ],
   "client": [
-    "client.ClientPlayerDropItemMixin"
+    "client.ClientPlayerDropItemMixin",
+    "client.CuboidItemModelWrapperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

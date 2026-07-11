@@ -47,11 +47,20 @@ data class LogbookOwner(val lifeId: UUID, val characterName: String) : TooltipPr
             ::LogbookOwner,
         )
 
-        // Null owner is treated as owned so the logbook is protected from the start
+        // Ownerless logbook counts as yours only while you haven't completed
+        // character creation (so it cannot be dropped if you just spawned)
         @JvmStatic
         fun isLogbookOwnedBy(stack: ItemStack, player: Player): Boolean {
             if (stack.item !is ExpeditionersLogbookItem) return false
-            val owner = stack.get(LOGBOOK_OWNER) ?: return true
+            val owner = stack.get(LOGBOOK_OWNER)
+
+            if (owner == null) {
+                val currentLife = if (player is ServerPlayer)
+                    player.getExpeditionLifeOrNull()
+                else
+                    clientPlayerLifeData
+                return currentLife?.didCreation != true
+            }
 
             val currentLifeId = if (player is ServerPlayer)
                 player.getExpeditionLifeOrNull()?.id
