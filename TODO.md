@@ -7,7 +7,7 @@
 - [ ] Life quirks as small effects
 - [ ] Cooler character UI
 - [ ] Multiplayer support: player A is main, other players respawn nearby
-- [ ] Signed variant of logbook, auto turns to it on death
+- [x] Signed variant of logbook, auto turns to it on death
 
 ## Secondary
 - [ ] Chat message for usage of Respawn Anchors

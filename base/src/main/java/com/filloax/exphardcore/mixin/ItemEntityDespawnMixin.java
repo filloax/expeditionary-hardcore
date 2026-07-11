@@ -1,6 +1,6 @@
 package com.filloax.exphardcore.mixin;
 
-import com.filloax.exphardcore.item.ExpeditionersLogbookItem;
+import com.filloax.exphardcore.item.LogbookItem;
 import net.minecraft.world.entity.item.ItemEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,7 +17,7 @@ public abstract class ItemEntityDespawnMixin {
         cancellable = true
     )
     private void exphardcore$preventLogbookDespawn(CallbackInfo ci) {
-        if (((ItemEntity) (Object) this).getItem().getItem() instanceof ExpeditionersLogbookItem) {
+        if (((ItemEntity) (Object) this).getItem().getItem() instanceof LogbookItem) {
             ci.cancel();
         }
     }

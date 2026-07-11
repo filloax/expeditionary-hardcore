@@ -19,7 +19,7 @@ import net.minecraft.world.item.component.TooltipDisplay
 import net.minecraft.world.level.Level
 import java.util.function.Consumer
 
-class ExpeditionersLogbookItem(properties: Properties) : WritableBookItem(properties) {
+class ExpeditionersLogbookItem(properties: Properties) : WritableBookItem(properties), LogbookItem {
     override fun isFoil(stack: ItemStack): Boolean {
         val owner = stack.get(ExpeditionaryHardcoreDataComponents.LOGBOOK_OWNER)
             ?: return clientPlayerLifeData?.didCreation != true

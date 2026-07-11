@@ -6,12 +6,14 @@
     "AbstractContainerMenuDropMixin",
     "ItemEntityDespawnMixin",
     "OnEditBookMixin",
+    "PlayerDeathSignLogbookMixin",
     "PlayerDisplayNameMixin",
     "PlayerDropItemMixin",
     "PlayerRespawnMixin",
     "RespawnPointMixin",
     "ServerPlayerTabListMixin",
-    "SetSpawnCommandMixin"
+    "SetSpawnCommandMixin",
+    "SignLogbookMixin"
   ],
   "client": [
     "client.ClientPlayerDropItemMixin",

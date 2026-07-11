@@ -6,6 +6,7 @@
 
   "item.exphardcore.expeditioner_logbook": "Expeditioner's Logbook",
   "item.exphardcore.expeditioner_logbook.desc": "Belongs to %s",
+  "item.exphardcore.signed_expeditioner_logbook": "Expeditioner's Logbook (Finished)",
 
   "exphardcore.commands.exphardcore.info_no_life": "No Expeditionary Hardcore character found.",
   "exphardcore.commands.exphardcore.info_name": "Current name: §l%s§r.",
