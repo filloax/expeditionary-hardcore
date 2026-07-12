@@ -110,4 +110,6 @@ dependencies {
 
 	// only for IDE testing
 	localRuntime(libs.modmenu)
+	localRuntime(libs.authme)
+
 }

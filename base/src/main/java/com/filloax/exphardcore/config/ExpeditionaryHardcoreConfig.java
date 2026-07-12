@@ -24,4 +24,7 @@ public final class ExpeditionaryHardcoreConfig {
 
     @ConfigEntry(id = "preventLogbookDrop", translation = T_PREF + "preventLogbookDrop")
     public static boolean preventLogbookDrop = true;
+
+    @ConfigEntry(id = "replacePlayerModel", translation = T_PREF + "replacePlayerModel")
+    public static boolean replacePlayerModel = true;
 }

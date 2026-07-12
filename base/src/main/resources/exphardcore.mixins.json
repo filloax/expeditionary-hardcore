@@ -17,7 +17,8 @@
   ],
   "client": [
     "client.ClientPlayerDropItemMixin",
-    "client.CuboidItemModelWrapperMixin"
+    "client.CuboidItemModelWrapperMixin",
+    "client.PlayerModelReplacementMixin"
   ],
   "injectors": {
     "defaultRequire": 1

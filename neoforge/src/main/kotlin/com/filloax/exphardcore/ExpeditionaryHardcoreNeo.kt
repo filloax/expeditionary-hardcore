@@ -1,8 +1,11 @@
 package com.filloax.exphardcore
 
+import com.filloax.exphardcore.client.model.PlayerModelOverrides
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreDataComponents
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
 import net.minecraft.core.registries.Registries
+import net.minecraft.resources.Identifier
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.CreativeModeTabs
 import net.minecraft.world.item.Item
@@ -22,6 +25,7 @@ object ExpeditionaryHardcoreNeo : ExpeditionaryHardcore() {
 
         runForDist(
             clientTarget = {
+                registerClientResourceListeners()
                 MOD_BUS.addListener<FMLClientSetupEvent> {
                     initClient()
                 }
@@ -46,6 +50,15 @@ object ExpeditionaryHardcoreNeo : ExpeditionaryHardcore() {
     }
 
     override fun registerResourceListeners() {
+    }
+
+    override fun registerClientResourceListeners() {
+        MOD_BUS.addListener<AddClientReloadListenersEvent> { ev ->
+            ev.addListener(
+                Identifier.fromNamespaceAndPath(MOD_ID, "player_models"),
+                PlayerModelOverrides.reloadListener,
+            )
+        }
     }
 
     override fun initRegistries() {

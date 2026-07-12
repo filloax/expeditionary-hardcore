@@ -52,5 +52,8 @@ abstract class ExpeditionaryHardcore {
 
     abstract fun initItemGroups()
     abstract fun registerResourceListeners()
+    // called at mod construction on client dist, not from initClient: on neoforge the
+    // reload listener event can fire before client setup does
+    abstract fun registerClientResourceListeners()
     abstract fun initRegistries()
 }

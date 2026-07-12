@@ -26,5 +26,8 @@
   "exphardcore.config.respawn.respawnDistribution.name": "Respawn distribution",
   "exphardcore.config.respawn.respawnDistributionMidpoint.name": "Distribution midpoint",
   "exphardcore.config.respawn.respawnDistributionMidpoint.comment": "Only used if respawnDistribution is set to MIDPOINT_MORE_LIKELY. Distance from the center where respawns are more likely to happen. Set to -1 to use the halfway point between respawnRadiusMin and respawnRadiusMax.",
-  "exphardcore.config.respawn.avoidOceans.name": "Avoid oceans"
+  "exphardcore.config.respawn.avoidOceans.name": "Avoid oceans",
+
+  "exphardcore.config.main.replacePlayerModel.name": "Replace player model",
+  "exphardcore.config.main.replacePlayerModel.comment": "Replace the player model every life"
 }
