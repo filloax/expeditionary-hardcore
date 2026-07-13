@@ -1,5 +1,6 @@
 package com.filloax.exphardcore.commands
 
+import com.filloax.exphardcore.character.CharacterLoadoutHandler
 import com.filloax.exphardcore.character.getAllExpeditionLives
 import com.filloax.exphardcore.character.getExpeditionLife
 import com.filloax.exphardcore.character.getExpeditionLifeOrNull
@@ -17,6 +18,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.HoverEvent
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.permissions.Permissions
+import kotlin.random.Random
 
 
 /**
@@ -48,6 +50,15 @@ object MainCommand {
                         )
                     )
                     .executes { ctx -> showHistory(ctx.source, null) }
+                )
+                .then(literal("loadout")
+                    .requires(hasPermission(LEVEL_GAMEMASTERS))
+                    .then(literal("player")
+                        .then(argument("player", EntityArgument.player())
+                            .executes { ctx -> giveLoadout(ctx.source, EntityArgument.getPlayer(ctx, "player")) }
+                        )
+                    )
+                    .executes { ctx -> giveLoadout(ctx.source, null) }
                 )
         )
     }
@@ -137,5 +148,20 @@ object MainCommand {
         }
 
         return lives.size
+    }
+
+    private fun giveLoadout(source: CommandSourceStack, player: ServerPlayer?): Int {
+        val sourcePlayer = source.playerOrException
+        val targetPlayer = player ?: sourcePlayer
+
+        val random = targetPlayer.random
+
+        CharacterLoadoutHandler.giveRandomLoadout(targetPlayer, Random(random.nextLong()))
+
+        source.sendSystemMessage(Component.translatable(
+            "exphardcore.commands.exphardcore.loadout_ok", targetPlayer.name,
+        ))
+
+        return 1
     }
 }

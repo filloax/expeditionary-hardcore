@@ -16,6 +16,7 @@
   "exphardcore.commands.exphardcore.name_set_refuse": "You do not have permission to set another player's name.",
   "exphardcore.commands.exphardcore.history_refuse": "You do not have permission to view another player's respawn history.",
   "exphardcore.commands.exphardcore.history_entry": "#%s - %s: ",
+  "exphardcore.commands.exphardcore.loadout_ok": "Gave a random starting loadout to %s.",
   "exphardcore.commands.spawnpoint.disabled": "Setting a respawn point is disabled.",
 
   "exphardcore.config.respawn.respawnRadiusMin.name": "Minimum respawn radius",
