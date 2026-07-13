@@ -7,6 +7,9 @@ import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
 import com.filloax.exphardcore.item.ExpeditionersLogbookItem
 import com.filloax.exphardcore.item.LogbookOwner
 import com.filloax.exphardcore.item.SignedExpeditionersLogbookItem
+import com.filloax.exphardcore.network.DATA_PLAYER_MODEL
+import com.filloax.exphardcore.network.ExpeditionaryHardcorePackets
+import com.filloax.fxlib.api.networking.setTrackedData
 import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
@@ -15,6 +18,7 @@ import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.network.Filterable
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.WrittenBookContent
+import java.util.Optional
 
 object LifeHandler {
     @JvmStatic
@@ -30,6 +34,29 @@ object LifeHandler {
         ExpeditionaryHardcore.LOGGER.info("New life for player {}: {}", player, newLifeData)
 
         ApibalegoInfoSender.onUpdateLives(player)
+    }
+
+    fun ServerPlayer.createExpeditionCharacter(data: CharacterCreationData) {
+        val currentLife = getExpeditionLife()
+
+        if (currentLife.didCreation) {
+            ExpeditionaryHardcore.LOGGER.warn("Player {} tried to create a new character but already has one", this)
+            return
+        }
+
+        currentLife.name = data.name
+        currentLife.didCreation = true
+        currentLife.setDirty()
+
+        refreshExpeditionData()
+
+        setLogbookOwner(data.name)
+
+        sendSystemMessage(Component.translatable("exphardcore.character.creation.success", data.name)
+            .withStyle(ChatFormatting.DARK_PURPLE)
+        )
+
+        ApibalegoInfoSender.onSaveCharacter(this, currentLife)
     }
 
     @JvmStatic
@@ -61,29 +88,6 @@ object LifeHandler {
         return signed
     }
 
-    fun ServerPlayer.createExpeditionCharacter(data: CharacterCreationData) {
-        val currentLife = getExpeditionLife()
-
-        if (currentLife.didCreation) {
-            ExpeditionaryHardcore.LOGGER.warn("Player {} tried to create a new character but already has one", this)
-            return
-        }
-
-        currentLife.name = data.name
-        currentLife.didCreation = true
-        currentLife.setDirty()
-
-        refreshExpeditionData()
-
-        setLogbookOwner(data.name)
-
-        sendSystemMessage(Component.translatable("exphardcore.character.creation.success", data.name)
-            .withStyle(ChatFormatting.DARK_PURPLE)
-        )
-
-        ApibalegoInfoSender.onSaveCharacter(this, currentLife)
-    }
-
     private fun ServerPlayer.setLogbookOwner(name: String) {
         val checkItem = ExpeditionaryHardcoreItems.EXPEDITIONERS_LOGBOOK
         val logbook = if (inventory.selectedItem.`is`(checkItem))
@@ -113,6 +117,12 @@ interface CharacterCreationData {
 fun ServerPlayer.refreshExpeditionData() {
     refreshExpeditionName()
     syncExpeditionLife()
+    syncExpeditionModel()
+}
+
+fun ServerPlayer.syncExpeditionModel() {
+    val modelResourceId = Optional.ofNullable(getExpeditionLifeOrNull()?.model?.model)
+    setTrackedData(DATA_PLAYER_MODEL, modelResourceId, includeSelf = true)
 }
 
 private fun ServerPlayer.refreshExpeditionName() {

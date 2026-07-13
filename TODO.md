@@ -8,10 +8,10 @@
 - [ ] Cooler character UI
 - [ ] Multiplayer support: player A is main, other players respawn nearby
 - [x] Signed variant of logbook, auto turns to it on death
-- [ ] Custom player models per life
+- [x] Custom player models per life
   - [x] Replace player model with a bbmodel (vanilla animations kept)
-  - [ ] Per-life model assignment + sync
-  - [ ] Models from Apibalego datasync
+  - [x] Per-life model assignment + sync
+  - [x] Models from Apibalego datasync
 
 ## Secondary
 - [ ] Chat message for usage of Respawn Anchors

@@ -1,6 +1,10 @@
 package com.filloax.exphardcore.data
 
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
+import com.filloax.exphardcore.character.PlayerModelDefinition
+import com.filloax.exphardcore.character.PlayerModelDefinitions
+import com.filloax.exphardcore.utils.id
+import com.filloax.fxlib.api.json.saveStable
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
@@ -10,6 +14,7 @@ import net.minecraft.client.data.models.model.ModelLocationUtils
 import net.minecraft.client.data.models.model.ModelTemplates
 import net.minecraft.client.data.models.model.TextureMapping
 import net.minecraft.client.renderer.item.ClientItem
+import net.minecraft.core.HolderLookup
 import net.minecraft.data.CachedOutput
 import net.minecraft.data.DataProvider
 import net.minecraft.data.PackOutput
@@ -21,17 +26,41 @@ import kotlin.collections.set
 class ExpeditionaryHardcoreDataGenerator : DataGeneratorEntrypoint {
     override fun onInitializeDataGenerator(fabricDataGenerator: FabricDataGenerator) {
         fabricDataGenerator.createPack().addProvider(::ItemModelProvider)
+        fabricDataGenerator.createPack().addProvider(::PlayerModelDefinitionProvider)
     }
 }
 
-/**
- * Vanilla's own ItemModelGenerators only builds models for the hardcoded vanilla item list
- * (its per-item methods are private), so modded items get their models/item-defs written
- * by hand here instead of through FabricModelProvider/ItemModelGenerators.
- *
- * All our items are flat (book-like) for now; give an item a bespoke [ClientItem] here if
- * that stops being true.
- */
+
+class PlayerModelDefinitionProvider(private val output: FabricPackOutput) : DataProvider {
+    private val pathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, PlayerModelDefinitions.DIRECTORY)
+
+    override fun run(cache: CachedOutput): CompletableFuture<*> {
+        return CompletableFuture.allOf(
+            *listOf(
+                "cydonia",
+                "evil_cydonia",
+            )
+            .map(::createBuiltinModel)
+            .map { (modelId, modelDefinition) ->
+                saveStable(cache, PlayerModelDefinition.serializer(), modelDefinition, pathProvider.json(modelId))
+            }.toTypedArray()
+        )
+    }
+
+    private fun createBuiltinModel(name: String) = id(name).let { modelId ->
+        Pair(
+            modelId,
+            PlayerModelDefinition(
+                model=modelId,
+                builtin=true
+            )
+        )
+    }
+
+    override fun getName() = "Expeditionary Hardcore Player Model Definitions"
+}
+
+
 class ItemModelProvider(output: FabricPackOutput) : DataProvider {
     private val modelPathProvider = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "models")
     private val itemPathProvider = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "items")
@@ -58,5 +87,14 @@ class ItemModelProvider(output: FabricPackOutput) : DataProvider {
     )
 
     override fun getName() = "Expeditionary Hardcore Item Models"
+}
+
+
+
+class TagProviderLootTable(output: FabricPackOutput, registries: CompletableFuture<HolderLookup.Provider>): LootTableTag(output, registries) {
+    override fun addTags(arg: HolderLookup.Provider) {
+        getOrCreateTagBuilder(ItemTags.DECORATED_POT_SHERDS)
+            .add(GrowssethItems.GROWSSETH_POTTERY_SHERD)
+    }
 }
 

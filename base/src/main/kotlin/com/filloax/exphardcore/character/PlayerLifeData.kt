@@ -1,5 +1,6 @@
 package com.filloax.exphardcore.character
 
+import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.PERSISTENT_DATA_PLAYER_LIVES
 import com.filloax.exphardcore.network.ClientboundLifeSyncPacket
 import com.filloax.fxlib.api.codec.codec
@@ -8,12 +9,15 @@ import com.filloax.fxlib.api.json.UUIDSerializer
 import com.filloax.fxlib.api.networking.sendPacket
 import com.filloax.fxlib.api.savedata.FxSavedData
 import com.filloax.exphardcore.utils.id
+import com.filloax.fxlib.api.json.IdentifierSerializer
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlin.random.Random
 import net.minecraft.core.BlockPos
 import net.minecraft.core.UUIDUtil
+import net.minecraft.resources.Identifier
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
 import java.util.*
@@ -43,12 +47,21 @@ data class PlayerLifeData(
     var name: String? = null,
     @Serializable(with=BlockPosSerializer::class)
     var spawnPoint: BlockPos,
+    @Serializable(with= IdentifierSerializer::class)
+    val modelId: Identifier,
 ) {
     @Transient
     lateinit var server: MinecraftServer
     var didCreation: Boolean
         get() = didCreationInt != 0
         set(value) { didCreationInt = if (value) 1 else 0 }
+
+    val model: PlayerModelDefinition?
+        get() {
+            if (!PlayerModelResolver.playerModelsByKey.containsKey(modelId))
+                ExpeditionaryHardcore.LOGGER.warn("Player model {} not found, using default", modelId)
+            return PlayerModelResolver.playerModelsByKey[modelId]
+        }
 
     fun setDirty() {
         val data = ServerAllPlayersLifeData.get(server)
@@ -75,13 +88,17 @@ data class PlayerLifeData(
         fun createNewForPlayer(player: ServerPlayer): PlayerLifeData {
             val data = ServerAllPlayersLifeData.get(player.level().server)
             val allLives = data.playerData.getOrPut(player.uuid) { mutableListOf() }
-
             val newId = UUID.randomUUID()
+            val random = Random(newId.mostSignificantBits xor newId.leastSignificantBits)
+
+            val model = PlayerModelResolver.playerModelsByKey.keys.random(random)
+
             return PlayerLifeData(
                 newId,
                 0,
                 null,
-                player.blockPosition()
+                player.blockPosition(),
+                model
             ).also {
                 finalize(it, player.level().server)
                 allLives.add(it)

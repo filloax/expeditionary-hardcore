@@ -2,9 +2,9 @@ package com.filloax.exphardcore.client.model
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.ExpeditionaryHardcore.Companion.MOD_ID
-import com.filloax.exphardcore.client.clientPlayerLifeData
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfig
-import com.filloax.exphardcore.utils.id
+import com.filloax.exphardcore.network.DATA_PLAYER_MODEL
+import com.filloax.fxlib.api.networking.getTrackedData
 import com.mojang.blaze3d.platform.NativeImage
 import net.minecraft.client.Minecraft
 import net.minecraft.client.model.player.PlayerModel
@@ -12,7 +12,8 @@ import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.resources.Identifier
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener
-import kotlin.random.Random
+import net.minecraft.world.entity.Entity
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * Client-side registry of player model replacements loaded from bbmodel files
@@ -35,8 +36,6 @@ object PlayerModelOverrides {
             }
     }
 
-    private val DEFAULT_MODELS = listOf(id("cydonia"), id("evil_cydonia"))
-
     private val models = mutableMapOf<Identifier, PlayerModelOverride>()
 
     class PlayerModelOverride(
@@ -45,9 +44,11 @@ object PlayerModelOverrides {
         val texture: Identifier,
     )
 
-    @JvmStatic
-    val active: PlayerModelOverride?
-        get() = if (ExpeditionaryHardcoreConfig.replacePlayerModel) getLifeModel()?.let { models[it] } else null
+    fun forPlayer(entity: Entity): PlayerModelOverride? {
+        if (!ExpeditionaryHardcoreConfig.replacePlayerModel) return null
+        val resourceId = entity.getTrackedData(DATA_PLAYER_MODEL)?.getOrNull() ?: return null
+        return models[resourceId]
+    }
 
     fun loadModel(id: Identifier, text: String) {
         try {
@@ -71,13 +72,5 @@ object PlayerModelOverrides {
         val textureId = id.withPath { "dynamic/$MODELS_PATH/$it" }
         Minecraft.getInstance().textureManager.register(textureId, texture)
         return textureId
-    }
-
-    private fun getLifeModel(): Identifier? {
-        val currentLifeData = clientPlayerLifeData ?: return null
-        val random = Random(currentLifeData.id.leastSignificantBits)
-
-        // TODO: better choice, embed it in life, server-side, etc.
-        return DEFAULT_MODELS.random(random)
     }
 }

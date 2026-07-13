@@ -3,6 +3,7 @@ package com.filloax.exphardcore
 import com.filloax.exphardcore.client.model.PlayerModelOverrides
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreDataComponents
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
+import com.filloax.exphardcore.character.PlayerModelDefinitions
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
@@ -33,6 +34,10 @@ object ExpeditionaryHardcoreFabric : ModInitializer, ExpeditionaryHardcore() {
     }
 
     override fun registerResourceListeners() {
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
+            Identifier.fromNamespaceAndPath(MOD_ID, "player_model_definitions"),
+            PlayerModelDefinitions.ReloadListener(),
+        )
     }
 
     override fun registerClientResourceListeners() {

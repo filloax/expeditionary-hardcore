@@ -39,6 +39,7 @@ loom {
 
             client()
             generateRunConfig = true
+            runDirectory.set(project.layout.projectDirectory.dir("run/client"))
         }
 
         named("server") {
@@ -47,6 +48,7 @@ loom {
 
             server()
             generateRunConfig = true
+            runDirectory.set(project.layout.projectDirectory.dir("run/server"))
         }
 
         create("data") {
