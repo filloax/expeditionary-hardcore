@@ -101,7 +101,12 @@ dependencies {
 	}
 	utils.getApibalego("fabric").let{
 		if (cydoniaMode) {
-			implementation(it) { exclude(module = "kotlin-stdlib") }
+			implementation(it) {
+				exclude(module = "kotlin-stdlib")
+//				capabilities {
+//					requireCapability("com.github.filloax:apibalego-fabric")
+//				}
+			}
 			include(it)
 		} else {
 			compileOnly(it) { exclude(module = "kotlin-stdlib") }

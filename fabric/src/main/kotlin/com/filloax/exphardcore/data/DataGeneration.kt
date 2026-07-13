@@ -1,5 +1,6 @@
 package com.filloax.exphardcore.data
 
+import com.filloax.exphardcore.ExpeditionaryHardcoreTags
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
 import com.filloax.exphardcore.character.PlayerModelDefinition
 import com.filloax.exphardcore.character.PlayerModelDefinitions
@@ -14,19 +15,24 @@ import net.minecraft.client.data.models.model.ModelLocationUtils
 import net.minecraft.client.data.models.model.ModelTemplates
 import net.minecraft.client.data.models.model.TextureMapping
 import net.minecraft.client.renderer.item.ClientItem
-import net.minecraft.core.HolderLookup
+import net.minecraft.core.registries.Registries
 import net.minecraft.data.CachedOutput
 import net.minecraft.data.DataProvider
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.Identifier
+import net.minecraft.tags.TagEntry
+import net.minecraft.tags.TagFile
 import net.minecraft.world.item.Item
 import java.util.concurrent.CompletableFuture
 import kotlin.collections.set
 
 class ExpeditionaryHardcoreDataGenerator : DataGeneratorEntrypoint {
     override fun onInitializeDataGenerator(fabricDataGenerator: FabricDataGenerator) {
-        fabricDataGenerator.createPack().addProvider(::ItemModelProvider)
-        fabricDataGenerator.createPack().addProvider(::PlayerModelDefinitionProvider)
+        val pack = fabricDataGenerator.createPack()
+
+        pack.addProvider(::ItemModelProvider)
+        pack.addProvider(::PlayerModelDefinitionProvider)
+        pack.addProvider(::LootTableTagProvider)
     }
 }
 
@@ -89,12 +95,24 @@ class ItemModelProvider(output: FabricPackOutput) : DataProvider {
     override fun getName() = "Expeditionary Hardcore Item Models"
 }
 
+// Loot tables aren't part of the datagen HolderLookup.Provider (they're loaded from disk at
+// server-reload time, not built from a RegistrySetBuilder), so TagsProvider/FabricTagsProvider
+// can't validate against Registries.LOOT_TABLE - write the tag file directly instead.
+class LootTableTagProvider(output: FabricPackOutput) : DataProvider {
+    private val pathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, Registries.tagsDirPath(Registries.LOOT_TABLE))
 
-
-class TagProviderLootTable(output: FabricPackOutput, registries: CompletableFuture<HolderLookup.Provider>): LootTableTag(output, registries) {
-    override fun addTags(arg: HolderLookup.Provider) {
-        getOrCreateTagBuilder(ItemTags.DECORATED_POT_SHERDS)
-            .add(GrowssethItems.GROWSSETH_POTTERY_SHERD)
+    override fun run(cache: CachedOutput): CompletableFuture<*> {
+        val tagFile = TagFile(
+            listOf(
+                TagEntry.element(id("loadout/sample_warrior")),
+                TagEntry.element(id("loadout/sample_miner")),
+            ),
+            false,
+        )
+        val tagId = ExpeditionaryHardcoreTags.LOOT_TABLE_CHARACTER_LOADOUT.location()
+        return DataProvider.saveStable(cache, TagFile.CODEC, tagFile, pathProvider.json(tagId))
     }
+
+    override fun getName() = "Expeditionary Hardcore Loot Table Tags"
 }
 

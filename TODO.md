@@ -2,7 +2,7 @@
 - [x] Respawn mechanic
 - [x] Implement "not in ocean" option
 - [x] Logbook
-- [ ] Starting loadout
+- [x] Starting loadout
 - [x] Logbook cannot be dropped or destroyed
 - [ ] Life quirks as small effects
 - [ ] Cooler character UI

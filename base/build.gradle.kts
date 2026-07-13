@@ -12,6 +12,7 @@ val modid: String by project
 val modVersion: String by project
 val versionType: String? by project
 val minecraftVersion = libs.versions.minecraft.asProvider().get()
+val cydoniaMode = (property("cydoniaMode") as String).toBoolean()
 
 val versionSuffix = if (versionType?.isBlank() == true) "" else "-$versionType"
 
@@ -66,6 +67,11 @@ tasks.test {
 
 // Datagen resources
 sourceSets.main.get().resources.srcDir(project(":base").file("src/generated/resources"))
+
+// Extra resources only packaged in Cydonia mode
+if (cydoniaMode) {
+	sourceSets.main.get().resources.srcDir(project(":base").file("src/cydonia/resources"))
+}
 
 configurations {
 	create(COMMON_JAVA) {
