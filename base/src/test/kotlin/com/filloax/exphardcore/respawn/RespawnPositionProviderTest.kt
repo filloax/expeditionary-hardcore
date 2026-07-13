@@ -97,6 +97,7 @@ class RespawnPositionProviderTest {
         distribution: RespawnDistribution = RespawnDistribution.UNIFORM,
         distributionMidpoint: Int = -1,
         forcedRespawnLocations: List<BlockPos>? = null,
+        avoidOceans: Boolean = false,
     ): RespawnConfigDef = RespawnConfigDto(
         respawnRadiusMin = radiusMin,
         respawnRadiusMax = radiusMax,
@@ -105,6 +106,7 @@ class RespawnPositionProviderTest {
         respawnDistribution = distribution,
         respawnDistributionMidpoint = distributionMidpoint,
         forcedRespawnLocations = forcedRespawnLocations,
+        avoidOceans = avoidOceans,
     )
 
     // --- RespawnPositionProvider: center selection ---
