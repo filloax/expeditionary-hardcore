@@ -1,5 +1,6 @@
 package com.filloax.exphardcore
 
+import com.filloax.exphardcore.character.PlayerModelResolver
 import com.filloax.exphardcore.compat.ModCompatChecker
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfigHandler
 import com.filloax.exphardcore.network.ExpeditionaryHardcorePackets
@@ -30,6 +31,7 @@ abstract class ExpeditionaryHardcore {
         ExpeditionaryHardcoreConfigHandler.initConfig()
 
         RespawnConfigResolver.init()
+        PlayerModelResolver.init()
 
         initRegistries()
 

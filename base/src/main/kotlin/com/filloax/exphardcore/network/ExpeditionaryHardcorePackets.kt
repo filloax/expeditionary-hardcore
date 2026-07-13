@@ -9,6 +9,7 @@ import com.filloax.fxlib.api.FxLibServices
 import com.filloax.fxlib.api.codec.streamCodec
 import com.filloax.fxlib.api.networking.ToClientContext
 import com.filloax.fxlib.api.networking.ToServerContext
+import com.filloax.fxlib.api.networking.TrackedEntityData
 import com.filloax.fxlib.api.networking.playC2S
 import com.filloax.fxlib.api.networking.playS2C
 import com.filloax.fxlib.api.optional
@@ -17,6 +18,8 @@ import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload.TypeAndCodec
+import net.minecraft.resources.Identifier
+import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 private typealias RStreamCodec<T> = StreamCodec<RegistryFriendlyByteBuf, T>
@@ -30,6 +33,7 @@ object ExpeditionaryHardcorePackets {
     val CHARACTER_CREATION = ServerboundCharacterCreationPacket.ENTRY
     val LIFE_SYNC = ClientboundLifeSyncPacket.ENTRY
 
+
     fun registerPacketsC2S() {
         FxLibServices.networking.packetRegistrator.apply {
             playC2S(CHARACTER_CREATION, ServerPacketHandlers::handleCharacterCreation)
@@ -40,6 +44,7 @@ object ExpeditionaryHardcorePackets {
         FxLibServices.networking.packetRegistrator.apply {
             playS2C(LIFE_SYNC, ClientPacketHandlers::handleLifeSync)
         }
+        registerAllTrackedData()
     }
 }
 
