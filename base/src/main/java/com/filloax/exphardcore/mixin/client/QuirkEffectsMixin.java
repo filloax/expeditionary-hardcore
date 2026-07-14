@@ -59,6 +59,19 @@ public abstract class QuirkEffectsMixin {
         }
     }
 
+    // Replace ** duration with custom text
+    @WrapOperation(
+            method = "extractEffects",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectUtil;formatDuration(Lnet/minecraft/world/effect/MobEffectInstance;FF)Lnet/minecraft/network/chat/Component;")
+    )
+    private Component expeditionaryhardcore$quirkDuration(
+            MobEffectInstance effect, float scale, float tickrate,
+            Operation<Component> original
+    ) {
+        Component quirkDuration = QuirkGfx.quirkDuration(effect);
+        return quirkDuration != null ? quirkDuration : original.call(effect, scale, tickrate);
+    }
+
     // vanilla only shows the tooltip when the text doesn't fit; always show it for
     // the quirk marker so its description is visible on hover
     @Inject(method = "extractText", at = @At("RETURN"))
