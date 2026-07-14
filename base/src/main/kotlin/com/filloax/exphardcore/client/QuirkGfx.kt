@@ -41,6 +41,12 @@ object QuirkGfx {
     }
 
     @JvmStatic
+    fun quirkDuration(effect: MobEffectInstance?): Component? {
+        quirkInfoFor(effect) ?: return null
+        return Component.translatable("effect.exphardcore.life_quirk.duration")
+    }
+
+    @JvmStatic
     fun quirkIcon(effect: MobEffectInstance?): QuirkIconInfo {
         val quirkInfo = quirkInfoFor(effect) ?: return QUIRK_ICON_INFO_EMPTY
         val icon = quirkInfo.icon

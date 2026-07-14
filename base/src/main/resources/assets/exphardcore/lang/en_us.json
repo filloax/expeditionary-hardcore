@@ -26,6 +26,7 @@
   "exphardcore.commands.spawnpoint.disabled": "Setting a respawn point is disabled.",
 
   "effect.exphardcore.life_quirk": "Quirk",
+  "effect.exphardcore.life_quirk.duration": "Character Quirk",
   "effect.exphardcore.quirk.slow": "Slow",
   "effect.exphardcore.quirk.slow.desc": "You move a little slower.",
   "effect.exphardcore.quirk.frail": "Frail",
