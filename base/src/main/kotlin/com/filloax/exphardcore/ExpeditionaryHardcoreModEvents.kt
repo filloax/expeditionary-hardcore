@@ -1,6 +1,7 @@
 package com.filloax.exphardcore
 
 import com.filloax.exphardcore.character.LifeHandler
+import com.filloax.exphardcore.character.quirk.LifeQuirkHandler
 import com.filloax.exphardcore.commands.MainCommand
 import com.filloax.fxlib.api.platform.ServiceUtil
 import com.filloax.fxlib.platform.ServerEvent
@@ -27,6 +28,10 @@ abstract class ExpeditionaryHardcoreModEvents {
         }
         onPlayerServerJoin { player ->
             LifeHandler.Callbacks.onPlayerServerJoin(player)
+            LifeQuirkHandler.Callbacks.onPlayerServerJoin(player)
+        }
+        onStartServerTick { server ->
+            LifeQuirkHandler.Callbacks.onStartServerTick(server)
         }
     }
 

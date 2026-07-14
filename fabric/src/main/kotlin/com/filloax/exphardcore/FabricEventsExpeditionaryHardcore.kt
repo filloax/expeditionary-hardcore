@@ -3,6 +3,7 @@ package com.filloax.exphardcore
 import com.filloax.fxlib.platform.ServerEvent
 import com.mojang.brigadier.CommandDispatcher
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLevelEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
@@ -26,6 +27,8 @@ class FabricEventsExpeditionaryHardcore : ExpeditionaryHardcoreModEvents() {
     override fun onPlayerServerJoin(event: (ServerPlayer) -> Unit) = ServerPlayConnectionEvents.JOIN.register { handler, _, _ ->
         event(handler.player)
     }
+
+//    override fun onPlayerServerTick() = ServerPlayerEvents.
 
     override fun onRegisterCommands(event: (CommandDispatcher<CommandSourceStack>, CommandBuildContext, CommandSelection) -> Unit) = CommandRegistrationCallback.EVENT.register { dispatcher, ctx, selection ->
         event(dispatcher, ctx, selection)

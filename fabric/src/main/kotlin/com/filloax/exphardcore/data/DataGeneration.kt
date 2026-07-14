@@ -1,19 +1,19 @@
 package com.filloax.exphardcore.data
 
 import com.filloax.exphardcore.ExpeditionaryHardcoreTags
-import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
 import com.filloax.exphardcore.character.PlayerModelDefinition
 import com.filloax.exphardcore.character.PlayerModelDefinitions
+import com.filloax.exphardcore.character.quirk.*
+import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
 import com.filloax.exphardcore.utils.id
 import com.filloax.fxlib.api.json.saveStable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
-import net.minecraft.client.data.models.model.ItemModelUtils
-import net.minecraft.client.data.models.model.ModelInstance
-import net.minecraft.client.data.models.model.ModelLocationUtils
-import net.minecraft.client.data.models.model.ModelTemplates
-import net.minecraft.client.data.models.model.TextureMapping
+import net.minecraft.client.data.models.model.*
 import net.minecraft.client.renderer.item.ClientItem
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.CachedOutput
@@ -22,9 +22,9 @@ import net.minecraft.data.PackOutput
 import net.minecraft.resources.Identifier
 import net.minecraft.tags.TagEntry
 import net.minecraft.tags.TagFile
+import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.item.Item
 import java.util.concurrent.CompletableFuture
-import kotlin.collections.set
 
 class ExpeditionaryHardcoreDataGenerator : DataGeneratorEntrypoint {
     override fun onInitializeDataGenerator(fabricDataGenerator: FabricDataGenerator) {
@@ -33,6 +33,7 @@ class ExpeditionaryHardcoreDataGenerator : DataGeneratorEntrypoint {
         pack.addProvider(::ItemModelProvider)
         pack.addProvider(::PlayerModelDefinitionProvider)
         pack.addProvider(::LootTableTagProvider)
+        pack.addProvider(::LifeQuirkDefinitionProvider)
     }
 }
 
@@ -67,6 +68,69 @@ class PlayerModelDefinitionProvider(private val output: FabricPackOutput) : Data
 }
 
 
+class LifeQuirkDefinitionProvider(output: FabricPackOutput) : DataProvider {
+    private val pathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, LifeQuirkDefinitions.DIRECTORY)
+
+    override fun run(cache: CachedOutput): CompletableFuture<*> {
+        val json = Json
+        val quirks = mapOf(
+            id("slow") to LifeQuirkDefinition(
+                icon = id("slow"),
+                name = "effect.exphardcore.quirk_slow",
+                description = "effect.exphardcore.quirk_slow.desc",
+                attributeModifiers = listOf(
+                    QuirkAttributeModifier(
+                        Identifier.withDefaultNamespace("movement_speed"),
+                        QuirkModifierOperation.ADD_MULTIPLIED_TOTAL,
+                        -0.10,
+                    ),
+                ),
+                builtin = true,
+            ),
+            id("frail") to LifeQuirkDefinition(
+                icon = id("frail"),
+                name = "effect.exphardcore.quirk_frail",
+                description = "effect.exphardcore.quirk_frail.desc",
+                attributeModifiers = listOf(
+                    QuirkAttributeModifier(
+                        Identifier.withDefaultNamespace("max_health"),
+                        QuirkModifierOperation.ADD_MULTIPLIED_TOTAL,
+                        -0.10,
+                    ),
+                ),
+                builtin = true,
+            ),
+            id("heavy_boned") to LifeQuirkDefinition(
+                icon = id("heavy_boned"),
+                name = "effect.exphardcore.quirk_heavy_boned",
+                description = "effect.exphardcore.quirk_heavy_boned.desc",
+                behavior = QuirkBehaviorRef(
+                    id("fall_impact"),
+                    Json.encodeToJsonElement(
+                        FallImpactBehavior.Params(
+                            damageMultiplier = 1.25f,
+                            effectDurationTicks = 60,
+                            effectAmplifier = 0,
+                            effects = listOf(MobEffects.SLOWNESS, MobEffects.BLINDNESS)
+                                .map { it.unwrapKey().orElseThrow().identifier() }
+                        )
+                    ).jsonObject,
+                ),
+                builtin = true,
+            ),
+        )
+
+        return CompletableFuture.allOf(
+            *quirks.map { (quirkId, definition) ->
+                saveStable(cache, LifeQuirkDefinition.serializer(), definition, pathProvider.json(quirkId))
+            }.toTypedArray()
+        )
+    }
+
+    override fun getName() = "Expeditionary Hardcore Life Quirk Definitions"
+}
+
+
 class ItemModelProvider(output: FabricPackOutput) : DataProvider {
     private val modelPathProvider = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "models")
     private val itemPathProvider = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "items")
@@ -95,9 +159,7 @@ class ItemModelProvider(output: FabricPackOutput) : DataProvider {
     override fun getName() = "Expeditionary Hardcore Item Models"
 }
 
-// Loot tables aren't part of the datagen HolderLookup.Provider (they're loaded from disk at
-// server-reload time, not built from a RegistrySetBuilder), so TagsProvider/FabricTagsProvider
-// can't validate against Registries.LOOT_TABLE - write the tag file directly instead.
+// Manually build tag as loot tables are not present during datagen
 class LootTableTagProvider(output: FabricPackOutput) : DataProvider {
     private val pathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, Registries.tagsDirPath(Registries.LOOT_TABLE))
 

@@ -2,6 +2,7 @@ package com.filloax.exphardcore.character
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.PERSISTENT_DATA_PLAYER_LIVES
+import com.filloax.exphardcore.character.quirk.LifeQuirkClientInfo
 import com.filloax.exphardcore.network.ClientboundLifeSyncPacket
 import com.filloax.fxlib.api.codec.codec
 import com.filloax.fxlib.api.json.BlockPosSerializer
@@ -49,6 +50,7 @@ data class PlayerLifeData(
     var spawnPoint: BlockPos,
     @Serializable(with= IdentifierSerializer::class)
     val modelId: Identifier,
+    var quirk: LifeQuirkClientInfo? = null,
 ) {
     @Transient
     lateinit var server: MinecraftServer
