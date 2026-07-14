@@ -17,7 +17,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import kotlin.jvm.optionals.getOrNull
 import kotlin.random.Random
-import kotlin.xor
 
 object CharacterLoadoutHandler {
     const val LAST_HOTBAR_SLOT = 8
@@ -33,8 +32,7 @@ object CharacterLoadoutHandler {
             player.addItem(logbookStack)
         }
 
-        val random = Random(lifeData.id.mostSignificantBits xor lifeData.id.leastSignificantBits)
-        giveRandomLoadout(player, random)
+        giveRandomLoadout(player, lifeData.random())
     }
 
     fun giveRandomLoadout(player: ServerPlayer, random: Random) {
