@@ -68,7 +68,12 @@ data class PlayerLifeData(
         data.setDirty()
     }
 
+    fun random(salt: Long = 0): Random = randomFor(id, salt)
+
     companion object {
+        fun randomFor(id: UUID, salt: Long = 0): Random =
+            Random(id.mostSignificantBits xor id.leastSignificantBits xor salt)
+
         fun getCurrentForPlayer(player: ServerPlayer): PlayerLifeData {
             val data = ServerAllPlayersLifeData.get(player.level().server)
             val allLives = data.playerData.getOrPut(player.uuid) { mutableListOf() }
@@ -89,7 +94,7 @@ data class PlayerLifeData(
             val data = ServerAllPlayersLifeData.get(player.level().server)
             val allLives = data.playerData.getOrPut(player.uuid) { mutableListOf() }
             val newId = UUID.randomUUID()
-            val random = Random(newId.mostSignificantBits xor newId.leastSignificantBits)
+            val random = randomFor(newId)
 
             val model = PlayerModelResolver.playerModelsByKey.keys.random(random)
 
