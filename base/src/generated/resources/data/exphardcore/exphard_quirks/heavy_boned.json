@@ -2,17 +2,16 @@
   "behavior": {
     "type": "exphardcore:fall_impact",
     "params": {
-      "damageMultiplier": 1.25,
       "effectDurationTicks": 60,
       "effects": [
-        "minecraft:blindness",
-        "minecraft:slowness"
-      ],
-      "effectAmplifier": 0
+        "minecraft:slowness",
+        "minecraft:blindness"
+      ]
     }
   },
   "builtin": true,
-  "description": "effect.exphardcore.quirk_heavy_boned.desc",
+  "description": "effect.exphardcore.quirk.heavy_boned.desc",
   "icon": "exphardcore:heavy_boned",
-  "name": "effect.exphardcore.quirk_heavy_boned"
+  "iconIsVanillaEffect": false,
+  "name": "effect.exphardcore.quirk.heavy_boned"
 }

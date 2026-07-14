@@ -33,6 +33,9 @@ abstract class ExpeditionaryHardcoreModEvents {
         onStartServerTick { server ->
             LifeQuirkHandler.Callbacks.onStartServerTick(server)
         }
+        onPlayerServerTick { player ->
+            LifeQuirkHandler.Callbacks.onPlayerServerTick(player)
+        }
     }
 
     abstract fun onServerStarting(event: ServerEvent)
@@ -40,5 +43,6 @@ abstract class ExpeditionaryHardcoreModEvents {
     abstract fun onServerLevelLoad(event: (MinecraftServer, ServerLevel) -> Unit)
     abstract fun onStartServerTick(event: ServerEvent)
     abstract fun onPlayerServerJoin(event: (player: ServerPlayer) -> Unit)
+    abstract fun onPlayerServerTick(event: (player: ServerPlayer) -> Unit)
     abstract fun onRegisterCommands(event: (dispatcher: CommandDispatcher<CommandSourceStack>, ctx: CommandBuildContext, selection: CommandSelection) -> Unit)
 }

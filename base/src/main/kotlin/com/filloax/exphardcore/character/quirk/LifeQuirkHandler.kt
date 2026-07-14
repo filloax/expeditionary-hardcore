@@ -60,7 +60,7 @@ object LifeQuirkHandler {
         removeQuirkArtifacts(player)
         lifeData.quirk = quirkId?.let { qid ->
             LifeQuirkDefinitions[qid]?.let { def ->
-                LifeQuirkClientInfo(qid, def.icon, def.name, def.description)
+                LifeQuirkClientInfo(qid, def.icon, if (def.iconIsVanillaEffect) 1 else 0, def.name, def.description)
             }
         }
         lifeData.setDirty()
@@ -141,6 +141,12 @@ object LifeQuirkHandler {
         }
 
         fun onPlayerServerTick(player: ServerPlayer) {
+            val quirkInfo = player.getExpeditionLifeOrNull()?.quirk ?: return
+            val behavior = LifeQuirkDefinitions.behaviorOf(quirkInfo.quirkId) ?: return
+
+            if (player.tickCount % behavior.onTickPeriod == 0) {
+                behavior.onTick(player)
+            }
         }
 
         fun onStartServerTick(server: MinecraftServer) {

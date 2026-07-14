@@ -3,7 +3,6 @@ package com.filloax.exphardcore
 import com.filloax.fxlib.platform.ServerEvent
 import com.mojang.brigadier.CommandDispatcher
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLevelEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
@@ -28,7 +27,11 @@ class FabricEventsExpeditionaryHardcore : ExpeditionaryHardcoreModEvents() {
         event(handler.player)
     }
 
-//    override fun onPlayerServerTick() = ServerPlayerEvents.
+    // Fabric API has no per-player tick event, only ServerPlayerEvents (join/leave/respawn/copy),
+    // so iterate connected players on the server tick instead.
+    override fun onPlayerServerTick(event: (ServerPlayer) -> Unit) = ServerTickEvents.END_SERVER_TICK.register { server ->
+        server.playerList.players.forEach(event)
+    }
 
     override fun onRegisterCommands(event: (CommandDispatcher<CommandSourceStack>, CommandBuildContext, CommandSelection) -> Unit) = CommandRegistrationCallback.EVENT.register { dispatcher, ctx, selection ->
         event(dispatcher, ctx, selection)

@@ -19,9 +19,8 @@ import kotlin.collections.set
  * A minor per-life effect: attribute tweaks and/or hardcoded behavior.
  *
  * @param icon Texture resource id for the quirk's icon, resolved to
- * `textures/quirk_icon/<icon>.png`; all quirks share one marker mob effect
- * (see [ExpeditionaryHardcoreMobEffects.LIFE_QUIRK]) so this can be arbitrary
- * art rather than one registered effect per quirk
+ * `<namespace>/textures/quirk_icon/<icon>.png`, or to a vanilla effect ID,
+ * depending on [iconIsVanillaEffect]
  * @param attributeModifiers Simple numeric changes to attributes
  * @param behavior Custom behavior that does more than change attributes
  */
@@ -29,6 +28,7 @@ import kotlin.collections.set
 data class LifeQuirkDefinition(
     @Serializable(with = IdentifierSerializer::class)
     val icon: Identifier,
+    val iconIsVanillaEffect: Boolean,
     val weight: Int = 10,
     val enabled: Boolean = true,
     // translation key or plain test (null: uses effect name)
@@ -37,7 +37,8 @@ data class LifeQuirkDefinition(
     val attributeModifiers: List<QuirkAttributeModifier> = listOf(),
     val behavior: QuirkBehaviorRef? = null,
     val builtin: Boolean = false,
-)
+) {
+}
 
 @Serializable
 data class QuirkAttributeModifier(
@@ -70,9 +71,13 @@ data class LifeQuirkClientInfo(
     val quirkId: Identifier,
     @Serializable(with = IdentifierSerializer::class)
     val icon: Identifier,
+    val iconIsVanillaEffectInt: Int,
     val name: String? = null,
     val description: String? = null,
-)
+) {
+    val iconIsVanillaEffect: Boolean get() = iconIsVanillaEffectInt != 0
+}
+
 
 object LifeQuirkDefinitions {
     const val DIRECTORY = "exphard_quirks"

@@ -1,0 +1,14 @@
+{
+  "attributeModifiers": [
+    {
+      "amount": -0.1,
+      "attribute": "minecraft:attack_damage",
+      "operation": "add_multiplied_total"
+    }
+  ],
+  "builtin": true,
+  "description": "effect.exphardcore.quirk.weak.desc",
+  "icon": "minecraft:weakness",
+  "iconIsVanillaEffect": true,
+  "name": "effect.exphardcore.quirk.weak"
+}
