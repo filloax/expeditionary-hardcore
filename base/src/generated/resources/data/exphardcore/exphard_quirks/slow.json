@@ -1,0 +1,13 @@
+{
+  "attributeModifiers": [
+    {
+      "amount": -0.1,
+      "attribute": "minecraft:movement_speed",
+      "operation": "add_multiplied_total"
+    }
+  ],
+  "builtin": true,
+  "description": "effect.exphardcore.quirk_slow.desc",
+  "icon": "exphardcore:slow",
+  "name": "effect.exphardcore.quirk_slow"
+}

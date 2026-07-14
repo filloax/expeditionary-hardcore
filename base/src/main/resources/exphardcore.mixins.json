@@ -5,6 +5,7 @@
   "mixins": [
     "AbstractContainerMenuDropMixin",
     "ItemEntityDespawnMixin",
+    "LivingEntityFallDamageMixin",
     "OnEditBookMixin",
     "PlayerDeathSignLogbookMixin",
     "PlayerDisplayNameMixin",
@@ -18,6 +19,7 @@
   "client": [
     "client.ClientPlayerDropItemMixin",
     "client.CuboidItemModelWrapperMixin",
+    "client.QuirkEffectsMixin",
     "client.PlayerModelReplacementMixin"
   ],
   "injectors": {

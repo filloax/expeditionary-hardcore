@@ -4,6 +4,9 @@ import com.filloax.exphardcore.client.model.PlayerModelOverrides
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreDataComponents
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
 import com.filloax.exphardcore.character.PlayerModelDefinitions
+import com.filloax.exphardcore.character.quirk.LifeQuirkDefinitions
+import com.filloax.exphardcore.effect.ExpeditionaryHardcoreMobEffects
+import net.minecraft.core.Registry
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent
@@ -58,6 +61,10 @@ object ExpeditionaryHardcoreNeo : ExpeditionaryHardcore() {
                 Identifier.fromNamespaceAndPath(MOD_ID, "player_model_definitions"),
                 PlayerModelDefinitions.ReloadListener(),
             )
+            ev.addListener(
+                Identifier.fromNamespaceAndPath(MOD_ID, "life_quirk_definitions"),
+                LifeQuirkDefinitions.ReloadListener(),
+            )
         }
     }
 
@@ -75,6 +82,11 @@ object ExpeditionaryHardcoreNeo : ExpeditionaryHardcore() {
             ev.register(Registries.ITEM) { helper -> ExpeditionaryHardcoreItems.registerItems(helper::register) }
             ev.register(Registries.DATA_COMPONENT_TYPE) { helper ->
                 ExpeditionaryHardcoreDataComponents.registerDataComponents(helper::register)
+            }
+            ev.register(Registries.MOB_EFFECT) { _ ->
+                ExpeditionaryHardcoreMobEffects.registerEffects { id, value ->
+                    Registry.registerForHolder(ev.getRegistry(Registries.MOB_EFFECT)!!, id, value)
+                }
             }
         }
     }

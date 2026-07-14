@@ -27,4 +27,10 @@ public final class ExpeditionaryHardcoreConfig {
 
     @ConfigEntry(id = "replacePlayerModel", translation = T_PREF + "replacePlayerModel")
     public static boolean replacePlayerModel = true;
+
+    @ConfigEntry(id = "enableLifeQuirks", translation = T_PREF + "enableLifeQuirks")
+    public static boolean enableLifeQuirks = true;
+
+    @ConfigEntry(id = "quirkChance", translation = T_PREF + "quirkChance")
+    public static double quirkChance = 1.0;
 }

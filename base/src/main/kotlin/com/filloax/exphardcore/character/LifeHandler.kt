@@ -1,14 +1,10 @@
 package com.filloax.exphardcore.character
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
+import com.filloax.exphardcore.character.quirk.LifeQuirkHandler
 import com.filloax.exphardcore.cydonia.ApibalegoInfoSender
-import com.filloax.exphardcore.item.ExpeditionaryHardcoreDataComponents
-import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
-import com.filloax.exphardcore.item.ExpeditionersLogbookItem
-import com.filloax.exphardcore.item.LogbookOwner
-import com.filloax.exphardcore.item.SignedExpeditionersLogbookItem
+import com.filloax.exphardcore.item.*
 import com.filloax.exphardcore.network.DATA_PLAYER_MODEL
-import com.filloax.exphardcore.network.ExpeditionaryHardcorePackets
 import com.filloax.fxlib.api.networking.setTrackedData
 import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
@@ -18,7 +14,7 @@ import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.network.Filterable
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.WrittenBookContent
-import java.util.Optional
+import java.util.*
 
 object LifeHandler {
     @JvmStatic
@@ -28,6 +24,7 @@ object LifeHandler {
         newLifeData.setDirty()
 
         CharacterLoadoutHandler.newLoadoutForPlayer(player, newLifeData)
+        LifeQuirkHandler.newQuirkForPlayer(player, newLifeData)
 
         player.refreshExpeditionData()
 
