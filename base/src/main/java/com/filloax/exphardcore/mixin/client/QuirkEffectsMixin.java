@@ -1,17 +1,20 @@
 package com.filloax.exphardcore.mixin.client;
 
-import com.filloax.exphardcore.client.QuirkEffectHover;
+import com.filloax.exphardcore.client.QuirkGfx;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.EffectsInInventory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffectInstance;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,7 +31,7 @@ public abstract class QuirkEffectsMixin {
     @Inject(method = "getEffectName", at = @At("RETURN"), cancellable = true)
     private void expeditionaryhardcore$quirkName(MobEffectInstance effect, CallbackInfoReturnable<Component> cir) {
         expeditionaryhardcore$currentEffect = effect;
-        Component quirkName = QuirkEffectHover.quirkName(effect);
+        Component quirkName = QuirkGfx.quirkName(effect);
         if (quirkName != null) {
             cir.setReturnValue(quirkName);
         }
@@ -45,10 +48,13 @@ public abstract class QuirkEffectsMixin {
             Operation<Void> original,
             @Local(name = "effect") MobEffectInstance effect
     ) {
-        Identifier icon = QuirkEffectHover.quirkIcon(effect);
-        if (icon != null) {
-            graphics.blit(pipeline, icon, x, y, 0.0F, 0.0F, width, height, width, height);
+        QuirkGfx.QuirkIconInfo icon = QuirkGfx.quirkIcon(effect);
+        if (icon.getCustomIcon() != null) {
+            graphics.blit(pipeline, icon.getCustomIcon(), x, y, 0.0F, 0.0F, width, height, width, height);
         } else {
+            if (icon.getVanillaEffectIcon() != null) {
+                sprite = icon.getVanillaEffectIcon();
+            }
             original.call(graphics, pipeline, sprite, x, y, width, height);
         }
     }
@@ -60,7 +66,7 @@ public abstract class QuirkEffectsMixin {
             GuiGraphicsExtractor graphics, Component effectText, Component duration, Font font,
             int x0, int y0, int textureWidth, int yStep, int mouseX, int mouseY, CallbackInfo ci
     ) {
-        QuirkEffectHover.extractTooltip(
+        QuirkGfx.extractTooltip(
                 graphics, expeditionaryhardcore$currentEffect, effectText, duration, font,
                 x0, y0, textureWidth, yStep, mouseX, mouseY
         );

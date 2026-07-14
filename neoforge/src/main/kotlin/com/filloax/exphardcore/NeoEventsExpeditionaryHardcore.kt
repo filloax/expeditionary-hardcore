@@ -13,6 +13,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEven
 import net.neoforged.neoforge.event.level.LevelEvent
 import net.neoforged.neoforge.event.server.ServerStartingEvent
 import net.neoforged.neoforge.event.server.ServerStoppingEvent
+import net.neoforged.neoforge.event.tick.PlayerTickEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
 
@@ -40,6 +41,16 @@ class NeoEventsExpeditionaryHardcore : ExpeditionaryHardcoreModEvents() {
 
     override fun onPlayerServerJoin(event: (ServerPlayer) -> Unit) {
         FORGE_BUS.addListener<PlayerLoggedInEvent> { ev ->
+            val player = ev.entity
+            if (player is ServerPlayer) {
+                event(player)
+            }
+        }
+    }
+
+    // PlayerTickEvent fires for both client and server players, so filter to ServerPlayer.
+    override fun onPlayerServerTick(event: (ServerPlayer) -> Unit) {
+        FORGE_BUS.addListener<PlayerTickEvent.Post> { ev ->
             val player = ev.entity
             if (player is ServerPlayer) {
                 event(player)

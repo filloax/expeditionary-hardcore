@@ -1,0 +1,14 @@
+{
+  "attributeModifiers": [
+    {
+      "amount": -0.2,
+      "attribute": "minecraft:oxygen_bonus",
+      "operation": "add_multiplied_total"
+    }
+  ],
+  "builtin": true,
+  "description": "effect.exphardcore.quirk.airless.desc",
+  "icon": "minecraft:water_breathing",
+  "iconIsVanillaEffect": true,
+  "name": "effect.exphardcore.quirk.airless"
+}

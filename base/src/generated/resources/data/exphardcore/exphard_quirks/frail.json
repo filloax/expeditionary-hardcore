@@ -1,13 +1,14 @@
 {
   "attributeModifiers": [
     {
-      "amount": -0.1,
+      "amount": -2.0,
       "attribute": "minecraft:max_health",
-      "operation": "add_multiplied_total"
+      "operation": "add_value"
     }
   ],
   "builtin": true,
-  "description": "effect.exphardcore.quirk_frail.desc",
-  "icon": "exphardcore:frail",
-  "name": "effect.exphardcore.quirk_frail"
+  "description": "effect.exphardcore.quirk.frail.desc",
+  "icon": "minecraft:wither",
+  "iconIsVanillaEffect": true,
+  "name": "effect.exphardcore.quirk.frail"
 }

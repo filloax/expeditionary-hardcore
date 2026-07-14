@@ -1,0 +1,10 @@
+{
+  "behavior": {
+    "type": "exphardcore:random_ambient_sound"
+  },
+  "builtin": true,
+  "description": "effect.exphardcore.quirk.paranoia.desc",
+  "icon": "minecraft:darkness",
+  "iconIsVanillaEffect": true,
+  "name": "effect.exphardcore.quirk.paranoia"
+}

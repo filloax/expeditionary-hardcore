@@ -6,7 +6,9 @@ import com.filloax.exphardcore.character.PlayerModelDefinitions
 import com.filloax.exphardcore.character.quirk.*
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
 import com.filloax.exphardcore.utils.id
+import com.filloax.fxlib.api.json.IdentifierSerializer
 import com.filloax.fxlib.api.json.saveStable
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
@@ -15,6 +17,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.minecraft.client.data.models.model.*
 import net.minecraft.client.renderer.item.ClientItem
+import net.minecraft.core.Holder
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.CachedOutput
 import net.minecraft.data.DataProvider
@@ -23,8 +26,12 @@ import net.minecraft.resources.Identifier
 import net.minecraft.tags.TagEntry
 import net.minecraft.tags.TagFile
 import net.minecraft.world.effect.MobEffects
+import net.minecraft.world.entity.ai.attributes.Attribute
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.item.Item
 import java.util.concurrent.CompletableFuture
+import kotlin.Double
+import kotlin.Int
 
 class ExpeditionaryHardcoreDataGenerator : DataGeneratorEntrypoint {
     override fun onInitializeDataGenerator(fabricDataGenerator: FabricDataGenerator) {
@@ -71,41 +78,48 @@ class PlayerModelDefinitionProvider(private val output: FabricPackOutput) : Data
 class LifeQuirkDefinitionProvider(output: FabricPackOutput) : DataProvider {
     private val pathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, LifeQuirkDefinitions.DIRECTORY)
 
+    data class SimpleAttributeDef(
+        val name: String,
+        val icon: String,
+        val attribute: Holder<Attribute>,
+        val amount: Double,
+        val operation: QuirkModifierOperation = QuirkModifierOperation.ADD_MULTIPLIED_TOTAL,
+    )
+
     override fun run(cache: CachedOutput): CompletableFuture<*> {
-        val json = Json
+        val attributeQuirks = listOf(
+            SimpleAttributeDef("slow", "slowness", Attributes.MOVEMENT_SPEED, -0.10),
+            SimpleAttributeDef("frail", "wither", Attributes.MAX_HEALTH, -2.0, QuirkModifierOperation.ADD_VALUE),
+            SimpleAttributeDef("clumsy", "mining_fatigue", Attributes.ATTACK_SPEED, -0.10),
+            SimpleAttributeDef("airless", "water_breathing", Attributes.OXYGEN_BONUS, -0.20),
+            SimpleAttributeDef("weak", "weakness", Attributes.ATTACK_DAMAGE, -0.10),
+        ).map { (name, icon, attribute, amount, operation) ->
+            id(name) to LifeQuirkDefinition(
+                icon = Identifier.withDefaultNamespace(icon),
+                iconIsVanillaEffect = true,
+                name = "effect.exphardcore.quirk.$name",
+                description = "effect.exphardcore.quirk.$name.desc",
+                attributeModifiers = listOf(
+                    QuirkAttributeModifier(
+                        attribute.unwrapKey().orElseThrow().identifier(),
+                        operation,
+                        amount,
+                    ),
+                ),
+                builtin = true,
+            )
+        }
+
         val quirks = mapOf(
-            id("slow") to LifeQuirkDefinition(
-                icon = id("slow"),
-                name = "effect.exphardcore.quirk_slow",
-                description = "effect.exphardcore.quirk_slow.desc",
-                attributeModifiers = listOf(
-                    QuirkAttributeModifier(
-                        Identifier.withDefaultNamespace("movement_speed"),
-                        QuirkModifierOperation.ADD_MULTIPLIED_TOTAL,
-                        -0.10,
-                    ),
-                ),
-                builtin = true,
-            ),
-            id("frail") to LifeQuirkDefinition(
-                icon = id("frail"),
-                name = "effect.exphardcore.quirk_frail",
-                description = "effect.exphardcore.quirk_frail.desc",
-                attributeModifiers = listOf(
-                    QuirkAttributeModifier(
-                        Identifier.withDefaultNamespace("max_health"),
-                        QuirkModifierOperation.ADD_MULTIPLIED_TOTAL,
-                        -0.10,
-                    ),
-                ),
-                builtin = true,
-            ),
+            *attributeQuirks.toTypedArray(),
+
             id("heavy_boned") to LifeQuirkDefinition(
                 icon = id("heavy_boned"),
-                name = "effect.exphardcore.quirk_heavy_boned",
-                description = "effect.exphardcore.quirk_heavy_boned.desc",
+                iconIsVanillaEffect = false,
+                name = "effect.exphardcore.quirk.heavy_boned",
+                description = "effect.exphardcore.quirk.heavy_boned.desc",
                 behavior = QuirkBehaviorRef(
-                    id("fall_impact"),
+                    LifeQuirkBehaviors.FALL_IMPACT,
                     Json.encodeToJsonElement(
                         FallImpactBehavior.Params(
                             damageMultiplier = 1.25f,
@@ -113,6 +127,25 @@ class LifeQuirkDefinitionProvider(output: FabricPackOutput) : DataProvider {
                             effectAmplifier = 0,
                             effects = listOf(MobEffects.SLOWNESS, MobEffects.BLINDNESS)
                                 .map { it.unwrapKey().orElseThrow().identifier() }
+                        )
+                    ).jsonObject,
+                ),
+                builtin = true,
+            ),
+            id("paranoia") to LifeQuirkDefinition(
+                icon = Identifier.withDefaultNamespace("darkness"),
+                iconIsVanillaEffect = true,
+                name = "effect.exphardcore.quirk.paranoia",
+                description = "effect.exphardcore.quirk.paranoia.desc",
+                behavior = QuirkBehaviorRef(
+                    LifeQuirkBehaviors.RANDOM_AMBIENT_SOUND,
+                    Json.encodeToJsonElement(
+                        RandomAmbientSoundBehavior.Params(
+                            tickCheckFrequencyTicks = 20,
+                            minDelayTicks = 20*5,
+                            chanceEachCheck = 0.01,
+                            applyEffect = MobEffects.DARKNESS.unwrapKey().orElseThrow().identifier(),
+                            applyEffectDurationTicks = 5*20,
                         )
                     ).jsonObject,
                 ),
