@@ -11,6 +11,7 @@ import com.filloax.fxlib.api.networking.sendPacket
 import com.filloax.fxlib.api.savedata.FxSavedData
 import com.filloax.exphardcore.utils.id
 import com.filloax.fxlib.api.json.IdentifierSerializer
+import com.filloax.fxlib.api.json.IntToBooleanSerializer
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import kotlinx.serialization.Serializable
@@ -44,7 +45,8 @@ fun ServerPlayer.syncExpeditionLife() {
 data class PlayerLifeData(
     @Serializable(with=UUIDSerializer::class)
     val id: UUID,
-    var didCreationInt: Int = 0, // int as boolean is not supported by fxlib kotlin Codecs
+    @Serializable(with = IntToBooleanSerializer::class)
+    var didCreation: Boolean = false,
     var name: String? = null,
     @Serializable(with=BlockPosSerializer::class)
     var spawnPoint: BlockPos,
@@ -54,9 +56,6 @@ data class PlayerLifeData(
 ) {
     @Transient
     lateinit var server: MinecraftServer
-    var didCreation: Boolean
-        get() = didCreationInt != 0
-        set(value) { didCreationInt = if (value) 1 else 0 }
 
     val model: PlayerModelDefinition?
         get() {
@@ -102,7 +101,7 @@ data class PlayerLifeData(
 
             return PlayerLifeData(
                 newId,
-                0,
+                false,
                 null,
                 player.blockPosition(),
                 model

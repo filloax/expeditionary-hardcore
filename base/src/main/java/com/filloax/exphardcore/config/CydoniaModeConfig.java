@@ -1,5 +1,6 @@
 package com.filloax.exphardcore.config;
 
+import com.teamresourceful.resourcefulconfig.api.annotations.Comment;
 import com.teamresourceful.resourcefulconfig.api.annotations.Config;
 import com.teamresourceful.resourcefulconfig.api.annotations.ConfigEntry;
 import com.teamresourceful.resourcefulconfig.api.annotations.ConfigInfo;
@@ -16,4 +17,12 @@ public final class CydoniaModeConfig {
 
     @ConfigEntry(id = "sendInfoToApibalego", translation = T_PREF + "sendInfoToApibalego")
     public static boolean sendInfoToApibalego = true;
+
+    @ConfigEntry(id = "mainPlayer", translation = T_PREF + "mainPlayer")
+    @Comment(
+            value = "The main player for the server-wide team, by name or UUID. "
+                    + "Everyone else respawns near them. Empty = no forced main.",
+            translation = T_PREF + "mainPlayer.comment"
+    )
+    public static String mainPlayer = "";
 }
