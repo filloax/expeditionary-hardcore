@@ -2,7 +2,10 @@ package com.filloax.exphardcore.character
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.ExpeditionaryHardcoreTags
+import com.filloax.exphardcore.character.team.ServerTeamsData
+import com.filloax.exphardcore.character.team.TeamManager
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems.EXPEDITIONERS_LOGBOOK
+import com.filloax.exphardcore.respawn.TeammateRespawnProvider
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.Registries
 import net.minecraft.server.level.ServerPlayer
@@ -32,7 +35,20 @@ object CharacterLoadoutHandler {
             player.addItem(logbookStack)
         }
 
-        giveRandomLoadout(player, lifeData.random())
+        var giveLoadout = true
+        val server = player.level().server
+        val hasMultiplayer = TeamManager.multiplayerEnabled()
+        val isSecondary = hasMultiplayer && TeamManager.isSecondary(server, player)
+        if (isSecondary && !TeamManager.isSecondaryLoadoutAvailable(server, player)) {
+            giveLoadout = false
+        }
+
+        if (giveLoadout)
+            giveRandomLoadout(player, lifeData.random())
+
+        if (isSecondary) {
+            TeamManager.setSecondaryLoadoutUsed(server, player)
+        }
     }
 
     fun giveRandomLoadout(player: ServerPlayer, random: Random) {

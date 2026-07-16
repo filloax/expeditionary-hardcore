@@ -1,8 +1,11 @@
 package com.filloax.exphardcore.respawn
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
+import com.filloax.exphardcore.character.ServerAllPlayersLifeData
 import com.filloax.exphardcore.character.getAllExpeditionLives
 import com.filloax.exphardcore.character.getExpeditionLifeOrNull
+import com.filloax.exphardcore.character.team.TeamManager
+import com.filloax.exphardcore.config.MultiplayerConfig
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.Registries
 import net.minecraft.server.level.ServerLevel
@@ -37,6 +40,15 @@ object RespawnPositionOverride {
 
     private fun ServerLevel.providerFor(player: ServerPlayer): IRespawnPositionProvider {
         val config = RespawnConfigResolver.currentRespawnConfig
+
+        // Team secondary players respawn near their main player instead of the normal center
+        if (TeamManager.multiplayerEnabled()) {
+            val mainUuid = TeamManager.mainUuidFor(server, player.uuid)
+            if (mainUuid != null && mainUuid != player.uuid) {
+                return TeammateRespawnProvider(this, player, mainUuid)
+            }
+        }
+
         val baseProvider = RespawnPositionProvider(this, player, config)
         return RespawnPositionConditionsProvider(this, player, baseProvider, config=config)
     }
@@ -191,6 +203,38 @@ class RespawnPositionProvider(
                 cachedStrongholds = it
                 ExpeditionaryHardcore.LOGGER.info("Found ${it.size} strongholds from $origin")
             }
+    }
+}
+
+/**
+ * Multiplayer team behavior: scatter within a small radius around
+ * the main player's current position.
+ * If the main is offline, fall back to their last stored spawn point,
+ * then to world origin.
+ */
+class TeammateRespawnProvider(
+    val level: ServerLevel,
+    val player: ServerPlayer,
+    private val mainUuid: UUID,
+) : IRespawnPositionProvider {
+    private val random = seededRandom(level, player)
+
+    override fun getRespawnPosition(): BlockPos {
+        val center = getCenterPos()
+        val min = MultiplayerConfig.teammateRespawnRadiusMin
+        val max = MultiplayerConfig.teammateRespawnRadiusMax
+        val radius = if (max <= min) max.toDouble() else min + random.nextDouble() * (max - min)
+        val angle = random.nextDouble(2.0 * Math.PI)
+        val dx = (radius * Mth.cos(angle)).toInt()
+        val dz = (radius * Mth.sin(angle)).toInt()
+
+        return center.offset(dx, 0, dz)
+    }
+
+    private fun getCenterPos(): BlockPos {
+        level.server.playerList.getPlayer(mainUuid)?.let { return it.blockPosition() }
+        ServerAllPlayersLifeData.get(level.server).playerData[mainUuid]?.lastOrNull()?.let { return it.spawnPoint }
+        return level.respawnData.globalPos.pos
     }
 }
 

@@ -25,6 +25,21 @@
   "exphardcore.commands.exphardcore.quirk_rerolled": "Rerolled %s's quirk: %s.",
   "exphardcore.commands.spawnpoint.disabled": "Setting a respawn point is disabled.",
 
+  "exphardcore.commands.exphardcore.team.invite_self": "You cannot invite yourself.",
+  "exphardcore.commands.exphardcore.team.invite_sent": "Invited %s to your team.",
+  "exphardcore.commands.exphardcore.team.invite_received": "%s invited you to their team. ",
+  "exphardcore.commands.exphardcore.team.invite_accept_button": "[Accept]",
+  "exphardcore.commands.exphardcore.team.invite_none": "You have no pending team invite.",
+  "exphardcore.commands.exphardcore.team.invite_target_busy": "%s is already in a team.",
+  "exphardcore.commands.exphardcore.team.accepted": "You joined %s's team.",
+  "exphardcore.commands.exphardcore.team.declined": "Declined the team invite.",
+  "exphardcore.commands.exphardcore.team.left": "You left your team.",
+  "exphardcore.commands.exphardcore.team.not_in_team": "You are not in a team.",
+  "exphardcore.commands.exphardcore.team.disbanded": "Disbanded your team.",
+  "exphardcore.commands.exphardcore.team.not_main": "Only the main player can disband the team.",
+  "exphardcore.commands.exphardcore.team.info_main": "You are the main player. Members: %s.",
+  "exphardcore.commands.exphardcore.team.info_member": "Your team's main player: %s.",
+
   "effect.exphardcore.life_quirk": "Quirk",
   "effect.exphardcore.life_quirk.duration": "Character Quirk",
   "effect.exphardcore.quirk.slow": "Slow",
@@ -51,6 +66,15 @@
   "exphardcore.config.respawn.respawnDistributionMidpoint.name": "Distribution midpoint",
   "exphardcore.config.respawn.respawnDistributionMidpoint.comment": "Only used if respawnDistribution is set to MIDPOINT_MORE_LIKELY. Distance from the center where respawns are more likely to happen. Set to -1 to use the halfway point between respawnRadiusMin and respawnRadiusMax.",
   "exphardcore.config.respawn.avoidOceans.name": "Avoid oceans",
+
+  "exphardcore.config.multiplayer.enableTeams.name": "Enable teams",
+  "exphardcore.config.multiplayer.enableTeams.comment": "Enable team play: teammates respawn near their team's main player. Always on in cydonia mode.",
+  "exphardcore.config.multiplayer.teammateRespawnRadiusMin.name": "Teammate respawn radius min",
+  "exphardcore.config.multiplayer.teammateRespawnRadiusMax.name": "Teammate respawn radius max",
+
+  "exphardcore.config.cydonia.sendInfoToApibalego": "Send info to Apibalego",
+  "exphardcore.config.cydonia.mainPlayer": "Main player",
+  "exphardcore.config.cydonia.mainPlayer.comment": "The main player for the server-wide team, by name or UUID. Everyone else respawns near them. Empty = no forced main.",
 
   "exphardcore.config.main.replacePlayerModel.name": "Replace player model",
   "exphardcore.config.main.replacePlayerModel.comment": "Replace the player model every life",

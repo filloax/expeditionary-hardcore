@@ -1,5 +1,6 @@
 package com.filloax.exphardcore.commands
 
+import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.character.CharacterLoadoutHandler
 import com.filloax.exphardcore.character.getAllExpeditionLives
 import com.filloax.exphardcore.character.getExpeditionLife
@@ -7,10 +8,13 @@ import com.filloax.exphardcore.character.getExpeditionLifeOrNull
 import com.filloax.exphardcore.character.quirk.LifeQuirkClientInfo
 import com.filloax.exphardcore.character.quirk.LifeQuirkDefinitions
 import com.filloax.exphardcore.character.quirk.LifeQuirkHandler
+import com.filloax.exphardcore.character.quirk.LifeQuirksResolver
 import com.filloax.exphardcore.character.refreshExpeditionData
+import com.filloax.exphardcore.character.team.ServerTeamsData
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfig
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
@@ -22,8 +26,10 @@ import net.minecraft.resources.Identifier
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.HoverEvent
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.permissions.Permissions
+import java.util.UUID
 import kotlin.random.Random
 
 
@@ -75,7 +81,7 @@ object MainCommand {
                     )
                     .then(literal("set")
                         .then(argument("quirk", IdentifierArgument.id())
-                            .suggests { _, builder -> SharedSuggestionProvider.suggestResource(LifeQuirkDefinitions.all.keys, builder) }
+                            .suggests { _, builder -> SharedSuggestionProvider.suggestResource(LifeQuirksResolver.quirks.keys, builder) }
                             .then(literal("player")
                                 .then(argument("player", EntityArgument.player())
                                     .executes { ctx -> setQuirk(ctx.source, EntityArgument.getPlayer(ctx, "player"), IdentifierArgument.getId(ctx, "quirk")) }
@@ -102,7 +108,147 @@ object MainCommand {
                     )
                     .executes { ctx -> showQuirk(ctx.source, null) }
                 )
+                .then(teamSubcommand())
         )
+    }
+
+    // Team play: invite/accept/decline/leave/disband/info. Hidden in cydonia mode (single automatic team).
+    private fun teamSubcommand(): LiteralArgumentBuilder<CommandSourceStack> =
+        literal("team")
+            .requires { !ExpeditionaryHardcore.cydoniaMode }
+            .then(literal("invite")
+                .then(argument("player", EntityArgument.player())
+                    .executes { ctx -> teamInvite(ctx.source, EntityArgument.getPlayer(ctx, "player")) }
+                )
+            )
+            .then(literal("accept")
+                .executes { ctx -> teamAccept(ctx.source) }
+            )
+            .then(literal("decline")
+                .executes { ctx -> teamDecline(ctx.source) }
+            )
+            .then(literal("leave")
+                .executes { ctx -> teamLeave(ctx.source) }
+            )
+            .then(literal("disband")
+                .executes { ctx -> teamDisband(ctx.source) }
+            )
+            .then(literal("info")
+                .executes { ctx -> teamInfo(ctx.source) }
+            )
+
+    private fun teamInvite(source: CommandSourceStack, target: ServerPlayer): Int {
+        val main = source.playerOrException
+        if (target == main) {
+            source.sendFailure(Component.translatable("exphardcore.commands.exphardcore.team.invite_self"))
+            return 0
+        }
+
+        val data = ServerTeamsData.get(source.server)
+        if (data.teamOf(target.uuid) != null) {
+            source.sendFailure(Component.translatable("exphardcore.commands.exphardcore.team.invite_target_busy", target.name))
+            return 0
+        }
+
+        data.createInvite(main.uuid, target.uuid)
+
+        val acceptButton = Component.translatable("exphardcore.commands.exphardcore.team.invite_accept_button")
+            .withStyle { style ->
+                style
+                    .withColor(ChatFormatting.GREEN)
+                    .withClickEvent(ClickEvent.RunCommand("/exphardcore team accept"))
+                    .withHoverEvent(HoverEvent.ShowText(Component.literal("/exphardcore team accept")))
+            }
+        target.sendSystemMessage(
+            Component.translatable("exphardcore.commands.exphardcore.team.invite_received", main.name)
+                .append(acceptButton)
+        )
+
+        source.sendSuccess({ Component.translatable("exphardcore.commands.exphardcore.team.invite_sent", target.name) }, false)
+        return 1
+    }
+
+    private fun teamAccept(source: CommandSourceStack): Int {
+        val player = source.playerOrException
+        val data = ServerTeamsData.get(source.server)
+        val main = data.acceptInvite(player.uuid)
+        if (main == null) {
+            source.sendFailure(Component.translatable("exphardcore.commands.exphardcore.team.invite_none"))
+            return 0
+        }
+
+        source.sendSuccess({ Component.translatable("exphardcore.commands.exphardcore.team.accepted", nameFor(source.server, main)) }, false)
+        return 1
+    }
+
+    private fun teamDecline(source: CommandSourceStack): Int {
+        val player = source.playerOrException
+        val data = ServerTeamsData.get(source.server)
+        if (data.pendingInviteFor(player.uuid) == null) {
+            source.sendFailure(Component.translatable("exphardcore.commands.exphardcore.team.invite_none"))
+            return 0
+        }
+        data.declineInvite(player.uuid)
+        source.sendSuccess({ Component.translatable("exphardcore.commands.exphardcore.team.declined") }, false)
+        return 1
+    }
+
+    private fun teamLeave(source: CommandSourceStack): Int {
+        val player = source.playerOrException
+        val data = ServerTeamsData.get(source.server)
+        val team = data.teamOf(player.uuid)
+        if (team == null) {
+            source.sendFailure(Component.translatable("exphardcore.commands.exphardcore.team.not_in_team"))
+            return 0
+        }
+        val wasMain = team.mainUuid == player.uuid
+        data.removeMember(player.uuid)
+        source.sendSuccess({ Component.translatable(
+            if (wasMain) "exphardcore.commands.exphardcore.team.disbanded"
+            else "exphardcore.commands.exphardcore.team.left"
+        ) }, false)
+        return 1
+    }
+
+    private fun teamDisband(source: CommandSourceStack): Int {
+        val player = source.playerOrException
+        val data = ServerTeamsData.get(source.server)
+        val team = data.teamOf(player.uuid)
+        if (team == null) {
+            source.sendFailure(Component.translatable("exphardcore.commands.exphardcore.team.not_in_team"))
+            return 0
+        }
+        if (team.mainUuid != player.uuid) {
+            source.sendFailure(Component.translatable("exphardcore.commands.exphardcore.team.not_main"))
+            return 0
+        }
+        data.disband(player.uuid)
+        source.sendSuccess({ Component.translatable("exphardcore.commands.exphardcore.team.disbanded") }, false)
+        return 1
+    }
+
+    private fun teamInfo(source: CommandSourceStack): Int {
+        val player = source.playerOrException
+        val data = ServerTeamsData.get(source.server)
+        val team = data.teamOf(player.uuid)
+        if (team == null) {
+            source.sendFailure(Component.translatable("exphardcore.commands.exphardcore.team.not_in_team"))
+            return 0
+        }
+
+        if (team.mainUuid == player.uuid) {
+            val members = if (team.memberUuids.isEmpty()) "-"
+                else team.memberUuids.joinToString(", ") { nameFor(source.server, it) }
+            source.sendSystemMessage(Component.translatable("exphardcore.commands.exphardcore.team.info_main", members))
+        } else {
+            source.sendSystemMessage(Component.translatable("exphardcore.commands.exphardcore.team.info_member", nameFor(source.server, team.mainUuid)))
+        }
+        return 1
+    }
+
+    private fun nameFor(server: MinecraftServer, uuid: UUID): String {
+        server.playerList.getPlayer(uuid)?.let { return it.gameProfile.name }
+        return server.services().nameToIdCache().get(uuid).map { it.name }.orElse(null) ?: uuid.toString()
     }
 
     private fun setName(source: CommandSourceStack, player: ServerPlayer?, name: String): Int {

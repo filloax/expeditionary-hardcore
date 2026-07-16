@@ -2,6 +2,7 @@ package com.filloax.exphardcore.character
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.character.quirk.LifeQuirkHandler
+import com.filloax.exphardcore.character.team.TeamManager
 import com.filloax.exphardcore.cydonia.ApibalegoInfoSender
 import com.filloax.exphardcore.item.*
 import com.filloax.exphardcore.network.DATA_PLAYER_MODEL
@@ -25,6 +26,13 @@ object LifeHandler {
 
         CharacterLoadoutHandler.newLoadoutForPlayer(player, newLifeData)
         LifeQuirkHandler.newQuirkForPlayer(player, newLifeData)
+
+        if (TeamManager.multiplayerEnabled()) {
+            val server = player.level().server
+            if (!TeamManager.isSecondary(server, player)) {
+                TeamManager.resetAllSecondaryLoadoutUsed(server, player)
+            }
+        }
 
         player.refreshExpeditionData()
 

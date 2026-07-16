@@ -9,7 +9,8 @@ import static com.filloax.exphardcore.ExpeditionaryHardcore.MOD_ID;
 @Config(
         value = MOD_ID,
         categories = {
-            RespawnConfig.class
+            RespawnConfig.class,
+            MultiplayerConfig.class
         }
 )
 @ConfigInfo(
@@ -30,7 +31,4 @@ public final class ExpeditionaryHardcoreConfig {
 
     @ConfigEntry(id = "enableLifeQuirks", translation = T_PREF + "enableLifeQuirks")
     public static boolean enableLifeQuirks = true;
-
-    @ConfigEntry(id = "quirkChance", translation = T_PREF + "quirkChance")
-    public static double quirkChance = 1.0;
 }
