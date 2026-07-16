@@ -45,12 +45,12 @@ class ProjectUtils(
     fun getApibalego(loader: String = "base"): String {
         val alwaysUseLocalMavenApibalego = (project.property("alwaysUseLocalMavenApibalego") as String).toBoolean()
         val version = libs.findVersion("apibalego").get().toString()
+        val useLocalMavenApibalego = alwaysUseLocalMavenApibalego || version.contains(Regex("rev\\d+"))
 
-//        val versionString = if (alwaysUseLocalMavenApibalego)
-//            "com.ruslan.apibalego:apibalego-${loader}:${version}"
-//        else
-//            "com.github.filloax.apibalego:apibalego-${loader}:${version}"
-        val versionString = "com.github.filloax.apibalego:apibalego-${loader}:${version}"
+        val versionString = if (useLocalMavenApibalego)
+            "com.ruslan.apibalego:apibalego-${loader}:${version}"
+        else
+            "com.github.filloax.apibalego:apibalego-${loader}:${version}"
 
         println("Using apibalego $versionString")
 
