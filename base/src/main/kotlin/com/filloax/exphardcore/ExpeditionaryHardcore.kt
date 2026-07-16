@@ -1,6 +1,7 @@
 package com.filloax.exphardcore
 
 import com.filloax.exphardcore.character.PlayerModelResolver
+import com.filloax.exphardcore.character.quirk.LifeQuirksResolver
 import com.filloax.exphardcore.client.QuirkGfx
 import com.filloax.exphardcore.compat.ModCompatChecker
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfigHandler
@@ -34,6 +35,7 @@ abstract class ExpeditionaryHardcore {
 
         RespawnConfigResolver.init()
         PlayerModelResolver.init()
+        LifeQuirksResolver.init()
 
         initRegistries()
 
