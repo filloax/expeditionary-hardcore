@@ -51,16 +51,15 @@ object LifeQuirkHandler {
     }
 
     private fun rollQuirk(previousLives: List<PlayerLifeData>, random: Random): Identifier? {
-        if (!ExpeditionaryHardcoreConfig.enableLifeQuirks) return null
-        if (random.nextDouble() >= ExpeditionaryHardcoreConfig.quirkChance) return null
-        return pickWeighted(previousLives, LifeQuirkDefinitions.all.filterValues { it.enabled }, random)
+        if (!LifeQuirksResolver.enableQuirks) return null
+        return pickWeighted(previousLives, LifeQuirksResolver.quirks.filterValues { it.enabled }, random)
     }
 
     private fun assignQuirk(player: ServerPlayer, lifeData: PlayerLifeData, quirkId: Identifier?) {
         removeQuirkArtifacts(player)
         lifeData.quirk = quirkId?.let { qid ->
             LifeQuirkDefinitions[qid]?.let { def ->
-                LifeQuirkClientInfo(qid, def.icon, if (def.iconIsVanillaEffect) 1 else 0, def.name, def.description)
+                LifeQuirkClientInfo(qid, def.icon, def.iconIsVanillaEffect, def.name, def.description)
             }
         }
         lifeData.setDirty()
@@ -71,7 +70,7 @@ object LifeQuirkHandler {
         val unusedWeightMultiplier = 10
         val usedQuirks = previousLives.mapNotNull { it.quirk?.quirkId }.toSet()
 
-        val weightedEntries = defs.mapValues { (id, def) -> def.weight.coerceAtLeast(0) * (if (id in usedQuirks) unusedWeightMultiplier else 1) }
+        val weightedEntries = defs.mapValues { (id, def) -> def.weight.coerceAtLeast(0) * (if (id !in usedQuirks) unusedWeightMultiplier else 1) }
             .entries
             // sorted so the pick is deterministic for a given seed regardless of datapack load order
             .sortedBy { it.key.toString() }

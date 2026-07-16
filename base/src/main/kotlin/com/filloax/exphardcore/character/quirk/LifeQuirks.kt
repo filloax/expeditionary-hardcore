@@ -1,7 +1,9 @@
 package com.filloax.exphardcore.character.quirk
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
+import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfig
 import com.filloax.fxlib.api.json.IdentifierSerializer
+import com.filloax.fxlib.api.json.IntToBooleanSerializer
 import com.filloax.fxlib.api.json.KotlinJsonResourceReloadListener
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -14,6 +16,38 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.ai.attributes.AttributeModifier
 import kotlin.collections.set
+
+object LifeQuirksResolver {
+    /**
+     * If API enabled, and builtins are disabled, will
+     * remove builtins to allow overriding the list entirely
+     */
+    val quirks
+        get() = if (!disableBuiltins)
+            LifeQuirkDefinitions.all
+        else
+            LifeQuirkDefinitions.all.filterValues { !it.builtin }
+
+    val enableQuirks: Boolean
+        get() = ExpeditionaryHardcoreConfig.enableLifeQuirks && (
+            if (ExpeditionaryHardcore.modCompat.isApibalegoLoaded)
+                LifeQuirksApibalego.apiEnabledQuirks
+            else
+                true
+        )
+
+    private val disableBuiltins: Boolean
+        get() = (
+                if (ExpeditionaryHardcore.modCompat.isApibalegoLoaded)
+                    LifeQuirksApibalego.apiDisabledBuiltins
+                else
+                    false
+                )
+
+    fun init() {
+        LifeQuirksApibalego.init()
+    }
+}
 
 /**
  * A minor per-life effect: attribute tweaks and/or hardcoded behavior.
@@ -71,11 +105,11 @@ data class LifeQuirkClientInfo(
     val quirkId: Identifier,
     @Serializable(with = IdentifierSerializer::class)
     val icon: Identifier,
-    val iconIsVanillaEffectInt: Int,
+    @Serializable(with = IntToBooleanSerializer::class)
+    val iconIsVanillaEffect: Boolean,
     val name: String? = null,
     val description: String? = null,
 ) {
-    val iconIsVanillaEffect: Boolean get() = iconIsVanillaEffectInt != 0
 }
 
 
