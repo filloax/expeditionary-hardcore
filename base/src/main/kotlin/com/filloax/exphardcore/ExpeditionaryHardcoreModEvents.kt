@@ -3,6 +3,7 @@ package com.filloax.exphardcore
 import com.filloax.exphardcore.character.LifeHandler
 import com.filloax.exphardcore.character.quirk.LifeQuirkHandler
 import com.filloax.exphardcore.commands.MainCommand
+import com.filloax.exphardcore.expedition.ExpeditionMode
 import com.filloax.fxlib.api.platform.ServiceUtil
 import com.filloax.fxlib.platform.ServerEvent
 import com.mojang.brigadier.CommandDispatcher
@@ -23,6 +24,9 @@ abstract class ExpeditionaryHardcoreModEvents {
     }
 
     fun initCallbacks() {
+        onServerStarting { server ->
+            ExpeditionMode.Callbacks.onServerStarting(server)
+        }
         onRegisterCommands { dispatcher, ctx, selection ->
             MainCommand.register(dispatcher, ctx, selection)
         }

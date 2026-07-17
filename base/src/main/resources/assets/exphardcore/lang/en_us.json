@@ -23,7 +23,15 @@
   "exphardcore.commands.exphardcore.quirk_set": "Set %s's quirk to %s.",
   "exphardcore.commands.exphardcore.quirk_cleared": "Cleared %s's quirk.",
   "exphardcore.commands.exphardcore.quirk_rerolled": "Rerolled %s's quirk: %s.",
-  "exphardcore.commands.spawnpoint.disabled": "Setting a respawn point is disabled.",
+  "exphardcore.commands.spawnpoint.disabled": "Setting a respawn point is disabled in Expedition mode.",
+
+  "exphardcore.commands.exphardcore.expedition.enabled": "Expedition mode enabled for this world.",
+  "exphardcore.commands.exphardcore.expedition.disabled": "Expedition mode disabled for this world.",
+  "exphardcore.commands.exphardcore.expedition.status_on": "Expedition mode is §aon§r for this world.",
+  "exphardcore.commands.exphardcore.expedition.status_off": "Expedition mode is §coff§r for this world.",
+
+  "exphardcore.gamemode.expedition": "Expedition",
+  "gamerule.exphardcore.expedition": "Expedition mode",
 
   "exphardcore.commands.exphardcore.team.invite_self": "You cannot invite yourself.",
   "exphardcore.commands.exphardcore.team.invite_sent": "Invited %s to your team.",

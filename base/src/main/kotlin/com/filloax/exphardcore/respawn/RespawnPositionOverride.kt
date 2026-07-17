@@ -6,6 +6,7 @@ import com.filloax.exphardcore.character.getAllExpeditionLives
 import com.filloax.exphardcore.character.getExpeditionLifeOrNull
 import com.filloax.exphardcore.character.team.TeamManager
 import com.filloax.exphardcore.config.MultiplayerConfig
+import com.filloax.exphardcore.expedition.ExpeditionMode
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.Registries
 import net.minecraft.server.level.ServerLevel
@@ -30,6 +31,8 @@ object RespawnPositionOverride {
      */
     @JvmStatic
     fun pickRespawnSuggestion(level: ServerLevel, player: ServerPlayer, vanillaSuggestion: BlockPos): Optional<BlockPos> {
+        if (!ExpeditionMode.enabled) return empty()
+
         val provider = level.providerFor(player)
         val result = provider.getRespawnPosition()
 

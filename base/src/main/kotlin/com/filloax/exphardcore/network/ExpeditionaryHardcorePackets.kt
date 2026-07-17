@@ -3,13 +3,13 @@ package com.filloax.exphardcore.network
 import com.filloax.exphardcore.character.CharacterCreationData
 import com.filloax.exphardcore.character.LifeHandler.createExpeditionCharacter
 import com.filloax.exphardcore.character.PlayerLifeData
+import com.filloax.exphardcore.client.clientExpeditionMode
 import com.filloax.exphardcore.client.clientPlayerLifeData
 import com.filloax.exphardcore.utils.id
 import com.filloax.fxlib.api.FxLibServices
 import com.filloax.fxlib.api.codec.streamCodec
 import com.filloax.fxlib.api.networking.ToClientContext
 import com.filloax.fxlib.api.networking.ToServerContext
-import com.filloax.fxlib.api.networking.TrackedEntityData
 import com.filloax.fxlib.api.networking.playC2S
 import com.filloax.fxlib.api.networking.playS2C
 import com.filloax.fxlib.api.optional
@@ -19,9 +19,7 @@ import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload.TypeAndCodec
-import net.minecraft.resources.Identifier
 import net.minecraft.sounds.SoundEvents
-import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 private typealias RStreamCodec<T> = StreamCodec<RegistryFriendlyByteBuf, T>
@@ -31,11 +29,13 @@ object ExpeditionaryHardcorePackets {
         val CHARACTER_CREATION = id("character_creation")
         val LIFE_SYNC = id("life_sync")
         val FORCE_AMBIENT_SOUND = id("force_ambient_sound")
+        val EXPEDITION_SYNC = id("expedition_sync")
     }
 
     val CHARACTER_CREATION = ServerboundCharacterCreationPacket.ENTRY
     val LIFE_SYNC = ClientboundLifeSyncPacket.ENTRY
     val FORCE_AMBIENT_SOUND = AmbientSoundsPacket.ENTRY
+    val EXPEDITION_SYNC = ClientboundExpeditionSyncPacket.ENTRY
 
 
     fun registerPacketsC2S() {
@@ -48,6 +48,7 @@ object ExpeditionaryHardcorePackets {
         FxLibServices.networking.packetRegistrator.apply {
             playS2C(LIFE_SYNC, ClientPacketHandlers::handleLifeSync)
             playS2C(FORCE_AMBIENT_SOUND, ClientPacketHandlers::handleAmbientSounds)
+            playS2C(EXPEDITION_SYNC, ClientPacketHandlers::handleExpeditionSync)
         }
         registerAllTrackedData()
     }
@@ -90,9 +91,28 @@ class ClientboundLifeSyncPacket(
     override fun type() = TYPE
 }
 
+class ClientboundExpeditionSyncPacket(
+    val enabled: Boolean,
+) : CustomPacketPayload {
+    companion object {
+        val CODEC: RStreamCodec<ClientboundExpeditionSyncPacket> = ByteBufCodecs.BOOL
+            .cast<RegistryFriendlyByteBuf>()
+            .map(::ClientboundExpeditionSyncPacket, ClientboundExpeditionSyncPacket::enabled)
+
+        val TYPE = CustomPacketPayload.Type<ClientboundExpeditionSyncPacket>(ExpeditionaryHardcorePackets.Types.EXPEDITION_SYNC)
+        val ENTRY = TypeAndCodec(TYPE, CODEC)
+    }
+
+    override fun type() = TYPE
+}
+
 private object ClientPacketHandlers {
     fun handleLifeSync(packet: ClientboundLifeSyncPacket, context: ToClientContext) {
         clientPlayerLifeData = packet.lifeData
+    }
+
+    fun handleExpeditionSync(packet: ClientboundExpeditionSyncPacket, context: ToClientContext) {
+        clientExpeditionMode = packet.enabled
     }
 
     fun handleAmbientSounds(packet: AmbientSoundsPacket, context: ToClientContext) {

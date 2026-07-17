@@ -1,0 +1,5 @@
+accessWidener	v2	official
+
+# Expose the GameRules backing map so the create-world screen can set the
+# Expedition gamerule without a MinecraftServer (GameRules.set needs one).
+accessible	field	net/minecraft/world/level/gamerules/GameRules	rules	Lnet/minecraft/world/level/gamerules/GameRuleMap;

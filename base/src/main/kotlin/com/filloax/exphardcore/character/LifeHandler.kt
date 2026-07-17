@@ -4,9 +4,13 @@ import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.character.quirk.LifeQuirkHandler
 import com.filloax.exphardcore.character.team.TeamManager
 import com.filloax.exphardcore.cydonia.ApibalegoInfoSender
+import com.filloax.exphardcore.expedition.ExpeditionMode
 import com.filloax.exphardcore.item.*
+import com.filloax.exphardcore.network.ClientboundLifeSyncPacket
 import com.filloax.exphardcore.network.DATA_PLAYER_MODEL
+import com.filloax.fxlib.api.networking.sendPacket
 import com.filloax.fxlib.api.networking.setTrackedData
+import net.minecraft.resources.Identifier
 import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
@@ -20,6 +24,8 @@ import java.util.*
 object LifeHandler {
     @JvmStatic
     fun newLife(player: ServerPlayer, position: BlockPos) {
+        if (!ExpeditionMode.enabled) return
+
         val newLifeData = player.newExpeditionLife()
         newLifeData.spawnPoint = position
         newLifeData.setDirty()
@@ -75,6 +81,18 @@ object LifeHandler {
         }
     }
 
+    fun playerInit(player: ServerPlayer) {
+        ExpeditionMode.instance.syncToClient(player)
+        if (!ExpeditionMode.enabled) return
+
+        if (player.getAllExpeditionLives().isEmpty()) {
+            ExpeditionaryHardcore.LOGGER.info("Player {} joined with no lives, initialize", player)
+            newLife(player, player.blockPosition())
+        } else {
+            player.refreshExpeditionData()
+        }
+    }
+
     private fun ItemStack.signAsLostLogbook(player: ServerPlayer): ItemStack {
         val pageStrings = get(DataComponents.WRITABLE_BOOK_CONTENT)?.pages()?.map { it.raw } ?: emptyList()
         val pages: List<Filterable<Component>> = get(DataComponents.WRITABLE_BOOK_CONTENT)?.pages()?.map { it.map { text -> Component.literal(text) } } ?: emptyList()
@@ -105,12 +123,7 @@ object LifeHandler {
 
     object Callbacks {
         fun onPlayerServerJoin(player: ServerPlayer) {
-            if (player.getAllExpeditionLives().isEmpty()) {
-                ExpeditionaryHardcore.LOGGER.info("Player {} joined with no lives, initialize", player)
-                newLife(player, player.blockPosition())
-            } else {
-                player.refreshExpeditionData()
-            }
+            playerInit(player)
         }
     }
 }
@@ -133,4 +146,18 @@ fun ServerPlayer.syncExpeditionModel() {
 private fun ServerPlayer.refreshExpeditionName() {
     val nickname = getExpeditionLifeOrNull()?.name
     customName = nickname?.let(Component::literal)
+}
+
+fun ServerPlayer.applyExpeditionState() {
+    if (ExpeditionMode.enabled) {
+        LifeHandler.playerInit(this)
+    } else {
+        clearExpeditionData()
+    }
+}
+
+fun ServerPlayer.clearExpeditionData() {
+    customName = null
+    sendPacket(ClientboundLifeSyncPacket(null))
+    setTrackedData(DATA_PLAYER_MODEL, Optional.empty<Identifier>(), includeSelf = true)
 }

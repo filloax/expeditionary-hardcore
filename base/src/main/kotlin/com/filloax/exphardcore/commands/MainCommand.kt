@@ -6,12 +6,13 @@ import com.filloax.exphardcore.character.getAllExpeditionLives
 import com.filloax.exphardcore.character.getExpeditionLife
 import com.filloax.exphardcore.character.getExpeditionLifeOrNull
 import com.filloax.exphardcore.character.quirk.LifeQuirkClientInfo
-import com.filloax.exphardcore.character.quirk.LifeQuirkDefinitions
 import com.filloax.exphardcore.character.quirk.LifeQuirkHandler
 import com.filloax.exphardcore.character.quirk.LifeQuirksResolver
+import com.filloax.exphardcore.character.applyExpeditionState
 import com.filloax.exphardcore.character.refreshExpeditionData
 import com.filloax.exphardcore.character.team.ServerTeamsData
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfig
+import com.filloax.exphardcore.expedition.ExpeditionMode
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
@@ -40,6 +41,19 @@ object MainCommand {
     fun register(dispatcher: CommandDispatcher<CommandSourceStack>, registryAccess: CommandBuildContext, environment: CommandSelection) {
         dispatcher.register(
             literal("exphardcore")
+                .then(literal("enabled")
+                    .requires(hasPermission(LEVEL_GAMEMASTERS))
+                    .then(literal("on")
+                        .executes { ctx -> setExpedition(ctx.source, true) }
+                    )
+                    .then(literal("off")
+                        .executes { ctx -> setExpedition(ctx.source, false) }
+                    )
+                    .then(literal("status")
+                        .executes { ctx -> showExpeditionStatus(ctx.source) }
+                    )
+                    .executes { ctx -> showExpeditionStatus(ctx.source) }
+                )
                 .then(literal("name")
                     .then(literal("player")
                         .then(argument("player", EntityArgument.player())
@@ -110,6 +124,27 @@ object MainCommand {
                 )
                 .then(teamSubcommand())
         )
+    }
+
+    private fun setExpedition(source: CommandSourceStack, enabled: Boolean): Int {
+        val server = source.server
+        ExpeditionMode.enabled = enabled
+        server.playerList.players.forEach { it.applyExpeditionState() }
+
+        source.sendSuccess({ Component.translatable(
+            if (enabled) "exphardcore.commands.exphardcore.expedition.enabled"
+            else "exphardcore.commands.exphardcore.expedition.disabled"
+        ) }, true)
+        return 1
+    }
+
+    private fun showExpeditionStatus(source: CommandSourceStack): Int {
+        val enabled = ExpeditionMode.enabled
+        source.sendSystemMessage(Component.translatable(
+            if (enabled) "exphardcore.commands.exphardcore.expedition.status_on"
+            else "exphardcore.commands.exphardcore.expedition.status_off"
+        ))
+        return 1
     }
 
     // Team play: invite/accept/decline/leave/disband/info. Hidden in cydonia mode (single automatic team).
