@@ -26,6 +26,8 @@ if (includeDeps) println("Including dependencies for test mode")
 loom {
 	mixin.defaultRefmapName = "${modid}.refmap.json"
 
+	accessWidenerPath = file("src/main/resources/exphardcore.accesswidener")
+
 	mods {
 		register(modid) {
 			sourceSet(sourceSets.main.get())

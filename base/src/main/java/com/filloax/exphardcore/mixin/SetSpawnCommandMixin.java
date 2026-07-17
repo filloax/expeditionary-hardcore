@@ -4,6 +4,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.coordinates.Coordinates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import com.filloax.exphardcore.expedition.ExpeditionMode;
 import net.minecraft.server.commands.SetSpawnCommand;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,6 +26,7 @@ public abstract class SetSpawnCommandMixin {
             Coordinates rotation,
             CallbackInfoReturnable<Integer> cir
     ) {
+        if (!ExpeditionMode.isEnabled()) return;
         source.sendFailure(Component.translatable("exphardcore.commands.spawnpoint.disabled"));
         cir.setReturnValue(0);
     }

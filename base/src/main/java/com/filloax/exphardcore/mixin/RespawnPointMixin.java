@@ -1,5 +1,6 @@
 package com.filloax.exphardcore.mixin;
 
+import com.filloax.exphardcore.expedition.ExpeditionMode;
 import com.filloax.exphardcore.respawn.RespawnPositionOverride;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -30,6 +31,7 @@ public abstract class RespawnPointMixin {
             boolean showMessage,
             CallbackInfo ci
     ) {
+        if (!ExpeditionMode.isEnabled()) return;
         ci.cancel();
     }
 }

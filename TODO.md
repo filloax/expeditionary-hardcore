@@ -14,7 +14,9 @@
   - [x] Replace player model with a bbmodel (vanilla animations kept)
   - [x] Per-life model assignment + sync
   - [x] Models from Apibalego datasync
-- [ ] Custom difficulty in selector (is just Hard but renamed + enables mod)
+- [x] Custom gamemode in selector (enables mod + locks Hard)
+  - [ ] Cool vfx around button
 
 ## Secondary
 - [ ] Chat message for usage of Respawn Anchors
+- [ ] Player lives and expedition mode in same persistent nbt

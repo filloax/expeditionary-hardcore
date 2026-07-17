@@ -25,6 +25,8 @@ base {
 neoForge {
 	// vanilla mode, see moddevgradle docs
 	neoFormVersion = libs.versions.neoform.get()
+
+	accessTransformers.files.from(file("src/main/resources/META-INF/accesstransformer.cfg"))
 }
 
 dependencies {

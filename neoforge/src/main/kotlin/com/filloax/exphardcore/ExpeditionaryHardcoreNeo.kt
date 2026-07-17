@@ -1,6 +1,8 @@
 package com.filloax.exphardcore
 
+import com.filloax.exphardcore.client.CreateWorldScreenHook
 import com.filloax.exphardcore.client.model.PlayerModelOverrides
+import com.filloax.exphardcore.expedition.ExpeditionGameRules
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreDataComponents
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
 import com.filloax.exphardcore.character.PlayerModelDefinitions
@@ -10,6 +12,7 @@ import net.minecraft.core.Registry
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent
+import net.neoforged.neoforge.client.event.ScreenEvent
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.CreativeModeTabs
 import net.minecraft.world.item.Item
@@ -34,6 +37,12 @@ object ExpeditionaryHardcoreNeo : ExpeditionaryHardcore() {
                 registerClientResourceListeners()
                 MOD_BUS.addListener<FMLClientSetupEvent> {
                     initClient()
+                }
+                FORGE_BUS.addListener<ScreenEvent.Init.Post> { ev ->
+                    CreateWorldScreenHook.install(ev.screen) { vanilla, replacement ->
+                        ev.removeListener(vanilla)
+                        ev.addListener(replacement)
+                    }
                 }
             },
             serverTarget = {},
@@ -88,6 +97,7 @@ object ExpeditionaryHardcoreNeo : ExpeditionaryHardcore() {
                     Registry.registerForHolder(ev.getRegistry(Registries.MOB_EFFECT)!!, id, value)
                 }
             }
+            ev.register(Registries.GAME_RULE) { helper -> ExpeditionGameRules.register(helper::register) }
         }
     }
 }

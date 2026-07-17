@@ -15,6 +15,7 @@
   "license": "MIT",
   "icon": "assets/exphardcore/icon.png",
   "environment": "*",
+  "accessWidener": "exphardcore.accesswidener",
   "mixins": [
     "exphardcore.mixins.json",
     "exphardcore-fabric.mixins.json"

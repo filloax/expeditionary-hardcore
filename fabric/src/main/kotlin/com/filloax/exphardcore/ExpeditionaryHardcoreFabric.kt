@@ -6,6 +6,7 @@ import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems
 import com.filloax.exphardcore.character.PlayerModelDefinitions
 import com.filloax.exphardcore.character.quirk.LifeQuirkDefinitions
 import com.filloax.exphardcore.effect.ExpeditionaryHardcoreMobEffects
+import com.filloax.exphardcore.expedition.ExpeditionGameRules
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
@@ -29,6 +30,7 @@ object ExpeditionaryHardcoreFabric : ModInitializer, ExpeditionaryHardcore() {
         ExpeditionaryHardcoreMobEffects.registerEffects { id, value ->
             Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, id, value)
         }
+        ExpeditionGameRules.register { id, rule -> Registry.register(BuiltInRegistries.GAME_RULE, id, rule) }
     }
 
     override fun initItemGroups() {
