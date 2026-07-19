@@ -64,7 +64,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:white_banner",
+          "name": "minecraft:shield",
           "functions": [
             {
               "function": "minecraft:set_banner_pattern",
