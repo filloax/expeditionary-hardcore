@@ -2,10 +2,8 @@ package com.filloax.exphardcore.character
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.ExpeditionaryHardcoreTags
-import com.filloax.exphardcore.character.team.ServerTeamsData
 import com.filloax.exphardcore.character.team.TeamManager
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems.EXPEDITIONERS_LOGBOOK
-import com.filloax.exphardcore.respawn.TeammateRespawnProvider
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.Registries
 import net.minecraft.server.level.ServerPlayer
@@ -14,6 +12,7 @@ import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.ItemAttributeModifiers
 import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
@@ -80,7 +79,7 @@ object CharacterLoadoutHandler {
     private fun assignItemsToSlots(player: ServerPlayer, items: Collection<ItemStack>, random: Random) {
         // Weapons then tools: hotbar (except for last slot used by logbook)
         // Then armor: equip best one if available
-        // Banners in offhand
+        // Shield in offhand, else banner
         // Then remaining items in inventory
 
         val hotbarCandidates = items.filter { it[DataComponents.WEAPON] != null || it[DataComponents.TOOL] != null }
@@ -95,13 +94,13 @@ object CharacterLoadoutHandler {
             .groupBy { it[DataComponents.EQUIPPABLE]!!.slot }
             .mapValues { (slot, items) -> items.maxBy { getItemArmorValue(it, slot) } }
 
-        val banner = items.find { it.`is`(ItemTags.BANNERS) }
+        val offhandItem = (items.find { it.`is`(Items.SHIELD) } ?: items.find { it.`is`(ItemTags.BANNERS) })
             ?.takeIf { player.offhandItem.isEmpty }
 
         val remaining = (items
                 - hotbarItems.toSet()
                 - bestArmorBySlot.values.toSet()
-                - (banner?.let { setOf(it) } ?: setOf())
+                - (offhandItem?.let { setOf(it) } ?: setOf())
                 )
                 .toMutableList()
 
@@ -117,7 +116,7 @@ object CharacterLoadoutHandler {
             player.inventory.setItem(slotIdx, item)
         }
 
-        banner?.let { player.setItemSlot(EquipmentSlot.OFFHAND, it) }
+        offhandItem?.let { player.setItemSlot(EquipmentSlot.OFFHAND, it) }
 
         val remainingSlots = randomFreeSlots(player, remaining.size, random)
         remaining.zip(remainingSlots).forEach { (item, slotIdx) ->

@@ -3,6 +3,7 @@ package com.filloax.exphardcore.mixin;
 import com.filloax.exphardcore.expedition.ExpeditionMode;
 import com.filloax.exphardcore.respawn.RespawnPositionOverride;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,6 +33,10 @@ public abstract class RespawnPointMixin {
             CallbackInfo ci
     ) {
         if (!ExpeditionMode.isEnabled()) return;
+        var player = (ServerPlayer) (Object) this;
+        if (showMessage) {
+            player.sendSystemMessage(Component.translatable("exphardcore.commands.spawnpoint.disabled"));
+        }
         ci.cancel();
     }
 }

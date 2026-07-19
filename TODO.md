@@ -3,7 +3,7 @@
 - [x] Implement "not in ocean" option
 - [x] Logbook
 - [x] Starting loadout
-  - [ ] Shield also goes in offhand
+  - [x] Shield also goes in offhand
 - [x] Logbook cannot be dropped or destroyed
 - [x] Life quirks as small effects
 - [ ] Cooler character UI
@@ -18,5 +18,4 @@
   - [ ] Cool vfx around button
 
 ## Secondary
-- [ ] Chat message for usage of Respawn Anchors
-- [ ] Player lives and expedition mode in same persistent nbt
+- [x] Chat message for usage of Respawn Anchors
