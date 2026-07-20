@@ -6,7 +6,7 @@
   - [x] Shield also goes in offhand
 - [x] Logbook cannot be dropped or destroyed
 - [x] Life quirks as small effects
-- [ ] Cooler character UI
+- [x] Cooler character UI
 - [x] Multiplayer support: player A is main, other players respawn nearby
   - [ ] FTB Teams compat: back non-cydonia teams with FTB's team API (owner=main, members=secondary) instead of the internal invite/accept store
 - [x] Signed variant of logbook, auto turns to it on death
@@ -15,7 +15,7 @@
   - [x] Per-life model assignment + sync
   - [x] Models from Apibalego datasync
 - [x] Custom gamemode in selector (enables mod + locks Hard)
-  - [ ] Cool vfx around button
+  - ~~[ ] Cool vfx around button~~
 
 ## Secondary
 - [x] Chat message for usage of Respawn Anchors
