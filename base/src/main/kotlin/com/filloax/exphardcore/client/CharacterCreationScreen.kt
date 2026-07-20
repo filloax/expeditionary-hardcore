@@ -21,6 +21,12 @@ class CharacterCreationScreen(
 ) : Screen(Component.translatable("exphardcore.screen.name_entry.title")) {
     private lateinit var nameEdit: EditBox
     private lateinit var saveButton: Button
+    private lateinit var cancelButton: Button
+
+    // for the typewriter thing
+    private var animating = false
+    private var animTick = 0
+    private var animName = ""
 
     override fun init() {
         // positioned inside the book page text column
@@ -37,7 +43,7 @@ class CharacterCreationScreen(
                 .bounds(this.width / 2 - 100, 196, 98, 20)
                 .build()
         )
-        addRenderableWidget(
+        cancelButton = addRenderableWidget(
             Button.builder(CommonComponents.GUI_CANCEL) { onClose() }
                 .bounds(this.width / 2 + 2, 196, 98, 20)
                 .build()
@@ -50,12 +56,21 @@ class CharacterCreationScreen(
     }
 
     override fun keyPressed(event: KeyEvent): Boolean {
+        if (animating) return true
         if (this.nameEdit.isFocused && !this.nameEdit.value.isEmpty() && event.isConfirmation) {
             this.onSave()
             return true
         } else {
             return super.keyPressed(event)
         }
+    }
+
+    override fun tick() {
+        super.tick()
+        if (!animating) return
+        animTick++
+        val total = VANISH_TICKS + animName.length * TICKS_PER_CHAR + END_TICKS
+        if (animTick >= total) commitSave()
     }
 
     override fun onClose() {
@@ -67,6 +82,17 @@ class CharacterCreationScreen(
     }
 
     private fun onSave() {
+        if (animating) return
+        animName = nameEdit.value
+        animating = true
+        animTick = 0
+        nameEdit.visible = false
+        nameEdit.isFocused = false
+        saveButton.active = false
+        cancelButton.active = false
+    }
+
+    private fun commitSave() {
         minecraft.player?.connection?.send(ServerboundCustomPayloadPacket(createCharacterCreationPacket()))
         onClose()
     }
@@ -124,6 +150,11 @@ class CharacterCreationScreen(
         val xo = (this.width - 192) / 2
         centeredPageText(graphics, title.copy().withStyle(ChatFormatting.BOLD), xo, TITLE_Y)
         centeredPageText(graphics, LABEL, xo, LABEL_Y)
+        if (animating) {
+            // EditBox hidden, draw name typewriter style
+            val shown = ((animTick - VANISH_TICKS) / TICKS_PER_CHAR).coerceIn(0, animName.length)
+            centeredPageText(graphics, Component.literal(animName.substring(0, shown)), xo, NAME_Y + 2)
+        }
     }
 
     private fun centeredPageText(graphics: GuiGraphicsExtractor, text: Component, xo: Int, y: Int) {
@@ -149,6 +180,11 @@ class CharacterCreationScreen(
         private const val TITLE_Y = 25
         private const val LABEL_Y = 45
         private const val NAME_Y = 60
+
+        // typewriter save animation
+        private const val VANISH_TICKS = 4
+        private const val TICKS_PER_CHAR = 2
+        private const val END_TICKS = 10
 
         // Call this from wherever the menu should be opened (e.g. a keybind or a respawn hook).
         fun open(lastScreen: Screen? = null, initialValue: String = "") {
