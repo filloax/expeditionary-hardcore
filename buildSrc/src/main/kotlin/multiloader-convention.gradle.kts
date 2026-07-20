@@ -122,6 +122,7 @@ val kotlinforgeVersion = libs.findVersion("kotlinforge").get()
 val kotlinforgeVersionRange = libs.findVersion("kotlinforge.range").get()
 
 // Libraries
+val rconfigVersion = libs.findVersion("rconfig").get().toString()
 val filloaxlibVersion = libs.findVersion("filloaxlib").get().toString()
 val apibalegoVersion = libs.findVersion("apibalego").get().toString()
 
@@ -188,6 +189,7 @@ tasks.withType<ProcessResources>().configureEach {
         "kotlinforge_version" to kotlinforgeVersion,
         "kotlinforge_version_range" to kotlinforgeVersionRange,
 
+        "rconfig_version" to rconfigVersion,
         "filloaxlib_version" to filloaxlibVersion,
         "apibalego_version" to apibalegoVersion,
 
