@@ -74,7 +74,8 @@
     minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
 
 # Dev runtime dependencies
-    modmenu = { group = "com.terraformersmc", name = "modmenu", version.ref = "modmenu" }
+    modmenu = { group = "maven.modrinth", name = "modmenu", version.ref = "modmenu" }
+#    modmenu = { group = "com.terraformersmc", name = "modmenu", version.ref = "modmenu" } //terraformers maven often breaks?
     authme = { group = "maven.modrinth", name = "auth-me", version.ref = "authme" }
 
 # Misc
