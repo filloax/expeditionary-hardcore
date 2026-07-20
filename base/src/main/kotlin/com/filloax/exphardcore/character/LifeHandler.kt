@@ -86,10 +86,60 @@ object LifeHandler {
         if (!ExpeditionMode.enabled) return
 
         if (player.getAllExpeditionLives().isEmpty()) {
-            ExpeditionaryHardcore.LOGGER.info("Player {} joined with no lives, initialize", player)
-            newLife(player, player.blockPosition())
+            if (tryMigrateSingleplayerLives(player)) {
+                player.refreshExpeditionData()
+            } else {
+                ExpeditionaryHardcore.LOGGER.info("Player {} joined with no lives, initialize", player)
+                newLife(player, player.blockPosition())
+            }
         } else {
             player.refreshExpeditionData()
+        }
+    }
+
+    /**
+     * In singleplayer, UUID for main player might change (offline mode, passing
+     * save, etc.)
+     */
+    private fun tryMigrateSingleplayerLives(player: ServerPlayer): Boolean {
+        val server = player.level().server
+        if (!server.isSingleplayer) return false
+        if (!server.isSingleplayerOwner(player.nameAndId())) return false
+
+        val data = ServerAllPlayersLifeData.get(server)
+
+        if (!data.playerData[player.uuid].isNullOrEmpty()) {
+            recordOwner(data, player.uuid)
+            return false
+        }
+
+        val recorded = data.lastSingleplayerOwner
+        val oldUuid = when {
+            recorded != null && recorded != player.uuid && !data.playerData[recorded].isNullOrEmpty() -> recorded
+            recorded == null -> data.playerData
+                .filter { (uuid, lives) -> uuid != player.uuid && lives.isNotEmpty() }
+                .keys.singleOrNull()
+            else -> null
+        }
+
+        if (oldUuid == null) {
+            recordOwner(data, player.uuid)
+            return false
+        }
+
+        data.playerData[player.uuid] = data.playerData.remove(oldUuid)?.toMutableList() ?: mutableListOf()
+        recordOwner(data, player.uuid)
+
+        ExpeditionaryHardcore.LOGGER.info(
+            "Migrated singleplayer lives from old uuid {} to current uuid {}", oldUuid, player.uuid
+        )
+        return true
+    }
+
+    private fun recordOwner(data: ServerAllPlayersLifeData, uuid: UUID) {
+        if (data.lastSingleplayerOwner != uuid) {
+            data.lastSingleplayerOwner = uuid
+            data.setDirty()
         }
     }
 
