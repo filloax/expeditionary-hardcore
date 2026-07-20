@@ -1,6 +1,6 @@
 {
-  "exphardcore.screen.name_entry.title": "Set Character Name",
-  "exphardcore.screen.name_entry.label": "Name",
+  "exphardcore.screen.name_entry.title": "Logbook",
+  "exphardcore.screen.name_entry.label": "Expeditioner's name:",
 
   "exphardcore.character.creation.success": "%s's expedition has begun...",
 
