@@ -22,6 +22,8 @@ class CharacterCreationScreen(
     private lateinit var nameEdit: EditBox
     private lateinit var saveButton: Button
     private lateinit var cancelButton: Button
+    private var xMouse = 0f
+    private var yMouse = 0f
 
     // for the typewriter thing
     private var animating = false
@@ -129,6 +131,7 @@ class CharacterCreationScreen(
             val height = 90
             val entX0 = (this.width - width) / 2
             val entY0 = 80
+            val isStill = false
             InventoryScreen.extractEntityInInventoryFollowsMouse(
                 graphics,
                 entX0,
@@ -138,8 +141,8 @@ class CharacterCreationScreen(
                 40,
                 0.0625f,
                 // look 3/4 left
-                entX0.toFloat() + width / 2 - 20,
-                entY0.toFloat() + height / 2 - 10,
+                if (isStill) entX0.toFloat() + width / 2 - 20 else xMouse,
+                if (isStill) entY0.toFloat() + height / 2 - 10 else yMouse,
                 it
             )
         }
@@ -155,6 +158,8 @@ class CharacterCreationScreen(
             val shown = ((animTick - VANISH_TICKS) / TICKS_PER_CHAR).coerceIn(0, animName.length)
             centeredPageText(graphics, Component.literal(animName.substring(0, shown)), xo, NAME_Y + 2)
         }
+        xMouse = mouseX.toFloat()
+        yMouse = mouseY.toFloat()
     }
 
     private fun centeredPageText(graphics: GuiGraphicsExtractor, text: Component, xo: Int, y: Int) {
