@@ -56,7 +56,8 @@ repositories {
         setUrl("https://thedarkcolour.github.io/KotlinForForge/")
     }
 
-    maven("https://maven.terraformersmc.com/releases")
+    // tends to error, use modrinth
+//    maven("https://maven.terraformersmc.com/releases")
 
 //    exclusiveContent {
 //        forRepository {
