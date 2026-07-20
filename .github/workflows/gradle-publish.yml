@@ -85,11 +85,32 @@ jobs:
       with:
         name: build-artifacts
 
+    - name: Append dependencies to release body
+      run: |
+        cat >> latest_changelog.txt <<'EOF'
+
+        ## Dependencies
+
+        **All Loaders:**
+        - [ResourcefulConfig](https://modrinth.com/mod/resourceful-config)
+
+        **Fabric:**
+        - [Fabric API](https://modrinth.com/mod/fabric-api)
+        - [Fabric Language Kotlin](https://modrinth.com/mod/fabric-language-kotlin)
+
+        **NeoForge:**
+        - [Kotlin for Forge](https://modrinth.com/mod/kotlin-for-forge)
+
+        *Included in current version*
+        - [FilloaxLib](https://modrinth.com/mod/filloaxlib)
+        - [Apibalego](https://github.com/filloax/apibalego)
+        EOF
+
     - name: Publish (GitHub)
       uses: softprops/action-gh-release@v2
       id: publish_github
       with:
-        name: Apibalego ${{ needs.build.outputs.version }} - ${{ needs.build.outputs.mc_version }}
+        name: Expeditionary Hardcore ${{ needs.build.outputs.version }} - ${{ needs.build.outputs.mc_version }}
         body_path: latest_changelog.txt
         token: ${{ secrets.GITHUB_TOKEN }}
         make_latest: true
@@ -104,4 +125,4 @@ jobs:
       if: steps.publish_github.outcome == 'success'
       run: |
         sleep 10s && curl --max-time 0 -L \
-          https://jitpack.io/com/github/filloax/apibalego/apibalego-base/${{ needs.build.outputs.version }}-${{ needs.build.outputs.mc_version }}/apibalego-base-${{ needs.build.outputs.version }}-${{ needs.build.outputs.mc_version }}.pom
+          https://jitpack.io/com/github/filloax/expeditionary-hardcore/expeditionary-hardcore-base/${{ needs.build.outputs.version }}-${{ needs.build.outputs.mc_version }}/expeditionary-hardcore-base-${{ needs.build.outputs.version }}-${{ needs.build.outputs.mc_version }}.pom
