@@ -27,6 +27,11 @@ issueTrackerURL="https://github.com/filloax/expeditionary-hardcore/issues"
     versionRange="${minecraft_version_range}"
 
 [[dependencies]]
+    modId="resourcefulconfig"
+    type="required"
+    versionRange="[${rconfig_version},)"
+
+[[dependencies]]
     modId="filloaxlib"
     type="required"
     versionRange="[${filloaxlib_version},)"
