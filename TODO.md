@@ -16,6 +16,7 @@
   - [x] Models from Apibalego datasync
 - [x] Custom gamemode in selector (enables mod + locks Hard)
   - ~~[ ] Cool vfx around button~~
+- [ ] General Neoforge checks as there was some wonkiness
 
 ## Secondary
 - [x] Chat message for usage of Respawn Anchors
