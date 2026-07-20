@@ -127,6 +127,8 @@ data class PlayerLifeData(
 
 class ServerAllPlayersLifeData private constructor(
     playerData: Map<UUID, List<PlayerLifeData>> = mapOf(),
+    // Use to track save file passing, offline mode, etc.
+    var lastSingleplayerOwner: UUID? = null,
 ) : FxSavedData<ServerAllPlayersLifeData>(CODEC) {
     val playerData = playerData.mapValues { (id, ls) -> ls.toMutableList() }.toMutableMap()
 
@@ -134,7 +136,9 @@ class ServerAllPlayersLifeData private constructor(
         val CODEC: Codec<ServerAllPlayersLifeData> = RecordCodecBuilder.create { builder -> builder.group(
             Codec.unboundedMap(UUIDUtil.STRING_CODEC, PlayerLifeData.serializer().codec().listOf())
                     .optionalFieldOf("playerData", mapOf()).forGetter(ServerAllPlayersLifeData::playerData),
-        ).apply(builder, ::ServerAllPlayersLifeData) }
+            UUIDUtil.STRING_CODEC.optionalFieldOf("lastSingleplayerOwner")
+                    .forGetter { Optional.ofNullable(it.lastSingleplayerOwner) },
+        ).apply(builder) { data, owner -> ServerAllPlayersLifeData(data, owner.orElse(null)) } }
 
         private val DEF = define(id(PERSISTENT_DATA_PLAYER_LIVES), ::ServerAllPlayersLifeData, CODEC)
 
