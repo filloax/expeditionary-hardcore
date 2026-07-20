@@ -24,7 +24,7 @@ public abstract class TitleScreenMixin {
         int color = ARGB.white(1.0F);
         int lineHeight = Math.round(9 * CREDITS_SCALE);
 
-        expeditionaryhardcore$drawScaledText(graphics, minecraft, "Expeditionary Hardcore v" + modVersion("exphardcore") + "C by Filloax, Farcr [altri dev]", 2, 2, color);
+        expeditionaryhardcore$drawScaledText(graphics, minecraft, "Expeditionary Hardcore v" + modVersion("exphardcore") + "C by Filloax, Farcr, Reivaxelain", 2, 2, color);
         expeditionaryhardcore$drawScaledText(graphics, minecraft, "APIBalego v" + modVersion("apibalego") + " by Filloax and Krozzzt", 2, 2 + lineHeight, color);
     }
 
