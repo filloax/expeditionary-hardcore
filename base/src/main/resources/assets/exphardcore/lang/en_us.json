@@ -76,7 +76,7 @@
   "exphardcore.config.respawn.avoidOceans.name": "Avoid oceans",
 
   "exphardcore.config.multiplayer.enableTeams.name": "Enable teams",
-  "exphardcore.config.multiplayer.enableTeams.comment": "Enable team play: teammates respawn near their team's main player. Always on in cydonia mode.",
+  "exphardcore.config.multiplayer.enableTeams.comment": "Enable team play: teammates respawn near their team's main player.",
   "exphardcore.config.multiplayer.teammateRespawnRadiusMin.name": "Teammate respawn radius min",
   "exphardcore.config.multiplayer.teammateRespawnRadiusMax.name": "Teammate respawn radius max",
 
@@ -87,7 +87,5 @@
   "exphardcore.config.main.replacePlayerModel.name": "Replace player model",
   "exphardcore.config.main.replacePlayerModel.comment": "Replace the player model every life",
   "exphardcore.config.main.enableLifeQuirks.name": "Enable life quirks",
-  "exphardcore.config.main.enableLifeQuirks.comment": "Give each new character a random minor quirk",
-  "exphardcore.config.main.quirkChance.name": "Quirk chance",
-  "exphardcore.config.main.quirkChance.comment": "Chance (0-1) that a new character gets a quirk"
+  "exphardcore.config.main.enableLifeQuirks.comment": "Give each new character a random minor quirk"
 }
