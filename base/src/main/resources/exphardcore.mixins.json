@@ -19,6 +19,8 @@
   "client": [
     "client.ClientPlayerDropItemMixin",
     "client.CuboidItemModelWrapperMixin",
+    "client.GridLayoutAccessor",
+    "client.LayoutChildWrapperAccessor",
     "client.QuirkEffectsMixin",
     "client.PlayerModelReplacementMixin"
   ],
