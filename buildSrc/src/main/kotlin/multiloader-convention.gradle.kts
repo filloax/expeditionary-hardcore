@@ -59,26 +59,19 @@ repositories {
     // tends to error, use modrinth
 //    maven("https://maven.terraformersmc.com/releases")
 
-//    exclusiveContent {
-//        forRepository {
-//            maven {
-//                url = uri("https://jitpack.io")
-//                metadataSources {
-//                    mavenPom()
-//                    artifact()
-//                }
-//            }
-//        }
-//        filter { includeGroupByRegex("com\\.github\\.(stuhlmeier|filloax).*") }
-//    }
-    maven {
-        url = uri("https://jitpack.io")
-        metadataSources {
-            mavenPom()
-            artifact()
-            // explicitly do NOT call gradleMetadata()
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Jitpack"
+                url = uri("https://jitpack.io")
+                metadataSources {
+                    mavenPom()
+                    artifact()
+                    // explicitly do NOT call gradleMetadata()
+                }
+            }
         }
-        content { includeGroupByRegex("com\\.github\\..*") }
+        filter { includeGroupByRegex("com\\.github\\.(stuhlmeier|filloax).*") }
     }
 
     exclusiveContent {
