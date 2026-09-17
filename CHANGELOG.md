@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+*Beta*
+
+- Update bundled Apibalego
+
 ## 0.2.0
 
 *Beta*
