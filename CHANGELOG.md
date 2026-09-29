@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+*Beta*
+
+- Update to 26.3 (neoforge broken until kff exists)
+
 ## 0.2.1
 
 *Beta*
