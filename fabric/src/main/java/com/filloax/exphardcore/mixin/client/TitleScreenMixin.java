@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin {
 
-    private static final float CREDITS_SCALE = 0.5F;
+    private static final float CREDITS_SCALE = 0.45F;
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
     private void expeditionaryhardcore$drawCydoniaCredits(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
@@ -26,6 +26,10 @@ public abstract class TitleScreenMixin {
 
         expeditionaryhardcore$drawScaledText(graphics, minecraft, "Expeditionary Hardcore v" + modVersion("exphardcore") + "C by Filloax, Farcr, Reivaxelain", 2, 2, color);
         expeditionaryhardcore$drawScaledText(graphics, minecraft, "APIBalego v" + modVersion("apibalego") + " by Filloax and Krozzzt", 2, 2 + lineHeight, color);
+
+        if (hasMod("world_area_title_mod")) {
+            expeditionaryhardcore$drawScaledText(graphics, minecraft, "Egobalocator v" + modVersion("world_area_title_mod") + " by LaStringa", 2, 2 + lineHeight * 2, color);
+        }
     }
 
     private static void expeditionaryhardcore$drawScaledText(GuiGraphicsExtractor graphics, Minecraft minecraft, String text, int x, int y, int color) {
@@ -41,5 +45,9 @@ public abstract class TitleScreenMixin {
                 .getModContainer(modId)
                 .map(container -> container.getMetadata().getVersion().getFriendlyString().split("-")[0])
                 .orElse("?");
+    }
+
+    private static boolean hasMod(String modId) {
+        return FabricLoader.getInstance().isModLoaded(modId);
     }
 }
