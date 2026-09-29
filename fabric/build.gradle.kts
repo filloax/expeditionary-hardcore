@@ -139,8 +139,8 @@ if (cydoniaMode) {
 		DatapackInfo(
 			"No Spoiler Recipe Book",
 			"no-spoiler-recipe-book",
-			"https://cdn.modrinth.com/data/nCce3xAY/versions/7UU6onTJ/No%20Spoiler%20Recipe%20Book%2026.2.zip",
-			"3da05b45645252e66f9087981791e7c95f6c3ca6",
+			"https://cdn.modrinth.com/data/nCce3xAY/versions/Q6xnrBoY/No%20Spoiler%20Recipe%20Book%2026.3.zip",
+			"3042e9bf9f7837f4a91b8e2727f931892427c477",
 			"datapacks/no-spoiler-recipe-book.zip",
 			"datapacks/no-spoiler-recipe-book"
 		)
