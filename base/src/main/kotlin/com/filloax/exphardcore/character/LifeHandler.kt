@@ -3,6 +3,7 @@ package com.filloax.exphardcore.character
 import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.character.quirk.LifeQuirkHandler
 import com.filloax.exphardcore.character.team.TeamManager
+import com.filloax.exphardcore.compat.DistantHorizonsWorldGenCompat
 import com.filloax.exphardcore.cydonia.ApibalegoInfoSender
 import com.filloax.exphardcore.expedition.ExpeditionMode
 import com.filloax.exphardcore.item.*
@@ -48,6 +49,10 @@ object LifeHandler {
         ApibalegoInfoSender.onUpdateLives(player)
 
         player.sendPacket(ClientboundRespawnedNewLifePacket())
+
+        if (ExpeditionaryHardcore.modCompat.isDistantHorizonsLoaded) {
+            DistantHorizonsWorldGenCompat.restartWorldGen(player.level().server)
+        }
     }
 
     fun ServerPlayer.createExpeditionCharacter(data: CharacterCreationData) {

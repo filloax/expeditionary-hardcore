@@ -40,4 +40,11 @@ public final class RespawnConfig {
 
     @ConfigEntry(id = "avoidOceans", translation = T_PREF + "avoidOceans.name")
     public static boolean avoidOceans = RespawnConfigDefaults.INSTANCE.getAvoidOceans();
+
+    @ConfigEntry(id = "respawnDistantHorizonsDisableSeconds", translation = T_PREF + "respawnDistantHorizonsDisableSeconds.name")
+    @Comment(
+            value = "If Distant Horizons is loaded: seconds it gets disabled after respawning elsewhere. 0 disables this. Used to avoid LoD islands, etc",
+            translation = T_PREF + "respawnDistantHorizonsDisableSeconds.comment"
+    )
+    public static int respawnDistantHorizonsDisableSeconds = 30;
 }

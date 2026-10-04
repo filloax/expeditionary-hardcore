@@ -2,6 +2,7 @@ package com.filloax.exphardcore.client.compat
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfig
+import com.filloax.exphardcore.config.RespawnConfig
 import com.seibel.distanthorizons.api.DhApi
 import com.seibel.distanthorizons.api.enums.rendering.EDhApiRendererMode
 import com.seibel.distanthorizons.api.interfaces.config.IDhApiConfigValue
@@ -34,7 +35,7 @@ object DistantHorizonsCompat {
     }
 
     fun disableDistantHorizonsTemporarily() {
-        val seconds = ExpeditionaryHardcoreConfig.respawnDistantHorizonsDisableSeconds
+        val seconds = RespawnConfig.respawnDistantHorizonsDisableSeconds
         if (seconds <= 0) return
 
         tryDh("disable") {
