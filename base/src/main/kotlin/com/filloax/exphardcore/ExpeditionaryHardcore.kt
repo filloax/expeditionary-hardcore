@@ -3,13 +3,13 @@ package com.filloax.exphardcore
 import com.filloax.exphardcore.character.PlayerModelResolver
 import com.filloax.exphardcore.character.quirk.LifeQuirksResolver
 import com.filloax.exphardcore.client.QuirkGfx
+import com.filloax.exphardcore.client.compat.DistantHorizonsCompat
 import com.filloax.exphardcore.compat.ModCompatChecker
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfigHandler
 import com.filloax.exphardcore.network.ExpeditionaryHardcorePackets
 import com.filloax.exphardcore.respawn.RespawnConfigResolver
 import com.filloax.exphardcore.utils.loadPropertiesFile
 import com.filloax.fxlib.api.platform.ServiceUtil
-import net.minecraft.client.Minecraft
 import org.apache.logging.log4j.LogManager
 
 abstract class ExpeditionaryHardcore {
@@ -54,6 +54,13 @@ abstract class ExpeditionaryHardcore {
 
     fun initClient() {
         QuirkGfx.initVanillaIcons()
+
+        ExpeditionaryHardcoreModEvents.get().initClientCallbacks()
+
+        if (modCompat.isDistantHorizonsLoaded) {
+            DistantHorizonsCompat.init()
+        }
+
         LOGGER.info("Initialized client!")
     }
 

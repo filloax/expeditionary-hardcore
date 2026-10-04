@@ -7,14 +7,15 @@ import com.filloax.exphardcore.cydonia.ApibalegoInfoSender
 import com.filloax.exphardcore.expedition.ExpeditionMode
 import com.filloax.exphardcore.item.*
 import com.filloax.exphardcore.network.ClientboundLifeSyncPacket
+import com.filloax.exphardcore.network.ClientboundRespawnedNewLifePacket
 import com.filloax.exphardcore.network.DATA_PLAYER_MODEL
 import com.filloax.fxlib.api.networking.sendPacket
 import com.filloax.fxlib.api.networking.setTrackedData
-import net.minecraft.resources.Identifier
 import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.network.Filterable
 import net.minecraft.world.item.ItemStack
@@ -45,6 +46,8 @@ object LifeHandler {
         ExpeditionaryHardcore.LOGGER.info("New life for player {}: {}", player, newLifeData)
 
         ApibalegoInfoSender.onUpdateLives(player)
+
+        player.sendPacket(ClientboundRespawnedNewLifePacket())
     }
 
     fun ServerPlayer.createExpeditionCharacter(data: CharacterCreationData) {
