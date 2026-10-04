@@ -2,6 +2,7 @@ package com.filloax.exphardcore.client.compat
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfig
+import com.filloax.exphardcore.config.RespawnConfig
 import com.seibel.distanthorizons.api.DhApi
 import com.seibel.distanthorizons.api.enums.rendering.EDhApiRendererMode
 import com.seibel.distanthorizons.api.interfaces.config.IDhApiConfigValue
@@ -34,14 +35,15 @@ object DistantHorizonsCompat {
     }
 
     fun disableDistantHorizonsTemporarily() {
-        val seconds = ExpeditionaryHardcoreConfig.respawnDistantHorizonsDisableSeconds
+        val seconds = RespawnConfig.respawnDistantHorizonsDisableSeconds
         if (seconds <= 0) return
 
         tryDh("disable") {
-            val graphics = DhApi.Delayed.configs.graphics()
+//            val graphics = DhApi.Delayed.configs.graphics()
 
-            graphics.renderingMode().setValue(EDhApiRendererMode.DISABLED, ExpeditionaryHardcore.MOD_NAME)
-            resetFog()
+//            graphics.renderingMode().setValue(EDhApiRendererMode.DISABLED, ExpeditionaryHardcore.MOD_NAME)
+//            resetFog()
+            applyFog(0f)
             disabledTicks = seconds * SharedConstants.TICKS_PER_SECOND
             fadeTicks = (disabledTicks * FADE_IN_PCT_TIME).toInt().coerceAtLeast(1)
             elapsedTicks = 0
@@ -59,7 +61,7 @@ object DistantHorizonsCompat {
             ExpeditionaryHardcore.LOGGER.info("Reenabling Distant Horizons")
             tryDh("reenable") {
                 applyFog(0f)
-                DhApi.Delayed.configs.graphics().renderingMode().clearValue()
+//                DhApi.Delayed.configs.graphics().renderingMode().clearValue()
             }
         } else if (elapsedTicks >= disabledTicks + fadeTicks) {
             ExpeditionaryHardcore.LOGGER.info("Finish fade")
