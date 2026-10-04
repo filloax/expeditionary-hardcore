@@ -87,5 +87,7 @@
   "exphardcore.config.main.replacePlayerModel.name": "Replace player model",
   "exphardcore.config.main.replacePlayerModel.comment": "Replace the player model every life",
   "exphardcore.config.main.enableLifeQuirks.name": "Enable life quirks",
-  "exphardcore.config.main.enableLifeQuirks.comment": "Give each new character a random minor quirk"
+  "exphardcore.config.main.enableLifeQuirks.comment": "Give each new character a random minor quirk",
+  "exphardcore.config.main.respawnDistantHorizonsDisableSeconds.name": "Distant Horizons disable time on respawn (seconds)",
+  "exphardcore.config.main.respawnDistantHorizonsDisableSeconds.comment": "If Distant Horizons is loaded: seconds it gets disabled after respawning elsewhere. 0 disables this. Used to avoid respawning in a LoD"
 }

@@ -2,11 +2,13 @@ package com.filloax.exphardcore
 
 import com.filloax.exphardcore.character.LifeHandler
 import com.filloax.exphardcore.character.quirk.LifeQuirkHandler
+import com.filloax.exphardcore.client.compat.DistantHorizonsCompat
 import com.filloax.exphardcore.commands.MainCommand
 import com.filloax.exphardcore.expedition.ExpeditionMode
 import com.filloax.fxlib.api.platform.ServiceUtil
 import com.filloax.fxlib.platform.ServerEvent
 import com.mojang.brigadier.CommandDispatcher
+import net.minecraft.client.Minecraft
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands.CommandSelection
@@ -42,11 +44,21 @@ abstract class ExpeditionaryHardcoreModEvents {
         }
     }
 
+    fun initClientCallbacks() {
+        onEndClientTick { client ->
+            if (ExpeditionaryHardcore.modCompat.isDistantHorizonsLoaded) {
+                DistantHorizonsCompat.onClientTick(client)
+            }
+        }
+    }
+
     abstract fun onServerStarting(event: ServerEvent)
     abstract fun onServerStopping(event: ServerEvent)
     abstract fun onServerLevelLoad(event: (MinecraftServer, ServerLevel) -> Unit)
     abstract fun onStartServerTick(event: ServerEvent)
     abstract fun onPlayerServerJoin(event: (player: ServerPlayer) -> Unit)
     abstract fun onPlayerServerTick(event: (player: ServerPlayer) -> Unit)
+    // client-only, only call from initClientCallbacks
+    abstract fun onEndClientTick(event: (Minecraft) -> Unit)
     abstract fun onRegisterCommands(event: (dispatcher: CommandDispatcher<CommandSourceStack>, ctx: CommandBuildContext, selection: CommandSelection) -> Unit)
 }
