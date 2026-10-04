@@ -32,6 +32,8 @@ import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.permissions.Permissions
 import java.util.UUID
 import kotlin.random.Random
+import kotlin.math.hypot
+import kotlin.math.roundToInt
 
 
 /**
@@ -367,6 +369,12 @@ object MainCommand {
                 "exphardcore.commands.exphardcore.history_entry",
                 index + 1, life.name ?: "?",
             ).append(coordComponent)
+            if (index > 0) {
+                val prev = lives[index - 1].spawnPoint
+                val distance = hypot((pos.x - prev.x).toDouble(), (pos.z - prev.z).toDouble()).roundToInt()
+                message.append(Component.translatable("exphardcore.commands.exphardcore.history_distance", distance)
+                    .withStyle(ChatFormatting.GRAY))
+            }
             source.sendSystemMessage(message)
         }
 
