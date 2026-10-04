@@ -44,6 +44,7 @@ dependencies {
 	compileOnly(utils.getFilloaxlib())
 	compileOnly(utils.getApibalego())
 	compileOnly(utils.getResourcefulConfig())
+	compileOnly(libs.distanthorizons.api)
 
     //#region Test deps
 

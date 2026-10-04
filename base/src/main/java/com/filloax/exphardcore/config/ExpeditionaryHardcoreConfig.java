@@ -1,5 +1,6 @@
 package com.filloax.exphardcore.config;
 
+import com.teamresourceful.resourcefulconfig.api.annotations.Comment;
 import com.teamresourceful.resourcefulconfig.api.annotations.Config;
 import com.teamresourceful.resourcefulconfig.api.annotations.ConfigEntry;
 import com.teamresourceful.resourcefulconfig.api.annotations.ConfigInfo;
@@ -31,4 +32,11 @@ public final class ExpeditionaryHardcoreConfig {
 
     @ConfigEntry(id = "enableLifeQuirks", translation = T_PREF + "enableLifeQuirks")
     public static boolean enableLifeQuirks = true;
+
+    @ConfigEntry(id = "respawnDistantHorizonsDisableSeconds", translation = T_PREF + "respawnDistantHorizonsDisableSeconds.name")
+    @Comment(
+            value = "If Distant Horizons is loaded: seconds it gets disabled after respawning elsewhere. 0 disables this. Used to avoid LoD islands, etc",
+            translation = T_PREF + "respawnDistantHorizonsDisableSeconds.comment"
+    )
+    public static int respawnDistantHorizonsDisableSeconds = 15;
 }

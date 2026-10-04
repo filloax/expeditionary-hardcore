@@ -15,6 +15,8 @@
     apibalego = "0.4.1-26.3"
     rconfig = "6.0.1"
     rconfigMc = "26.3"
+    distanthorizons-api = "7.2.0"
+    distanthorizons = "3.3.4-26.3"
 
 # Dev runtime dependencies
     modmenu = "21.0.0-beta.1" # 26.3
@@ -77,6 +79,10 @@
     # terraformers maven often breaks, use modrinth
     modmenu = { group = "maven.modrinth", name = "modmenu", version.ref = "modmenu" }
     authme = { group = "maven.modrinth", name = "auth-me", version.ref = "authme" }
+
+# Optional mod compat
+    distanthorizons-api = { group = "maven.modrinth", name = "distanthorizonsapi", version.ref = "distanthorizons-api" }
+    distanthorizons = { group = "maven.modrinth", name = "distanthorizons", version.ref = "distanthorizons" }
 
 # Misc
     jsr305 = { group = "com.google.code.findbugs", name = "jsr305", version.ref = "jsr305" }

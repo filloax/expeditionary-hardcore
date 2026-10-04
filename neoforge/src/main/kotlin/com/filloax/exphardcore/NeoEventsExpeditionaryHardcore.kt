@@ -2,12 +2,14 @@ package com.filloax.exphardcore
 
 import com.filloax.fxlib.platform.ServerEvent
 import com.mojang.brigadier.CommandDispatcher
+import net.minecraft.client.Minecraft
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands.CommandSelection
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
+import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.neoforged.neoforge.event.level.LevelEvent
@@ -56,6 +58,10 @@ class NeoEventsExpeditionaryHardcore : ExpeditionaryHardcoreModEvents() {
                 event(player)
             }
         }
+    }
+
+    override fun onEndClientTick(event: (Minecraft) -> Unit) {
+        FORGE_BUS.addListener<ClientTickEvent.Post> { event(Minecraft.getInstance()) }
     }
 
     override fun onRegisterCommands(event: (CommandDispatcher<CommandSourceStack>, CommandBuildContext, CommandSelection) -> Unit) {
