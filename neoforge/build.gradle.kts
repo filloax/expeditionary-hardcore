@@ -16,6 +16,7 @@ val versionType: String? by project
 val minecraftVersion = libs.versions.minecraft.asProvider().get()
 val cydoniaMode = (property("cydoniaMode") as String).toBoolean()
 val includeDeps = (property("includeDeps") as String).toBoolean()
+val runWithDistantHorizons = (property("runWithDistantHorizons") as String).toBoolean()
 
 val versionSuffix = if (versionType?.isBlank() == true) "" else "-$versionType"
 
@@ -55,6 +56,9 @@ neoForge {
     runs {
         create("client") {
             client()
+            // DH wants alt garbage collectors
+            if (runWithDistantHorizons)
+                jvmArgument("-XX:+UseZGC")
             ideName = "Expeditionary Hardcore - NeoForge Client"
         }
 
@@ -105,4 +109,9 @@ dependencies {
                 jarJar(it)
         }
     }
+
+    compileOnly(libs.distanthorizons.api)
+    if (runWithDistantHorizons)
+        // Fixes DH enabled setting being wonky when toggled via API, use base when released
+        runtimeOnly(files(rootProject.file("local/distanthorizons/DistantHorizons-neoforge-3.3.5-dev-26.3.jar")))
 }

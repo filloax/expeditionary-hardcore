@@ -17,6 +17,7 @@ val versionType: String? by project
 val minecraftVersion = libs.versions.minecraft.asProvider().get()
 val cydoniaMode = (property("cydoniaMode") as String).toBoolean()
 val includeDeps = (property("includeDeps") as String).toBoolean()
+val runWithDistantHorizons = (property("runWithDistantHorizons") as String).toBoolean()
 
 val versionSuffix = if (versionType?.isBlank() == true) "" else "-$versionType"
 
@@ -41,6 +42,9 @@ loom {
             appendProjectPathToDisplayName.set(false)
 
             client()
+            // DH wants alt garbage collectors
+            if (runWithDistantHorizons)
+                jvmArguments.add("-XX:+UseZGC")
             generateRunConfig = true
             runDirectory.set(project.layout.projectDirectory.dir("run/client"))
         }
@@ -121,9 +125,14 @@ dependencies {
 		}
 	}
 
+	compileOnly(libs.distanthorizons.api)
+
 	// only for IDE testing
 	localRuntime(libs.modmenu)
 	localRuntime(libs.authme)
+	if (runWithDistantHorizons)
+		// Fixes DH enabled setting being wonky when toggled via API, use base when released
+		localRuntime(files(rootProject.file("local/distanthorizons/DistantHorizons-fabric-3.3.5-dev-26.3.jar")))
 
 }
 

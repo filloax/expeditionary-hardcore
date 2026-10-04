@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin {
 
-    private static final float CREDITS_SCALE = 0.45F;
+    private static final float CREDITS_SCALE = 0.5F;
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
     private void expeditionaryhardcore$drawCydoniaCredits(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {

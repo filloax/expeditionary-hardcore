@@ -1,10 +1,12 @@
 package com.filloax.exphardcore.network
 
+import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.character.CharacterCreationData
 import com.filloax.exphardcore.character.LifeHandler.createExpeditionCharacter
 import com.filloax.exphardcore.character.PlayerLifeData
 import com.filloax.exphardcore.client.clientExpeditionMode
 import com.filloax.exphardcore.client.clientPlayerLifeData
+import com.filloax.exphardcore.client.compat.DistantHorizonsCompat
 import com.filloax.exphardcore.utils.id
 import com.filloax.fxlib.api.FxLibServices
 import com.filloax.fxlib.api.codec.streamCodec
@@ -30,12 +32,14 @@ object ExpeditionaryHardcorePackets {
         val LIFE_SYNC = id("life_sync")
         val FORCE_AMBIENT_SOUND = id("force_ambient_sound")
         val EXPEDITION_SYNC = id("expedition_sync")
+        val RESPAWNED_NEW_LIFE = id("respawned_new_life")
     }
 
     val CHARACTER_CREATION = ServerboundCharacterCreationPacket.ENTRY
     val LIFE_SYNC = ClientboundLifeSyncPacket.ENTRY
     val FORCE_AMBIENT_SOUND = AmbientSoundsPacket.ENTRY
     val EXPEDITION_SYNC = ClientboundExpeditionSyncPacket.ENTRY
+    val RESPAWNED_NEW_LIFE = ClientboundRespawnedNewLifePacket.ENTRY
 
 
     fun registerPacketsC2S() {
@@ -49,6 +53,7 @@ object ExpeditionaryHardcorePackets {
             playS2C(LIFE_SYNC, ClientPacketHandlers::handleLifeSync)
             playS2C(FORCE_AMBIENT_SOUND, ClientPacketHandlers::handleAmbientSounds)
             playS2C(EXPEDITION_SYNC, ClientPacketHandlers::handleExpeditionSync)
+            playS2C(RESPAWNED_NEW_LIFE, ClientPacketHandlers::handleRespawnedNewLife)
         }
         registerAllTrackedData()
     }
@@ -129,6 +134,15 @@ private object ClientPacketHandlers {
             }
         }
     }
+
+    fun handleRespawnedNewLife(packet: ClientboundRespawnedNewLifePacket, context: ToClientContext) {
+        context.client.submit {
+            // trigger distant horizons temporary disabling to avoid spawning into LODs
+            if (ExpeditionaryHardcore.modCompat.isDistantHorizonsLoaded) {
+                DistantHorizonsCompat.disableDistantHorizonsTemporarily()
+            }
+        }
+    }
 }
 
 abstract class EmptyPacket : CustomPacketPayload {
@@ -141,6 +155,16 @@ class AmbientSoundsPacket : EmptyPacket() {
     companion object {
         val TYPE = CustomPacketPayload.Type<AmbientSoundsPacket>(ExpeditionaryHardcorePackets.Types.FORCE_AMBIENT_SOUND)
         val CODEC = codec(::AmbientSoundsPacket)
+        val ENTRY = TypeAndCodec(TYPE, CODEC)
+    }
+
+    override fun type() = TYPE
+}
+
+class ClientboundRespawnedNewLifePacket : EmptyPacket() {
+    companion object {
+        val TYPE = CustomPacketPayload.Type<ClientboundRespawnedNewLifePacket>(ExpeditionaryHardcorePackets.Types.RESPAWNED_NEW_LIFE)
+        val CODEC = codec(::ClientboundRespawnedNewLifePacket)
         val ENTRY = TypeAndCodec(TYPE, CODEC)
     }
 
