@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.3
+
+*Beta*
+
+- Improve DH compatibility (restart worldgen on respawn, fix stutter with shaders), no longer
+  requires nightly build
+
 ## 0.3.2
 
 *Beta*
