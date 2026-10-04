@@ -88,6 +88,6 @@
   "exphardcore.config.main.replacePlayerModel.comment": "Sostituisci il modello del giocatore ad ogni vita",
   "exphardcore.config.main.enableLifeQuirks.name": "Abilita le debuff delle vite",
   "exphardcore.config.main.enableLifeQuirks.comment": "Dai ad ogni nuovo personaggio un effetto minore casuale",
-  "exphardcore.config.main.respawnDistantHorizonsDisableSeconds.name": "Durata disattivazione Distant Horizons al respawn (secondi)",
-  "exphardcore.config.main.respawnDistantHorizonsDisableSeconds.comment": "Con Distant Horizons: secondi per cui viene disattivato dopo un respawn. 0 disattiva questa funzione. Per non respawnare in un LoD"
+  "exphardcore.config.respawn.respawnDistantHorizonsDisableSeconds.name": "Durata disattivazione Distant Horizons al respawn (secondi)",
+  "exphardcore.config.respawn.respawnDistantHorizonsDisableSeconds.comment": "Con Distant Horizons: secondi per cui viene disattivato dopo un respawn. 0 disattiva questa funzione. Per non respawnare in un LoD"
 }
