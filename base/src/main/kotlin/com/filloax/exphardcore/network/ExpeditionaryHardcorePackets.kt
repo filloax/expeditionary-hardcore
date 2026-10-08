@@ -138,7 +138,7 @@ private object ClientPacketHandlers {
     fun handleRespawnedNewLife(packet: ClientboundRespawnedNewLifePacket, context: ToClientContext) {
         context.client.submit {
             // trigger distant horizons temporary disabling to avoid spawning into LODs
-            if (ExpeditionaryHardcore.modCompat.isDistantHorizonsLoaded) {
+            if (!packet.isFirstLife && ExpeditionaryHardcore.modCompat.isDistantHorizonsLoaded) {
                 DistantHorizonsCompat.disableDistantHorizonsTemporarily()
             }
         }
@@ -161,10 +161,15 @@ class AmbientSoundsPacket : EmptyPacket() {
     override fun type() = TYPE
 }
 
-class ClientboundRespawnedNewLifePacket : EmptyPacket() {
+data class ClientboundRespawnedNewLifePacket(
+    val isFirstLife: Boolean
+): CustomPacketPayload {
     companion object {
+        val CODEC: RStreamCodec<ClientboundRespawnedNewLifePacket> = ByteBufCodecs.BOOL
+            .cast<RegistryFriendlyByteBuf>()
+            .map(::ClientboundRespawnedNewLifePacket, ClientboundRespawnedNewLifePacket::isFirstLife)
+
         val TYPE = CustomPacketPayload.Type<ClientboundRespawnedNewLifePacket>(ExpeditionaryHardcorePackets.Types.RESPAWNED_NEW_LIFE)
-        val CODEC = codec(::ClientboundRespawnedNewLifePacket)
         val ENTRY = TypeAndCodec(TYPE, CODEC)
     }
 

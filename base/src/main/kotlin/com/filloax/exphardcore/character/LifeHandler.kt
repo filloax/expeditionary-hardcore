@@ -48,7 +48,8 @@ object LifeHandler {
 
         ApibalegoInfoSender.onUpdateLives(player)
 
-        player.sendPacket(ClientboundRespawnedNewLifePacket())
+        val isFirstLife = player.getAllExpeditionLives().size == 1
+        player.sendPacket(ClientboundRespawnedNewLifePacket(isFirstLife))
 
         if (ExpeditionaryHardcore.modCompat.isDistantHorizonsLoaded) {
             DistantHorizonsWorldGenCompat.restartWorldGen(player.level().server)

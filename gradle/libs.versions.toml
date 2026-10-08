@@ -17,6 +17,8 @@
     rconfigMc = "26.3"
     distanthorizons-api = "7.2.0"
     distanthorizons = "3.3.4-26.3"
+    iris-fabric = "1.11.7+26.3-fabric"
+    iris-neoforge = "1.11.7+26.3-neoforge"
 
 # Dev runtime dependencies
     modmenu = "21.0.0-beta.1" # 26.3
@@ -83,6 +85,8 @@
 # Optional mod compat
     distanthorizons-api = { group = "maven.modrinth", name = "distanthorizonsapi", version.ref = "distanthorizons-api" }
     distanthorizons = { group = "maven.modrinth", name = "distanthorizons", version.ref = "distanthorizons" }
+    iris-fabric = { group = "maven.modrinth", name = "iris", version.ref = "iris-fabric" }
+    iris-neoforge = { group = "maven.modrinth", name = "iris", version.ref = "iris-neoforge" }
 
 # Misc
     jsr305 = { group = "com.google.code.findbugs", name = "jsr305", version.ref = "jsr305" }
