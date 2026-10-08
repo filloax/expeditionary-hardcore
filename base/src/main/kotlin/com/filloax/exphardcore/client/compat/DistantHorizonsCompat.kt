@@ -15,8 +15,9 @@ import net.minecraft.client.Minecraft
 import net.minecraft.util.Mth
 
 /**
- * Temporarily disables DH rendering after respawning, to avoid spawning inside LODs,
- * then reenables it covered by opaque fog and fades the fog back to the user's settings.
+ * Temporarily disables DH rendering after respawning, to avoid spawning inside LODs
+ * - without shaders: turns off dh, then attempts lerping fog back to original distance (may not work depending on dh issue fixes)
+ * - with shaders: alters iris internal dhRenderDistance var to reduce dist for duration, then lerps back
  */
 object DistantHorizonsCompat {
     private var loggedError = false
@@ -24,8 +25,13 @@ object DistantHorizonsCompat {
     private var elapsedTicks = -1
     private var disabledTicks = 0
     private var fadeTicks = 0
+    private var usingShaders = false
 
     private const val FADE_IN_PCT_TIME = .33f
+    // how much more than vanilla render distance fog dist is set
+    // (as DH normally makes you use a lower vanilla distance
+    // than normal, to compensate)
+    private const val HIDDEN_FOG_DIST_MULT = 1.35f
 
     fun init() {
         ExpeditionaryHardcore.LOGGER.info("Distant Horizons detected, enabling compatibility")
@@ -39,11 +45,13 @@ object DistantHorizonsCompat {
         if (seconds <= 0) return
 
         tryDh("disable") {
-//            val graphics = DhApi.Delayed.configs.graphics()
-
-//            graphics.renderingMode().setValue(EDhApiRendererMode.DISABLED, ExpeditionaryHardcore.MOD_NAME)
-//            resetFog()
-            applyFog(0f)
+            usingShaders = IrisCompat.isUsingShaders
+            if (usingShaders) {
+                IrisCompat.setShaderFogDistance(hiddenFogDistanceBlocks())
+            } else {
+                DhApi.Delayed.configs.graphics().renderingMode().setValue(EDhApiRendererMode.DISABLED, ExpeditionaryHardcore.MOD_NAME)
+                applyFog(0f)
+            }
             disabledTicks = seconds * SharedConstants.TICKS_PER_SECOND
             fadeTicks = (disabledTicks * FADE_IN_PCT_TIME).toInt().coerceAtLeast(1)
             elapsedTicks = 0
@@ -59,14 +67,16 @@ object DistantHorizonsCompat {
 
         if (elapsedTicks == disabledTicks) {
             ExpeditionaryHardcore.LOGGER.info("Reenabling Distant Horizons")
-            tryDh("reenable") {
+            if (!usingShaders) tryDh("reenable") {
                 applyFog(0f)
-//                DhApi.Delayed.configs.graphics().renderingMode().clearValue()
+                DhApi.Delayed.configs.graphics().renderingMode().clearValue()
             }
         } else if (elapsedTicks >= disabledTicks + fadeTicks) {
             ExpeditionaryHardcore.LOGGER.info("Finish fade")
             elapsedTicks = -1
-            tryDh("finish fade") {
+            if (usingShaders) {
+                IrisCompat.setShaderFogDistance(null)
+            } else tryDh("finish fade") {
                 resetFog()
             }
         }
@@ -80,8 +90,14 @@ object DistantHorizonsCompat {
             if (elapsedTicks < disabledTicks) return
 
             val partialTick = client.deltaTracker.getGameTimeDeltaPartialTick(false)
-            val t = (elapsedTicks - disabledTicks + partialTick) / fadeTicks
-            tryDh("fade") { applyFog(t.coerceIn(0f, 1f)) }
+            val t = ((elapsedTicks - disabledTicks + partialTick) / fadeTicks).coerceIn(0f, 1f)
+            tryDh("fade") {
+                if (usingShaders) {
+                    IrisCompat.setShaderFogDistance(Mth.lerp(t, hiddenFogDistanceBlocks(), dhRenderDistanceBlocks()))
+                } else {
+                    applyFog(t)
+                }
+            }
         }
     }
 
@@ -93,12 +109,16 @@ object DistantHorizonsCompat {
         val fog = DhApi.Delayed.configs.graphics().fog()
         val farFog = fog.farFog()
         fog.enableDhFog().setValue(true, ExpeditionaryHardcore.MOD_NAME)
-        farFog.farFogStartDistance().lerpToBase(0f, t)
+        // start distance is relative to DH render distance
+        farFog.farFogStartDistance().lerpToBase(hiddenFogDistanceBlocks() / dhRenderDistanceBlocks(), t)
         farFog.farFogMinThickness().lerpToBase(1f, thickT)
         farFog.farFogMaxThickness().lerpToBase(1f, thickT)
     }
 
-    // this sets back to config value, doesn't change the actual config
+    private fun hiddenFogDistanceBlocks() = Minecraft.getInstance().options.effectiveRenderDistance * 16f * HIDDEN_FOG_DIST_MULT
+
+    private fun dhRenderDistanceBlocks() = DhApi.Delayed.configs.graphics().chunkRenderDistance().value * 16f
+
     private fun resetFog() {
         val fog = DhApi.Delayed.configs.graphics().fog()
         val farFog = fog.farFog()

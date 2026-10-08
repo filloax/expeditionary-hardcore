@@ -126,14 +126,17 @@ dependencies {
 	}
 
 	compileOnly(libs.distanthorizons.api)
+	compileOnly(libs.iris.fabric)
 
 	// only for IDE testing
 	localRuntime(libs.modmenu)
 	localRuntime(libs.authme)
-	if (runWithDistantHorizons)
+	if (runWithDistantHorizons) {
 		// Fixes DH enabled setting being wonky when toggled via API, use base when released
 		localRuntime(files(rootProject.file("local/distanthorizons/DistantHorizons-fabric-3.3.5-dev-26.3.jar")))
-
+		localRuntime("maven.modrinth:sodium:mc26.3-0.9.2-fabric")
+		localRuntime("maven.modrinth:iris:1.11.7+26.3-fabric")
+	}
 }
 
 class DatapackInfo(val name: String, val id: String, val url: String, val sha: String, zipPath: String, dirPath: String) {
