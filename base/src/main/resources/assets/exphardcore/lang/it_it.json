@@ -16,6 +16,7 @@
   "exphardcore.commands.exphardcore.name_set_refuse": "Non hai il permesso di impostare il nome di un altro giocatore.",
   "exphardcore.commands.exphardcore.history_refuse": "Non hai il permesso di vedere la cronologia di respawn di un altro giocatore.",
   "exphardcore.commands.exphardcore.history_entry": "#%s - %s: ",
+  "exphardcore.commands.exphardcore.history_distance": " (%s blocchi dal precedente)",
   "exphardcore.commands.exphardcore.loadout_ok": "Dato un equipaggiamento iniziale casuale a %s.",
   "exphardcore.commands.exphardcore.quirk_none": "%s non ha debuff in questa vita.",
   "exphardcore.commands.exphardcore.quirk_current": "Debuff attuale di %s: %s (%s)",

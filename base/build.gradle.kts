@@ -45,6 +45,7 @@ dependencies {
 	compileOnly(utils.getApibalego())
 	compileOnly(utils.getResourcefulConfig())
 	compileOnly(libs.distanthorizons.api)
+	compileOnly(libs.iris.fabric)
 
     //#region Test deps
 

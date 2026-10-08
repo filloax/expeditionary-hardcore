@@ -111,6 +111,7 @@ dependencies {
     }
 
     compileOnly(libs.distanthorizons.api)
+    compileOnly(libs.iris.neoforge)
     if (runWithDistantHorizons)
         // Fixes DH enabled setting being wonky when toggled via API, use base when released
         runtimeOnly(files(rootProject.file("local/distanthorizons/DistantHorizons-neoforge-3.3.5-dev-26.3.jar")))
