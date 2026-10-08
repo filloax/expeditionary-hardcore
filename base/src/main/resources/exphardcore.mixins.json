@@ -19,6 +19,7 @@
   "client": [
     "client.ClientPlayerDropItemMixin",
     "client.CuboidItemModelWrapperMixin",
+    "client.IrisCommonUniformsMixin",
     "client.GridLayoutAccessor",
     "client.LayoutChildWrapperAccessor",
     "client.QuirkEffectsMixin",

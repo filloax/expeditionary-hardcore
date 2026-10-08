@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.4
+
+*Beta*
+
+- Improve DH compatibility again, should work with shaders. No-shader version may not work
+  properly until some DH-side fixes are released
+
 ## 0.3.3
 
 *Beta*
