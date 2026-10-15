@@ -1,4 +1,20 @@
 {
   "trim_pattern.growsseth.growsseth": "Egida di un regno perduto",
-  "item.growsseth.growsseth_banner_pattern.desc": "Egida di un regno perduto"
+  "item.growsseth.growsseth_banner_pattern.desc": "Egida di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.white": "Egida bianca di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.orange": "Egida arancione di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.magenta": "Egida magenta di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.light_blue": "Egida azzurra di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.yellow": "Egida gialla di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.lime": "Egida lime di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.pink": "Egida rosa di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.gray": "Egida grigia di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.light_gray": "Egida grigio chiaro di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.cyan": "Egida ciano di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.purple": "Egida viola di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.blue": "Egida blu di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.brown": "Egida marrone di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.green": "Egida verde di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.red": "Egida rossa di un regno perduto",
+  "item.growsseth.growsseth_banner_pattern.desc.black": "Egida nera di un regno perduto"
 }
