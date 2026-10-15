@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0
+
+*Beta*
+
+- Add proper sprites instead of placeholders
+- Use placeholder skins taken from online for random model feature (to be removed in final published version)
+- \[Cydonia mode] auto add Growsseth pattern to loadout shields, with random colors
+
 ## 0.3.4
 
 *Beta*
