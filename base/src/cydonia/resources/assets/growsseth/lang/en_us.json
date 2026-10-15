@@ -1,4 +1,20 @@
 {
   "trim_pattern.growsseth.growsseth": "Lost Kingdom's Effigy",
-  "item.growsseth.growsseth_banner_pattern.desc": "Lost Kingdom's Effigy"
+  "item.growsseth.growsseth_banner_pattern.desc": "Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.white": "White Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.orange": "Orange Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.magenta": "Magenta Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.light_blue": "Light Blue Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.yellow": "Yellow Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.lime": "Lime Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.pink": "Pink Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.gray": "Gray Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.light_gray": "Light Gray Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.cyan": "Cyan Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.purple": "Purple Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.blue": "Blue Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.brown": "Brown Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.green": "Green Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.red": "Red Lost Kingdom's Effigy",
+  "item.growsseth.growsseth_banner_pattern.desc.black": "Black Lost Kingdom's Effigy"
 }

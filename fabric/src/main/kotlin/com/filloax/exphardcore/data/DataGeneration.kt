@@ -52,7 +52,26 @@ class PlayerModelDefinitionProvider(private val output: FabricPackOutput) : Data
         return CompletableFuture.allOf(
             *listOf(
                 "cydonia",
-                "evil_cydonia",
+                "knight",
+                "knight_2",
+                "explorer",
+                "explorer_2",
+                "cartographer",
+                "cartographer_2",
+                "alchemist",
+                "alchemist_2",
+                "gunner",
+                "musketeer",
+                "pirate",
+                "archer",
+                "ranger",
+                "mage",
+                "blacksmith",
+                "miner",
+                "paladin",
+                "merchant",
+                "viking",
+                "monk",
             )
             .map(::createBuiltinModel)
             .map { (modelId, modelDefinition) ->

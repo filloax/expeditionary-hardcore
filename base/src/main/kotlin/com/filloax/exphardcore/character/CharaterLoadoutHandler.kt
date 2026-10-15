@@ -6,6 +6,8 @@ import com.filloax.exphardcore.character.team.TeamManager
 import com.filloax.exphardcore.item.ExpeditionaryHardcoreItems.EXPEDITIONERS_LOGBOOK
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.Registries
+import net.minecraft.resources.Identifier
+import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.tags.ItemTags
 import net.minecraft.util.RandomSource
@@ -13,7 +15,10 @@ import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.component.ItemAttributeModifiers
+import net.minecraft.world.level.block.entity.BannerPattern
+import net.minecraft.world.level.block.entity.BannerPatternLayers
 import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
@@ -24,6 +29,10 @@ object CharacterLoadoutHandler {
     const val LAST_HOTBAR_SLOT = 8
     const val FIRST_INVENTORY_SLOT = 9
     const val LAST_INVENTORY_SLOT = 36
+
+    private val CYDONIA_SHIELD_PATTERN: ResourceKey<BannerPattern> = ResourceKey.create(
+        Registries.BANNER_PATTERN, Identifier.fromNamespaceAndPath("growsseth", "growsseth")
+    )
 
     fun newLoadoutForPlayer(player: ServerPlayer, lifeData: PlayerLifeData) {
         // first, add logbook
@@ -73,7 +82,26 @@ object CharacterLoadoutHandler {
             .create(LootContextParamSets.GIFT)
 
         val itemList = chosenTable.getRandomItems(params)
+        if (ExpeditionaryHardcore.cydoniaMode) {
+            itemList.filter { it.`is`(Items.SHIELD) }.forEach { addCydoniaShieldPattern(player, it, random) }
+        }
         assignItemsToSlots(player, itemList, random)
+    }
+
+    private fun addCydoniaShieldPattern(player: ServerPlayer, shield: ItemStack, random: Random) {
+        val pattern = player.level().registryAccess().lookupOrThrow(Registries.BANNER_PATTERN).get(CYDONIA_SHIELD_PATTERN).getOrNull()
+        if (pattern == null) {
+            ExpeditionaryHardcore.LOGGER.warn("Banner pattern {} not found, skipping shield pattern", CYDONIA_SHIELD_PATTERN.identifier())
+            return
+        }
+        val baseColor = DyeColor.entries.random(random)
+        val patternColor = (DyeColor.entries - baseColor).random(random)
+        val layers = BannerPatternLayers.Builder()
+            .addAll(shield.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY))
+            .add(pattern, patternColor)
+            .build()
+        shield.set(DataComponents.BASE_COLOR, baseColor)
+        shield.set(DataComponents.BANNER_PATTERNS, layers)
     }
 
     private fun assignItemsToSlots(player: ServerPlayer, items: Collection<ItemStack>, random: Random) {

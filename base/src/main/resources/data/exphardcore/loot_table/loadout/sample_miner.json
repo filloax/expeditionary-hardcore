@@ -50,19 +50,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:shield",
-          "functions": [
-            {
-              "function": "minecraft:set_banner_pattern",
-              "patterns": [
-                {
-                  "pattern": "growsseth:growsseth",
-                  "color": "purple"
-                }
-              ],
-              "append": true
-            }
-          ]
+          "name": "minecraft:shield"
         }
       ]
     }
