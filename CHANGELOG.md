@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.1
+
+*Beta*
+
+- Update localization
+- Record death point (currently only for history cmd and cydonia mode)
+- \[Cydonia mode] Fix info sending
+
 ## 0.4.0
 
 *Beta*
