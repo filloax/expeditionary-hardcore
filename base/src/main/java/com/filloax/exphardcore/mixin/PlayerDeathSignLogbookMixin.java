@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class PlayerDeathSignLogbookMixin {
 
     @Inject(method = "dropEquipment", at = @At("HEAD"))
-    private void exphardcore$signLogbookOnDeath(ServerLevel level, CallbackInfo ci) {
-        LifeHandler.signLogbookOnDeath((net.minecraft.server.level.ServerPlayer) (Object) this);
+    private void exphardcore$onDeath(ServerLevel level, CallbackInfo ci) {
+        LifeHandler.onPlayerDeath((net.minecraft.server.level.ServerPlayer) (Object) this);
     }
 }
