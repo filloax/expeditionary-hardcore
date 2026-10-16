@@ -50,7 +50,7 @@
   "exphardcore.commands.exphardcore.team.info_member": "Giocatore principale della tua squadra: %s.",
 
   "effect.exphardcore.life_quirk": "Debuff",
-  "effect.exphardcore.life_quirk.duration": "Particolarità del personaggio",
+  "effect.exphardcore.life_quirk.duration": "Particolarità",
   "effect.exphardcore.quirk.slow": "Lento",
   "effect.exphardcore.quirk.slow.desc": "Sei leggermente più lento nei movimenti.",
   "effect.exphardcore.quirk.frail": "Gracile",
