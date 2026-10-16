@@ -29,8 +29,10 @@ data class ApibalegoPlayerLifeData(
     val name: String? = null,
     @Serializable(with = BlockPosSerializer::class)
     val spawnPoint: BlockPos,
+    @Serializable(with = BlockPosSerializer::class)
+    val deathPoint: BlockPos? = null,
 ) {
     companion object {
-        fun fromLifeData(lifeData: PlayerLifeData) = ApibalegoPlayerLifeData(lifeData.name, lifeData.spawnPoint)
+        fun fromLifeData(lifeData: PlayerLifeData) = ApibalegoPlayerLifeData(lifeData.name, lifeData.spawnPoint, lifeData.deathPoint)
     }
 }
