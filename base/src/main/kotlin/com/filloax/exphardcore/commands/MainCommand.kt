@@ -23,6 +23,7 @@ import net.minecraft.commands.Commands.*
 import net.minecraft.commands.SharedSuggestionProvider
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.IdentifierArgument
+import net.minecraft.core.BlockPos
 import net.minecraft.resources.Identifier
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
@@ -358,28 +359,35 @@ object MainCommand {
 
         lives.forEachIndexed { index, life ->
             val pos = life.spawnPoint
-            val coordComponent = Component.translatable("chat.coordinates", pos.x, pos.y, pos.z)
-                .withStyle { style ->
-                    style
-                        .withColor(ChatFormatting.GREEN)
-                        .withClickEvent(ClickEvent.SuggestCommand("/tp @s ${pos.x} ${pos.y} ${pos.z}"))
-                        .withHoverEvent(HoverEvent.ShowText(Component.translatable("chat.coordinates.tooltip")))
-                }
             val message = Component.translatable(
                 "exphardcore.commands.exphardcore.history_entry",
                 index + 1, life.name ?: "?",
-            ).append(coordComponent)
+            ).append(coordinatesComponent(pos, ChatFormatting.GREEN))
             if (index > 0) {
                 val prev = lives[index - 1].spawnPoint
                 val distance = hypot((pos.x - prev.x).toDouble(), (pos.z - prev.z).toDouble()).roundToInt()
                 message.append(Component.translatable("exphardcore.commands.exphardcore.history_distance", distance)
                     .withStyle(ChatFormatting.GRAY))
             }
+            life.deathPoint?.let { deathPos ->
+                message.append(Component.translatable("exphardcore.commands.exphardcore.history_death")
+                    .withStyle(ChatFormatting.GRAY))
+                    .append(coordinatesComponent(deathPos, ChatFormatting.RED))
+            }
             source.sendSystemMessage(message)
         }
 
         return lives.size
     }
+
+    private fun coordinatesComponent(pos: BlockPos, color: ChatFormatting) =
+        Component.translatable("chat.coordinates", pos.x, pos.y, pos.z)
+            .withStyle { style ->
+                style
+                    .withColor(color)
+                    .withClickEvent(ClickEvent.SuggestCommand("/tp @s ${pos.x} ${pos.y} ${pos.z}"))
+                    .withHoverEvent(HoverEvent.ShowText(Component.translatable("chat.coordinates.tooltip")))
+            }
 
     private fun giveLoadout(source: CommandSourceStack, player: ServerPlayer?): Int {
         val sourcePlayer = source.playerOrException

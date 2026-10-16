@@ -80,7 +80,23 @@ object LifeHandler {
     }
 
     @JvmStatic
-    fun signLogbookOnDeath(player: ServerPlayer) {
+    fun onPlayerDeath(player: ServerPlayer) {
+        recordDeathPoint(player)
+        signLogbookOnDeath(player)
+    }
+
+    private fun recordDeathPoint(player: ServerPlayer) {
+        if (!ExpeditionMode.enabled) return
+        val life = player.getExpeditionLifeOrNull() ?: return
+
+        life.deathPoint = player.blockPosition()
+        life.setDirty()
+        player.syncExpeditionLife()
+
+        ApibalegoInfoSender.onUpdateLives(player)
+    }
+
+    private fun signLogbookOnDeath(player: ServerPlayer) {
         val inventory = player.inventory
         for (slot in 0 until inventory.containerSize) {
             val stack = inventory.getItem(slot)
