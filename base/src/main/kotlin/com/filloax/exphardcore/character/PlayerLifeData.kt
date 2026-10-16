@@ -53,6 +53,8 @@ data class PlayerLifeData(
     @Serializable(with= IdentifierSerializer::class)
     val modelId: Identifier,
     var quirk: LifeQuirkClientInfo? = null,
+    @Serializable(with=BlockPosSerializer::class)
+    var deathPoint: BlockPos? = null,
 ) {
     @Transient
     lateinit var server: MinecraftServer
