@@ -11,6 +11,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.item.ItemStack
+import org.apache.logging.log4j.Level
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -87,14 +88,20 @@ object ApibalegoInfoSender {
         val url = getApibalegoUrl()
         val bodyStr = json.encodeToString(serializer, data)
         val request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
+            .uri(URI.create(url).resolve(endpoint))
             .timeout(Duration.ofSeconds(15))
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(bodyStr))
+            .also {
+                val apiKey = getApibalegoApiKey()
+                if (apiKey.isNotBlank())
+                    it.header("apiKey", "$apiKey")
+            }
             .build()
         try {
             val resp = http.send(request, HttpResponse.BodyHandlers.ofString())
-            ExpeditionaryHardcore.LOGGER.debug("Apibalego data info send $endpoint | Status ${resp.statusCode()}: ${resp.body()}")
+            val logLevel = if (resp.statusCode() == 200) Level.DEBUG else Level.ERROR
+            ExpeditionaryHardcore.LOGGER.log(logLevel, "Apibalego data info send $endpoint | Status ${resp.statusCode()}: ${resp.body()}")
         } catch (e: Exception) {
             ExpeditionaryHardcore.LOGGER.error("Failed to send data to apibalego $endpoint", e)
         }
@@ -102,5 +109,9 @@ object ApibalegoInfoSender {
 
     private fun getApibalegoUrl(): String {
         return ApiBalegoConfig.dataSyncUrl
+    }
+
+    private fun getApibalegoApiKey(): String {
+        return ApiBalegoConfig.dataSyncApiKey
     }
 }
