@@ -10,7 +10,6 @@ import net.minecraft.resources.Identifier
 import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.tags.ItemTags
-import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.item.ItemStack
@@ -51,29 +50,36 @@ object CharacterLoadoutHandler {
             giveLoadout = false
         }
 
-        if (giveLoadout)
-            giveRandomLoadout(player, lifeData.random())
+        if (giveLoadout) {
+            val previousLoadouts = player.getAllExpeditionLives().dropLast(1).map { it.loadoutId }
+            lifeData.loadoutId = giveRandomLoadout(player, lifeData.random(), previousLoadouts)
+            lifeData.setDirty()
+        }
 
         if (isSecondary) {
             TeamManager.setSecondaryLoadoutUsed(server, player)
         }
     }
 
-    fun giveRandomLoadout(player: ServerPlayer, random: Random) {
+    fun giveRandomLoadout(player: ServerPlayer, random: Random, previousLoadouts: List<Identifier?> = listOf()): Identifier? {
         val level = player.level()
         val lootTables = level.server.reloadableRegistries().lookup().lookupOrThrow(Registries.LOOT_TABLE)
-        val randomSource = RandomSource.create(random.nextLong())
         val tablesList = lootTables.get(ExpeditionaryHardcoreTags.LOOT_TABLE_CHARACTER_LOADOUT_OVERRIDE)
             .takeIf { (it.getOrNull()?.size() ?: 0) > 0 }
             ?: lootTables.get(ExpeditionaryHardcoreTags.LOOT_TABLE_CHARACTER_LOADOUT)
-        val chosenTable = tablesList
-            .flatMap { it.getRandomElement(randomSource) }
-            .map { it.value() }
-            .orElse(null)
+        val tablesById = tablesList.getOrNull()
+            ?.mapNotNull { holder -> holder.unwrapKey().getOrNull()?.let { it.identifier() to holder.value() } }
+            ?.toMap()
+            ?: mapOf()
+        val chosenId = selectCyclingNewElements(previousLoadouts, tablesById.keys)
+            // sorted so the pick is deterministic for a given seed regardless of load order
+            .sortedBy { it.toString() }
+            .randomOrNull(random)
+        val chosenTable = chosenId?.let(tablesById::get)
 
         if (chosenTable == null) {
             ExpeditionaryHardcore.LOGGER.warn("No loadout loot table found in tag {}, skipping starting loadout", ExpeditionaryHardcoreTags.LOOT_TABLE_CHARACTER_LOADOUT.location())
-            return
+            return null
         }
 
         val params = LootParams.Builder(level)
@@ -86,6 +92,7 @@ object CharacterLoadoutHandler {
             itemList.filter { it.`is`(Items.SHIELD) }.forEach { addCydoniaShieldPattern(player, it, random) }
         }
         assignItemsToSlots(player, itemList, random)
+        return chosenId
     }
 
     private fun addCydoniaShieldPattern(player: ServerPlayer, shield: ItemStack, random: Random) {
