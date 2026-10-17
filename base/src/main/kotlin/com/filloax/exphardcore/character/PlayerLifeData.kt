@@ -55,6 +55,8 @@ data class PlayerLifeData(
     var quirk: LifeQuirkClientInfo? = null,
     @Serializable(with=BlockPosSerializer::class)
     var deathPoint: BlockPos? = null,
+    @Serializable(with = IdentifierSerializer::class)
+    var loadoutId: Identifier? = null,
 ) {
     @Transient
     lateinit var server: MinecraftServer
@@ -99,7 +101,9 @@ data class PlayerLifeData(
             val newId = UUID.randomUUID()
             val random = randomFor(newId)
 
-            val model = PlayerModelResolver.playerModelsByKey.keys.random(random)
+            val model = selectCyclingNewElements(allLives.map { it.modelId }, PlayerModelResolver.playerModelsByKey.keys)
+                .sortedBy { it.toString() }
+                .random(random)
 
             return PlayerLifeData(
                 newId,
