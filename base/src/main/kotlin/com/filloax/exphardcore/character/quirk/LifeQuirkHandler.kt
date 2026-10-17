@@ -5,7 +5,7 @@ import com.filloax.exphardcore.character.PlayerLifeData
 import com.filloax.exphardcore.character.getAllExpeditionLives
 import com.filloax.exphardcore.character.getExpeditionLifeOrNull
 import com.filloax.exphardcore.character.syncExpeditionLife
-import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfig
+import com.filloax.exphardcore.character.selectCyclingNewElements
 import com.filloax.exphardcore.effect.ExpeditionaryHardcoreMobEffects
 import com.filloax.exphardcore.utils.id
 import net.minecraft.core.registries.BuiltInRegistries
@@ -67,10 +67,11 @@ object LifeQuirkHandler {
     }
 
     internal fun pickWeighted(previousLives: List<PlayerLifeData>, defs: Map<Identifier, LifeQuirkDefinition>, random: Random): Identifier? {
-        val unusedWeightMultiplier = 10
-        val usedQuirks = previousLives.mapNotNull { it.quirk?.quirkId }.toSet()
+        val positiveWeightIds = defs.filterValues { it.weight > 0 }.keys
+        val candidates = selectCyclingNewElements(previousLives.map { it.quirk?.quirkId }, positiveWeightIds)
 
-        val weightedEntries = defs.mapValues { (id, def) -> def.weight.coerceAtLeast(0) * (if (id !in usedQuirks) unusedWeightMultiplier else 1) }
+        val weightedEntries = defs.filterKeys { it in candidates }
+            .mapValues { (_, def) -> def.weight }
             .entries
             // sorted so the pick is deterministic for a given seed regardless of datapack load order
             .sortedBy { it.key.toString() }
