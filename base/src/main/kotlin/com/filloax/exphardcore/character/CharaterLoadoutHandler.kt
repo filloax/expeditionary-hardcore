@@ -94,8 +94,8 @@ object CharacterLoadoutHandler {
             ExpeditionaryHardcore.LOGGER.warn("Banner pattern {} not found, skipping shield pattern", CYDONIA_SHIELD_PATTERN.identifier())
             return
         }
-        val baseColor = DyeColor.entries.random(random)
-        val patternColor = (DyeColor.entries - baseColor).random(random)
+        val baseColor = DyeColor.BROWN // DyeColor.entries.random(random)
+        val patternColor = DyeColor.LIGHT_GRAY // (DyeColor.entries - baseColor).random(random)
         val layers = BannerPatternLayers.Builder()
             .addAll(shield.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY))
             .add(pattern, patternColor)
