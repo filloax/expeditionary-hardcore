@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.2
+
+*Beta*
+
+- Avoid repeating loadouts / skins (quirks already sort of did that, but consolidate logic)
+- \[Cydonia mode] Shield has fixed color + lang string tweak
+
 ## 0.4.1
 
 *Beta*
