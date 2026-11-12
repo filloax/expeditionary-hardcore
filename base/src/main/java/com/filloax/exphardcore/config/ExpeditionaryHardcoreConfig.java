@@ -38,4 +38,8 @@ public final class ExpeditionaryHardcoreConfig {
     @ConfigEntry(id = "enableLifeQuirks", translation = T_PREF + "enableLifeQuirks.name")
     @Comment(value = "Give each new character a random minor quirk", translation = T_PREF + "enableLifeQuirks.comment")
     public static boolean enableLifeQuirks = true;
+
+    @ConfigEntry(id = "resetEnderChest", translation = T_PREF + "resetEnderChest.name")
+    @Comment(value = "Reset ender chest for player on death", translation = T_PREF + "resetEnderChest.comment")
+    public static boolean resetEnderChest = true;
 }
