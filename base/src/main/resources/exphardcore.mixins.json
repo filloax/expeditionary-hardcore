@@ -21,6 +21,7 @@
     "client.CuboidItemModelWrapperMixin",
     "client.IrisCommonUniformsMixin",
     "client.GridLayoutAccessor",
+    "client.HudHeartsMixin",
     "client.LayoutChildWrapperAccessor",
     "client.QuirkEffectsMixin",
     "client.PlayerModelReplacementMixin"
