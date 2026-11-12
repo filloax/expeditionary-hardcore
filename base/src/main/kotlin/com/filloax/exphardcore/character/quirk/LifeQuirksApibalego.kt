@@ -19,9 +19,7 @@ object LifeQuirksApibalego : ApiEntryHandler<LifeQuirksApibalego.ApibalegoQuirkC
         private set
 
     fun init() {
-        if (ExpeditionaryHardcore.modCompat.isApibalegoLoaded) {
-            Apibalego.registerApiHandler(id("life_quirks_config"), ApibalegoQuirkConfig.serializer(), LifeQuirksApibalego)
-        }
+        Apibalego.registerApiHandler(id("life_quirks_config"), ApibalegoQuirkConfig.serializer(), LifeQuirksApibalego)
     }
 
     override fun handleApiUpdate(
