@@ -9,10 +9,10 @@
     neoform = "26.3-1" # vanilla neoforge configuration
 
 # Mod dependencies
-    filloaxlib = "0.42.1-26.3"
+    filloaxlib = "0.42.3-26.3"
     # optional: separate version for filloaxlib common, defaults to filloaxlib version if unset
 #    filloaxlibCommon = "0.38.0a-26.2"
-    apibalego = "0.4.1-26.3"
+    apibalego = "1.1.0-26.3"
     rconfig = "6.0.1"
     rconfigMc = "26.3"
     distanthorizons-api = "7.2.0"
