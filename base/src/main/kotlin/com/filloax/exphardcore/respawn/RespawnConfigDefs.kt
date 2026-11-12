@@ -51,6 +51,7 @@ enum class RespawnCenter {
     WORLD_ORIGIN,
     STRONGHOLD,
     LAST_RESPAWN_POINT,
+    DEATH_POS,
 }
 
 enum class RespawnDistribution {

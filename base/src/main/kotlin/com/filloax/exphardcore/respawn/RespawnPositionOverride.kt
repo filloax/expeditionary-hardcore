@@ -115,6 +115,7 @@ class RespawnPositionProvider(
                 val playerLife = player.getExpeditionLifeOrNull() ?: return level.respawnData.globalPos.pos
                 playerLife.spawnPoint
             }
+            RespawnCenter.DEATH_POS -> player.blockPosition()
             RespawnCenter.STRONGHOLD -> {
                 val candidates = getNearestStrongholds(player.blockPosition(), 3)
                 if (candidates.isNotEmpty()) candidates[random.nextInt(candidates.size)]
