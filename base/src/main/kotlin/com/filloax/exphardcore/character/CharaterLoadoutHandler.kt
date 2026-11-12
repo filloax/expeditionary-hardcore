@@ -27,7 +27,7 @@ import kotlin.random.Random
 object CharacterLoadoutHandler {
     const val LAST_HOTBAR_SLOT = 8
     const val FIRST_INVENTORY_SLOT = 9
-    const val LAST_INVENTORY_SLOT = 36
+    const val LAST_INVENTORY_SLOT = 35
 
     private val CYDONIA_SHIELD_PATTERN: ResourceKey<BannerPattern> = ResourceKey.create(
         Registries.BANNER_PATTERN, Identifier.fromNamespaceAndPath("growsseth", "growsseth")
@@ -164,9 +164,10 @@ object CharacterLoadoutHandler {
         return mods.compute(Attributes.ARMOR, 0.0, slot)
     }
 
+    // Backpack first, hotbar only once it's full; items past that are discarded
     private fun randomFreeSlots(player: ServerPlayer, amount: Int, random: Random): Collection<Int> {
-        val inventoryBackpackSlots = FIRST_INVENTORY_SLOT .. LAST_INVENTORY_SLOT
-        val freeSlots = inventoryBackpackSlots.filter { player.inventory.getItem(it).isEmpty }
-        return freeSlots.shuffled(random).take(amount)
+        fun freeShuffled(range: IntRange) = range.filter { player.inventory.getItem(it).isEmpty }.shuffled(random)
+        val freeSlots = freeShuffled(FIRST_INVENTORY_SLOT .. LAST_INVENTORY_SLOT) + freeShuffled(0 .. LAST_HOTBAR_SLOT)
+        return freeSlots.take(amount)
     }
 }
