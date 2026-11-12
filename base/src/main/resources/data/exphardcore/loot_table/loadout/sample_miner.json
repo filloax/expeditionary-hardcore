@@ -15,6 +15,27 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "minecraft:diamond_pickaxe",
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": 0.01
+            },
+            {
+              "type": "minecraft:set_enchantments",
+              "enchantments": {
+                "minecraft:fortune": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
           "name": "minecraft:wooden_shovel"
         }
       ]
@@ -28,7 +49,17 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:bread"
+          "name": "minecraft:bread",
+          "modifier": [
+            {
+              "type": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2,
+                "max": 3
+              }
+            }
+          ]
         }
       ]
     },
