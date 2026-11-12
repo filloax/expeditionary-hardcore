@@ -168,6 +168,19 @@ class LifeQuirkDefinitionProvider(output: FabricPackOutput) : DataProvider {
                 ),
                 builtin = true,
             ),
+            id("hungry") to LifeQuirkDefinition(
+                icon = Identifier.withDefaultNamespace("hunger"),
+                iconIsVanillaEffect = true,
+                name = "effect.exphardcore.quirk.hungry",
+                description = "effect.exphardcore.quirk.hungry.desc",
+                behavior = QuirkBehaviorRef(
+                    LifeQuirkBehaviors.HUNGER_MODIFIER,
+                    Json.encodeToJsonElement(
+                        HungerModifierBehavior.Params(exhaustionMultiplier = 1.05f)
+                    ).jsonObject,
+                ),
+                builtin = true,
+            ),
         )
 
         return CompletableFuture.allOf(

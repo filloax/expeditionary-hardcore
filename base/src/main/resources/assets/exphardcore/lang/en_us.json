@@ -66,6 +66,8 @@
   "effect.exphardcore.quirk.heavy_boned.desc": "Falls hit harder and leave you dazed.",
   "effect.exphardcore.quirk.paranoia": "Paranoia",
   "effect.exphardcore.quirk.paranoia.desc": "You think you hear things, sometimes...",
+  "effect.exphardcore.quirk.hungry": "Voracious",
+  "effect.exphardcore.quirk.hungry.desc": "You get hungry a little faster.",
 
   "exphardcore.config.respawn.respawnRadiusMin.name": "Minimum respawn radius",
   "exphardcore.config.respawn.respawnRadiusMax.name": "Maximum respawn radius",

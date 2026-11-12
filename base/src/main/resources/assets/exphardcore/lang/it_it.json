@@ -66,6 +66,8 @@
   "effect.exphardcore.quirk.heavy_boned.desc": "Le cadute infliggono più danni e ti lasciano scosso.",
   "effect.exphardcore.quirk.paranoia": "Paranoia",
   "effect.exphardcore.quirk.paranoia.desc": "Pensi di sentire delle cose, a volte...",
+  "effect.exphardcore.quirk.hungry": "Vorace",
+  "effect.exphardcore.quirk.hungry.desc": "Ti viene fame un po' più in fretta.",
 
   "exphardcore.config.respawn.respawnRadiusMin.name": "Raggio di respawn minimo",
   "exphardcore.config.respawn.respawnRadiusMax.name": "Raggio di respawn massimo",

@@ -133,6 +133,13 @@ object LifeQuirkHandler {
             val behavior = LifeQuirkDefinitions.behaviorOf(quirkInfo.quirkId) ?: return damage
             return behavior.onFallDamage(player, damage)
         }
+
+        @JvmStatic
+        fun modifyFoodExhaustion(player: ServerPlayer, amount: Float): Float {
+            val quirkInfo = player.getExpeditionLifeOrNull()?.quirk ?: return amount
+            val behavior = LifeQuirkDefinitions.behaviorOf(quirkInfo.quirkId) ?: return amount
+            return behavior.modifyFoodExhaustion(player, amount)
+        }
     }
 
     object Callbacks {
