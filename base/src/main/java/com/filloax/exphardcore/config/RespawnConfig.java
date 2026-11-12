@@ -6,8 +6,10 @@ import com.filloax.exphardcore.respawn.RespawnDistribution;
 import com.teamresourceful.resourcefulconfig.api.annotations.Category;
 import com.teamresourceful.resourcefulconfig.api.annotations.Comment;
 import com.teamresourceful.resourcefulconfig.api.annotations.ConfigEntry;
+import com.teamresourceful.resourcefulconfig.api.annotations.ConfigInfo;
 
 @Category("respawn")
+@ConfigInfo(title = "Respawn", titleTranslation = "exphardcore.config.respawn.title")
 public final class RespawnConfig {
     public static final String T_PREF = "exphardcore.config.respawn.";
     @ConfigEntry(id = "respawnRadiusMin", translation = T_PREF + "respawnRadiusMin.name")

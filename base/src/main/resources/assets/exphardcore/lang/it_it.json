@@ -86,9 +86,17 @@
   "exphardcore.config.cydonia.mainPlayer": "Giocatore principale",
   "exphardcore.config.cydonia.mainPlayer.comment": "Il giocatore principale per la squadra a livello di server, per nome o UUID. Tutti gli altri respawnano vicino a lui. Vuoto = nessun principale forzato.",
 
+  "exphardcore.config.title": "Expeditionary Hardcore",
+  "exphardcore.config.description": "Impostazioni di Expeditionary Hardcore",
+  "exphardcore.config.respawn.title": "Respawn",
+  "exphardcore.config.multiplayer.title": "Multigiocatore",
+  "exphardcore.config.main.allowChangingName.name": "Permetti di cambiare nome",
+  "exphardcore.config.main.allowChangingName.comment": "Permetti ai giocatori di cambiare il nome del personaggio dopo la creazione",
+  "exphardcore.config.main.preventLogbookDrop.name": "Impedisci di gettare il diario",
+  "exphardcore.config.main.preventLogbookDrop.comment": "Impedisci di gettare il Diario Personale della Spedizione",
   "exphardcore.config.main.replacePlayerModel.name": "Sostituisci il modello del giocatore",
   "exphardcore.config.main.replacePlayerModel.comment": "Sostituisci il modello del giocatore ad ogni vita",
-  "exphardcore.config.main.enableLifeQuirks.name": "Abilita le debuff delle vite",
+  "exphardcore.config.main.enableLifeQuirks.name": "Abilita i debuff delle vite",
   "exphardcore.config.main.enableLifeQuirks.comment": "Dai ad ogni nuovo personaggio un effetto minore casuale",
   "exphardcore.config.respawn.respawnDistantHorizonsDisableSeconds.name": "Durata disattivazione Distant Horizons al respawn (secondi)",
   "exphardcore.config.respawn.respawnDistantHorizonsDisableSeconds.comment": "Con Distant Horizons: secondi per cui viene disattivato dopo un respawn. 0 disattiva questa funzione. Per non respawnare in un LoD"
