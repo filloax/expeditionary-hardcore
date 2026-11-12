@@ -68,6 +68,11 @@ object ApibalegoInfoSender {
         sendDataAsync("info/player_life_history", request, ApibalegoPlayerLifeHistory.serializer())
     }
 
+    fun onApiEvent(entryId: String, details: ApibalegoEventEntryHandler.EventDetails) {
+        val body = ApibalegoApiEventData(entryId, details.event, details.data)
+        sendDataAsync("info/event", body, ApibalegoApiEventData.serializer())
+    }
+
 
     private fun sendLogbookAndCharacterContents(player: ServerPlayer, currentLife: PlayerLifeData?, pages: List<String>, title: String?) {
         val currentLife = player.getExpeditionLifeOrNull()
@@ -88,7 +93,8 @@ object ApibalegoInfoSender {
         val url = getApibalegoUrl()
         val bodyStr = json.encodeToString(serializer, data)
         val request = HttpRequest.newBuilder()
-            .uri(URI.create(url).resolve(endpoint))
+            // URI.resolve drops the base's last path segment, and breaks entirely with an empty path
+            .uri(URI.create(url.trimEnd('/') + "/" + endpoint))
             .timeout(Duration.ofSeconds(15))
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(bodyStr))

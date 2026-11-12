@@ -6,6 +6,7 @@ import com.filloax.exphardcore.client.QuirkGfx
 import com.filloax.exphardcore.client.compat.DistantHorizonsCompat
 import com.filloax.exphardcore.compat.ModCompatChecker
 import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfigHandler
+import com.filloax.exphardcore.cydonia.ApibalegoEventEntryHandler
 import com.filloax.exphardcore.network.ExpeditionaryHardcorePackets
 import com.filloax.exphardcore.respawn.RespawnConfigResolver
 import com.filloax.exphardcore.utils.loadPropertiesFile
@@ -36,6 +37,7 @@ abstract class ExpeditionaryHardcore {
         RespawnConfigResolver.init()
         PlayerModelResolver.init()
         LifeQuirksResolver.init()
+        ApibalegoEventEntryHandler.init()
 
         initRegistries()
 
