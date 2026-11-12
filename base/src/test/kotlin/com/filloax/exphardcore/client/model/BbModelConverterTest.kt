@@ -25,8 +25,6 @@ class BbModelConverterTest {
         }
     }
 
-    // parts are wrapped one level per source cube since vanilla PartDefinitions
-    // can't receive cubes after creation
     private fun singleCube(part: ModelPart): ModelPart.Cube = part.getRandomCube(RandomSource.create(0))
 
     @Test
@@ -44,6 +42,17 @@ class BbModelConverterTest {
     fun `creates all parts required by PlayerModel`() {
         // the constructor looks all of them up and throws if any is missing
         PlayerModel(root, false)
+    }
+
+    @Test
+    fun `stuck arrows can pick a cube from any body part`() {
+        // StuckInBodyLayer does getRandomBodyPart + getRandomCube, crashed on cube-less parts
+        val playerModel = BbPlayerModel(root)
+        val random = RandomSource.create(0)
+        repeat(50) { playerModel.getRandomBodyPart(random).getRandomCube(random) }
+        listOf("head", "body", "left_arm", "right_arm", "left_leg", "right_leg").forEach {
+            assertTrue(!root.getChild(it).isEmpty, "$it has no direct cubes")
+        }
     }
 
     @Test
@@ -65,7 +74,7 @@ class BbModelConverterTest {
 
     @Test
     fun `head cube matches vanilla geometry`() {
-        val cube = singleCube(root.getChild("head").getChild("head"))
+        val cube = singleCube(root.getChild("head"))
         assertEquals(-4f, cube.minX)
         assertEquals(-8f, cube.minY)
         assertEquals(-4f, cube.minZ)
@@ -77,13 +86,13 @@ class BbModelConverterTest {
     @Test
     fun `overlay cubes go in vanilla layer parts`() {
         // Cube min/max don't include the CubeDeformation (it only grows the polygons)
-        val hat = singleCube(root.getChild("head").getChild("hat").getChild("hat_layer"))
+        val hat = singleCube(root.getChild("head").getChild("hat"))
         assertEquals(-4f, hat.minX)
         assertEquals(-8f, hat.minY)
         assertEquals(4f, hat.maxX)
 
         val leftPants = root.getChild("left_leg").getChild("left_pants")
-        assertEquals(-2f, singleCube(leftPants.getChild("left_leg_layer")).minX)
+        assertEquals(-2f, singleCube(leftPants).minX)
         assertTrue(root.getChild("body").hasChild("jacket"))
         assertTrue(root.getChild("left_arm").hasChild("left_sleeve"))
         assertTrue(root.getChild("right_arm").hasChild("right_sleeve"))
@@ -97,7 +106,7 @@ class BbModelConverterTest {
         assertEquals(17.5f * PI.toFloat() / 180f, bun.xRot, 1e-5f)
         assertEquals(-(28.89587f - 24f), bun.y, 1e-5f)
         assertEquals(3.00926f, bun.z, 1e-5f)
-        assertTrue(bun.getAllParts().size > 1)
+        assertTrue(!bun.isEmpty)
     }
 
     @Test
@@ -107,5 +116,51 @@ class BbModelConverterTest {
         val wrapper = head.getChild("cube_r")
         assertEquals(25f * PI.toFloat() / 180f, wrapper.yRot, 1e-5f)
         assertTrue(head.hasChild("cube_r_2"))
+    }
+
+    private fun cube(name: String, from: FloatArray, to: FloatArray, rotation: FloatArray = FloatArray(3)) = BbNode.Cube(
+        BbCube(name, name, from, to, FloatArray(3), rotation, 0 to 0, 0f, false)
+    )
+
+    private fun convert(vararg roots: BbNode) =
+        BbModelConverter.convert(BbModel("test", 64, 64, roots.toList(), null)).bakeRoot()
+
+    @Test
+    fun `loose cubes named like standard parts go in those parts`() {
+        val flatRoot = convert(
+            cube("Head", floatArrayOf(-4f, 24f, -4f), floatArrayOf(4f, 32f, 4f)),
+            cube("Body", floatArrayOf(-4f, 12f, -2f), floatArrayOf(4f, 24f, 2f)),
+        )
+        assertEquals(-8f, singleCube(flatRoot.getChild("head")).minY)
+        assertEquals(0f, singleCube(flatRoot.getChild("body")).minY)
+        assertTrue(!flatRoot.getChild("head").hasChild("head_2"))
+    }
+
+    @Test
+    fun `extra parts don't replace standard ones`() {
+        val root = convert(
+            BbNode.Group("Head", floatArrayOf(0f, 24f, 0f), FloatArray(3), listOf(
+                cube("Head", floatArrayOf(-4f, 24f, -4f), floatArrayOf(4f, 32f, 4f)),
+            )),
+            // sanitizes to left_leg, but isn't mapped to it
+            BbNode.Group("left-leg", floatArrayOf(0f, 24f, 0f), FloatArray(3), listOf(
+                cube("cube", floatArrayOf(0f, 0f, 0f), floatArrayOf(1f, 1f, 1f)),
+            )),
+        )
+        assertTrue(!root.getChild("head").isEmpty)
+        assertTrue(root.hasChild("left_leg_2"))
+        assertTrue(root.getChild("left_leg").isEmpty)
+    }
+
+    @Test
+    fun `rotated overlay cubes keep their rotation`() {
+        val root = convert(
+            BbNode.Group("Head", floatArrayOf(0f, 24f, 0f), FloatArray(3), listOf(
+                cube("Hat Layer", floatArrayOf(-4f, 24f, -4f), floatArrayOf(4f, 32f, 4f), floatArrayOf(0f, 0f, 10f)),
+            )),
+        )
+        val wrapper = root.getChild("head").getChild("hat").getChild("hat_layer_r")
+        assertEquals(10f * PI.toFloat() / 180f, wrapper.zRot, 1e-5f)
+        assertTrue(!wrapper.isEmpty)
     }
 }

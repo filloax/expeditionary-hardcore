@@ -12,7 +12,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition
  * Converts a [BbModel] into a vanilla [LayerDefinition] shaped like the player model,
  * reusing vanilla animations.
  *
- * Requires groups named close to their standard player parts (ignoring case + some characters).
+ * Requires groups/cubes named close to their standard player parts (ignoring case + some characters).
  * - Extra parts are parented depending on Blockbench outliner.
  * - Missing parts are created empty
  */
@@ -52,31 +52,56 @@ object BbModelConverter {
     private val VIRTUAL_ROOT_PIVOT = floatArrayOf(0f, 24f, 0f)
 
     fun convert(model: BbModel): LayerDefinition {
+        val builder = Builder()
+        model.roots.forEach { builder.walk(it, builder.root) }
+        // PlayerModel looks all of these up for things like arrow overlays
+        STANDARD_PARTS.keys.forEach { builder.standardPart(it) }
+        OVERLAY_PARTS.keys.forEach { builder.overlayPart(it) }
+
         val mesh = MeshDefinition()
-        val builder = Builder(mesh)
-        model.roots.forEach { builder.walk(it, builder.rootCtx) }
-        builder.fillMissingStandardParts()
+        builder.root.children.values.forEach { it.build(mesh.root) }
         return LayerDefinition.create(mesh, model.textureWidth, model.textureHeight)
     }
 
-    private class BoneCtx(val part: PartDefinition, val pivot: FloatArray)
+    // Use to gradually build a part, as vanilla PartDefinition takes cubes at creation
+    private class Bone(val name: String, val pivot: FloatArray, val pose: PartPose) {
+        val cubes: CubeListBuilder = CubeListBuilder.create()
+        val children = linkedMapOf<String, Bone>()
 
-    private class Builder(mesh: MeshDefinition) {
-        val rootCtx = BoneCtx(mesh.root, VIRTUAL_ROOT_PIVOT)
-        val standardParts = mutableMapOf<String, BoneCtx>()
-        val overlayParts = mutableMapOf<String, BoneCtx>()
-        private val usedNames = mutableMapOf<PartDefinition, MutableSet<String>>()
+        // standard and overlay parts
+        fun fixedChild(name: String, pivot: FloatArray, rotation: FloatArray = FloatArray(3)) =
+            // misses pivot/rotation of duplicate group names, edge case anyways
+            children.getOrPut(name) { Bone(name, pivot, pose(this.pivot, pivot, rotation)) }
 
-        fun walk(node: BbNode, ctx: BoneCtx) {
+        // non-standard parts
+        fun extraChild(name: String, pivot: FloatArray, rotation: FloatArray): Bone {
+            val base = sanitizeName(name)
+            // ensure not replacing extra part with same name
+            var unique = base
+            var i = 2
+            while (unique in children || unique in STANDARD_PARTS || unique in OVERLAY_PARTS) unique = "${base}_${i++}"
+            return Bone(unique, pivot, pose(this.pivot, pivot, rotation)).also { children[unique] = it }
+        }
+
+        fun build(parent: PartDefinition) {
+            val part = parent.addOrReplaceChild(name, cubes, pose)
+            children.values.forEach { it.build(part) }
+        }
+    }
+
+    private class Builder {
+        val root = Bone("root", VIRTUAL_ROOT_PIVOT, PartPose.ZERO)
+
+        fun walk(node: BbNode, parent: Bone) {
             when (node) {
-                is BbNode.Cube -> addCube(node.cube, ctx)
-                is BbNode.Group -> walkGroup(node, ctx)
+                is BbNode.Cube -> addCube(node.cube, parent)
+                is BbNode.Group -> walkGroup(node, parent)
             }
         }
 
-        private fun walkGroup(group: BbNode.Group, ctx: BoneCtx) {
+        private fun walkGroup(group: BbNode.Group, parent: Bone) {
             val mapped = mappedName(group.name)
-            val groupCtx = when {
+            val bone = when {
                 mapped in STANDARD_PARTS -> standardPart(mapped!!, group.origin, group.rotation)
                 mapped in OVERLAY_PARTS -> overlayPart(mapped!!, group.origin, group.rotation)
                 // container groups (like a root group wrapping the whole model) are
@@ -86,81 +111,64 @@ object BbModelConverter {
                         ExpeditionaryHardcore.LOGGER.warn(
                             "bbmodel group '{}' contains player parts but has a rotation, ignoring it", group.name
                         )
-                    ctx
+                    parent
                 }
-                else -> childPart(ctx, group.name, group.origin, group.rotation)
+                else -> parent.extraChild(group.name, group.origin, group.rotation)
             }
-            group.children.forEach { walk(it, groupCtx) }
+            group.children.forEach { walk(it, bone) }
         }
 
-        //
-        private fun addCube(cube: BbCube, ctx: BoneCtx) {
-            val overlay = mappedName(cube.name)?.takeIf { it in OVERLAY_PARTS }
-            val target = when {
+        private fun addCube(cube: BbCube, parent: Bone) {
+            val mapped = mappedName(cube.name)
+            // in mc models a cube belongs to a part
+            val owner = when (mapped) {
                 // overlay cubes (like a "Hat Layer" element inside the Head group) go in
                 // their own part so vanilla can toggle them from skin customization settings
-                overlay != null -> overlayPart(overlay, ctx.pivot, FloatArray(3))
+                in OVERLAY_PARTS -> overlayPart(mapped!!).also {
+                    val standard = standardPart(OVERLAY_PARTS.getValue(mapped))
+                    if (parent !== root && parent !== standard && parent !== it)
+                        ExpeditionaryHardcore.LOGGER.warn(
+                            "bbmodel cube '{}' moved to {}, won't follow its group's animation", cube.name, mapped
+                        )
+                }
+                // models without groups, cubes named like the part
+                in STANDARD_PARTS if parent === root -> standardPart(mapped!!)
+                else -> parent
+            }
+            val target = when {
                 // vanilla cubes can't rotate, wrap in a part carrying the rotation
-                cube.hasRotation() -> childPart(ctx, cube.name + "_r", cube.origin, cube.rotation)
-                else -> ctx
+                cube.hasRotation() -> owner.extraChild(cube.name + "_r", cube.origin, cube.rotation)
+                // owner root (default) -> is extra prt
+                owner === root -> owner.extraChild(cube.name, owner.pivot, FloatArray(3))
+                else -> owner
             }
-            target.part.addOrReplaceChild(
-                uniqueName(target.part, sanitizeName(cube.name)),
-                CubeListBuilder.create()
-                    .texOffs(cube.uvOffset.first, cube.uvOffset.second)
-                    .mirror(cube.mirror)
-                    // similar to pose, flips coords due to MC coords being different than Blockbench
-                    // (flip x and y)
-                    .addBox(
-                        target.pivot[0] - cube.to[0],
-                        target.pivot[1] - cube.to[1],
-                        cube.from[2] - target.pivot[2],
-                        cube.to[0] - cube.from[0],
-                        cube.to[1] - cube.from[1],
-                        cube.to[2] - cube.from[2],
-                        CubeDeformation(cube.inflate),
-                    ),
-                PartPose.ZERO,
-            )
+            target.cubes
+                .texOffs(cube.uvOffset.first, cube.uvOffset.second)
+                .mirror(cube.mirror)
+                // similar to pose, flips coords due to MC coords being different than Blockbench
+                // (flip x and y)
+                .addBox(
+                    target.pivot[0] - cube.to[0],
+                    target.pivot[1] - cube.to[1],
+                    cube.from[2] - target.pivot[2],
+                    cube.to[0] - cube.from[0],
+                    cube.to[1] - cube.from[1],
+                    cube.to[2] - cube.from[2],
+                    CubeDeformation(cube.inflate),
+                )
         }
 
-        private fun standardPart(name: String, pivot: FloatArray, rotation: FloatArray) =
-            standardParts.getOrPut(name) {
-                BoneCtx(rootCtx.part.addOrReplaceChild(name, CubeListBuilder.create(), pose(rootCtx.pivot, pivot, rotation)), pivot)
-            }
+        fun standardPart(
+            name: String,
+            pivot: FloatArray = STANDARD_PARTS.getValue(name),
+            rotation: FloatArray = FloatArray(3),
+        ) = root.fixedChild(name, pivot, rotation)
 
-        private fun overlayPart(name: String, pivot: FloatArray, rotation: FloatArray): BoneCtx =
-            overlayParts.getOrPut(name) {
-                val parent = standardParts[OVERLAY_PARTS.getValue(name)]
-                    ?: standardPart(OVERLAY_PARTS.getValue(name), STANDARD_PARTS.getValue(OVERLAY_PARTS.getValue(name)), FloatArray(3))
-                BoneCtx(parent.part.addOrReplaceChild(name, CubeListBuilder.create(), pose(parent.pivot, pivot, rotation)), pivot)
-            }
-
-        private fun childPart(parent: BoneCtx, name: String, pivot: FloatArray, rotation: FloatArray) = BoneCtx(
-            parent.part.addOrReplaceChild(
-                uniqueName(parent.part, sanitizeName(name)),
-                CubeListBuilder.create(),
-                pose(parent.pivot, pivot, rotation),
-            ),
-            pivot,
-        )
-
-        fun fillMissingStandardParts() {
-            STANDARD_PARTS.forEach { (name, pivot) ->
-                if (name !in standardParts) standardPart(name, pivot, FloatArray(3))
-            }
-            OVERLAY_PARTS.keys.forEach { name ->
-                if (name !in overlayParts)
-                    overlayPart(name, standardParts.getValue(OVERLAY_PARTS.getValue(name)).pivot, FloatArray(3))
-            }
-        }
-
-        private fun uniqueName(parent: PartDefinition, name: String): String {
-            val used = usedNames.getOrPut(parent) { mutableSetOf() }
-            var result = name
-            var i = 2
-            while (!used.add(result)) result = "${name}_${i++}"
-            return result
+        fun overlayPart(name: String, pivot: FloatArray? = null, rotation: FloatArray = FloatArray(3)): Bone {
+            // small edge case: if overlay loaded before standard, in case there was custom pivot/rotation it gets lost
+            // as this sets it to default
+            val standard = standardPart(OVERLAY_PARTS.getValue(name))
+            return standard.fixedChild(name, pivot ?: standard.pivot, rotation)
         }
     }
 
