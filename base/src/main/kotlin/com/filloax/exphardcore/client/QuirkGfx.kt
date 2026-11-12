@@ -2,18 +2,15 @@ package com.filloax.exphardcore.client
 
 import com.filloax.exphardcore.character.quirk.LifeQuirkClientInfo
 import com.filloax.exphardcore.effect.ExpeditionaryHardcoreMobEffects
-import com.mojang.authlib.minecraft.client.MinecraftClient
 import net.minecraft.ChatFormatting
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.Hud
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import net.minecraft.world.effect.MobEffectInstance
-import net.minecraft.world.effect.MobEffects
-import java.util.Optional
 
 /**
  * All quirks share one mob effect (ExpeditionaryHardcoreMobEffects.LIFE_QUIRK),
@@ -73,7 +70,9 @@ object QuirkGfx {
             duration,
             Component.translatableWithFallback(description, description).withStyle(ChatFormatting.GRAY),
         )
-        graphics.setTooltipForNextFrame(font, lines, Optional.empty(), mouseX, mouseY)
+        graphics.setTooltipForNextFrame(
+            font, lines.map { it.visualOrderText }, DefaultTooltipPositioner.INSTANCE, mouseX, mouseY, true
+        )
     }
 
     private fun quirkInfoFor(effect: MobEffectInstance?): LifeQuirkClientInfo? {
