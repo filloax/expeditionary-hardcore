@@ -19,11 +19,11 @@ interface RespawnConfigDef {
 
 // Used for both config and remote
 object RespawnConfigDefaults: RespawnConfigDef {
-    override val respawnRadiusMin = 500
+    override val respawnRadiusMin = 1500
     override val respawnRadiusMax = 5000
-    override val minDistanceFromLastRespawn = 1000
-    override val respawnCenter = RespawnCenter.WORLD_ORIGIN
-    override val respawnDistribution = RespawnDistribution.UNIFORM
+    override val minDistanceFromLastRespawn = 2000
+    override val respawnCenter = RespawnCenter.DEATH_POS
+    override val respawnDistribution = RespawnDistribution.MIDPOINT_MORE_LIKELY
     override val respawnDistributionMidpoint = -1
     override val avoidOceans = true
     override val forcedRespawnLocations = null
