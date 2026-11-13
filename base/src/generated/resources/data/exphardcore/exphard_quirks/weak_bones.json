@@ -1,0 +1,19 @@
+{
+  "attributeModifiers": [
+    {
+      "amount": -0.15,
+      "attribute": "minecraft:block_break_speed",
+      "operation": "add_multiplied_base"
+    },
+    {
+      "amount": -0.15,
+      "attribute": "minecraft:attack_damage",
+      "operation": "add_multiplied_base"
+    }
+  ],
+  "builtin": true,
+  "description": "effect.exphardcore.quirk.weak_bones.desc",
+  "icon": "minecraft:weakness",
+  "iconIsVanillaEffect": true,
+  "name": "effect.exphardcore.quirk.weak_bones"
+}

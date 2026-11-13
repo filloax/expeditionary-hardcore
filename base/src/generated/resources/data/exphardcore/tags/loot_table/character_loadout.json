@@ -1,6 +1,16 @@
 {
   "values": [
-    "exphardcore:loadout/sample_warrior",
-    "exphardcore:loadout/sample_miner"
+    "exphardcore:loadout/cook",
+    "exphardcore:loadout/exorcist",
+    "exphardcore:loadout/explorer",
+    "exphardcore:loadout/fisherman",
+    "exphardcore:loadout/goldminer",
+    "exphardcore:loadout/gravedigger",
+    "exphardcore:loadout/lumberjack",
+    "exphardcore:loadout/planeswalker",
+    "exphardcore:loadout/scout",
+    "exphardcore:loadout/shepard",
+    "exphardcore:loadout/swordman",
+    "exphardcore:loadout/thinkerer"
   ]
 }

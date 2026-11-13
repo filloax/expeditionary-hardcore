@@ -25,6 +25,7 @@ import net.minecraft.data.PackOutput
 import net.minecraft.resources.Identifier
 import net.minecraft.tags.TagEntry
 import net.minecraft.tags.TagFile
+import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.ai.attributes.Attribute
 import net.minecraft.world.entity.ai.attributes.Attributes
@@ -95,41 +96,67 @@ class PlayerModelDefinitionProvider(private val output: FabricPackOutput) : Data
 class LifeQuirkDefinitionProvider(output: FabricPackOutput) : DataProvider {
     private val pathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, LifeQuirkDefinitions.DIRECTORY)
 
-    data class SimpleAttributeDef(
-        val name: String,
-        val icon: String,
-        val attribute: Holder<Attribute>,
-        val amount: Double,
-        val operation: QuirkModifierOperation = QuirkModifierOperation.ADD_MULTIPLIED_TOTAL,
+    private fun modifier(
+        attribute: Holder<Attribute>,
+        amount: Double,
+        operation: QuirkModifierOperation = QuirkModifierOperation.ADD_MULTIPLIED_TOTAL,
+    ) = QuirkAttributeModifier(attribute.unwrapKey().orElseThrow().identifier(), operation, amount)
+
+    private fun vanillaEffectQuirk(
+        name: String,
+        icon: Holder<MobEffect>,
+        attributeModifiers: List<QuirkAttributeModifier> = listOf(),
+        behavior: QuirkBehaviorRef? = null,
+    ) = id(name) to LifeQuirkDefinition(
+        icon = icon.unwrapKey().orElseThrow().identifier(),
+        iconIsVanillaEffect = true,
+        name = "effect.exphardcore.quirk.$name",
+        description = "effect.exphardcore.quirk.$name.desc",
+        attributeModifiers = attributeModifiers,
+        behavior = behavior,
+        builtin = true,
     )
 
     override fun run(cache: CachedOutput): CompletableFuture<*> {
-        val attributeQuirks = listOf(
-            SimpleAttributeDef("slow", "slowness", Attributes.MOVEMENT_SPEED, -0.10),
-            SimpleAttributeDef("frail", "wither", Attributes.MAX_HEALTH, -2.0, QuirkModifierOperation.ADD_VALUE),
-            SimpleAttributeDef("clumsy", "mining_fatigue", Attributes.ATTACK_SPEED, -0.10),
-            SimpleAttributeDef("airless", "water_breathing", Attributes.OXYGEN_BONUS, -0.20),
-            SimpleAttributeDef("weak", "weakness", Attributes.ATTACK_DAMAGE, -0.10),
-        ).map { (name, icon, attribute, amount, operation) ->
-            id(name) to LifeQuirkDefinition(
-                icon = Identifier.withDefaultNamespace(icon),
-                iconIsVanillaEffect = true,
-                name = "effect.exphardcore.quirk.$name",
-                description = "effect.exphardcore.quirk.$name.desc",
-                attributeModifiers = listOf(
-                    QuirkAttributeModifier(
-                        attribute.unwrapKey().orElseThrow().identifier(),
-                        operation,
-                        amount,
-                    ),
-                ),
-                builtin = true,
-            )
-        }
-
         val quirks = mapOf(
-            *attributeQuirks.toTypedArray(),
-
+            vanillaEffectQuirk(
+                "slow", MobEffects.SLOWNESS,
+                attributeModifiers = listOf(
+                    modifier(Attributes.MOVEMENT_SPEED, -0.10),
+                ),
+            ),
+            vanillaEffectQuirk(
+                "frail", MobEffects.WITHER,
+                attributeModifiers = listOf(
+                    modifier(Attributes.MAX_HEALTH, -2.0, QuirkModifierOperation.ADD_VALUE),
+                ),
+            ),
+            vanillaEffectQuirk(
+                "clumsy", MobEffects.MINING_FATIGUE,
+                attributeModifiers = listOf(
+                    modifier(Attributes.ATTACK_SPEED, -0.10),
+                ),
+            ),
+            vanillaEffectQuirk(
+                "weak_ankles", MobEffects.SLOWNESS,
+                attributeModifiers = listOf(
+                    modifier(Attributes.SAFE_FALL_DISTANCE, -1.0, QuirkModifierOperation.ADD_VALUE),
+                ),
+            ),
+            vanillaEffectQuirk(
+                "smoker", MobEffects.WIND_CHARGED,
+                attributeModifiers = listOf(
+                    modifier(Attributes.OXYGEN_BONUS, -0.33, QuirkModifierOperation.ADD_MULTIPLIED_BASE),
+                    modifier(Attributes.BURNING_TIME, 0.5, QuirkModifierOperation.ADD_MULTIPLIED_BASE),
+                ),
+            ),
+            vanillaEffectQuirk(
+                "weak_bones", MobEffects.WEAKNESS,
+                attributeModifiers = listOf(
+                    modifier(Attributes.BLOCK_BREAK_SPEED, -0.15, QuirkModifierOperation.ADD_MULTIPLIED_BASE),
+                    modifier(Attributes.ATTACK_DAMAGE, -0.15, QuirkModifierOperation.ADD_MULTIPLIED_BASE),
+                ),
+            ),
             id("heavy_boned") to LifeQuirkDefinition(
                 icon = id("heavy_boned"),
                 iconIsVanillaEffect = false,
@@ -149,11 +176,8 @@ class LifeQuirkDefinitionProvider(output: FabricPackOutput) : DataProvider {
                 ),
                 builtin = true,
             ),
-            id("paranoia") to LifeQuirkDefinition(
-                icon = Identifier.withDefaultNamespace("darkness"),
-                iconIsVanillaEffect = true,
-                name = "effect.exphardcore.quirk.paranoia",
-                description = "effect.exphardcore.quirk.paranoia.desc",
+            vanillaEffectQuirk(
+                "paranoia", MobEffects.DARKNESS,
                 behavior = QuirkBehaviorRef(
                     LifeQuirkBehaviors.RANDOM_AMBIENT_SOUND,
                     Json.encodeToJsonElement(
@@ -166,20 +190,15 @@ class LifeQuirkDefinitionProvider(output: FabricPackOutput) : DataProvider {
                         )
                     ).jsonObject,
                 ),
-                builtin = true,
             ),
-            id("hungry") to LifeQuirkDefinition(
-                icon = Identifier.withDefaultNamespace("hunger"),
-                iconIsVanillaEffect = true,
-                name = "effect.exphardcore.quirk.hungry",
-                description = "effect.exphardcore.quirk.hungry.desc",
+            vanillaEffectQuirk(
+                "hungry", MobEffects.HUNGER,
                 behavior = QuirkBehaviorRef(
                     LifeQuirkBehaviors.HUNGER_MODIFIER,
                     Json.encodeToJsonElement(
                         HungerModifierBehavior.Params(exhaustionMultiplier = 1.05f)
                     ).jsonObject,
                 ),
-                builtin = true,
             ),
         )
 
@@ -229,9 +248,19 @@ class LootTableTagProvider(output: FabricPackOutput) : DataProvider {
     override fun run(cache: CachedOutput): CompletableFuture<*> {
         val tagFile = TagFile(
             listOf(
-                TagEntry.element(id("loadout/sample_warrior")),
-                TagEntry.element(id("loadout/sample_miner")),
-            ),
+                "cook",
+                "exorcist",
+                "explorer",
+                "fisherman",
+                "goldminer",
+                "gravedigger",
+                "lumberjack",
+                "planeswalker",
+                "scout",
+                "shepard",
+                "swordman",
+                "thinkerer",
+            ).map { TagEntry.element(id("loadout/$it")) },
             false,
         )
         val tagId = ExpeditionaryHardcoreTags.LOOT_TABLE_CHARACTER_LOADOUT.location()
