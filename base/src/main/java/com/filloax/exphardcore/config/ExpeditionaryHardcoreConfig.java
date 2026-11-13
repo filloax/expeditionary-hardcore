@@ -42,4 +42,8 @@ public final class ExpeditionaryHardcoreConfig {
     @ConfigEntry(id = "resetEnderChest", translation = T_PREF + "resetEnderChest.name")
     @Comment(value = "Reset ender chest for player on death", translation = T_PREF + "resetEnderChest.comment")
     public static boolean resetEnderChest = true;
+
+    @ConfigEntry(id = "enableCustomHeartsIcon", translation = T_PREF + "enableCustomHeartsIcon.name")
+    @Comment(value = "Use a custom hearts icon (needs resource pack, not provided currently)", translation = T_PREF + "enableCustomHeartsIcon.comment")
+    public static boolean enableCustomHeartsIcon = false;
 }

@@ -102,6 +102,8 @@
   "exphardcore.config.main.enableLifeQuirks.comment": "Dai ad ogni nuovo personaggio un effetto minore casuale",
   "exphardcore.config.main.resetEnderChest.name": "Resetta Ender Chest",
   "exphardcore.config.main.resetEnderChest.comment": "Resetta Ender Chest per un giocatore alla morte",
+  "exphardcore.config.main.enableCustomHeartsIcon.name": "Abilita icona cuori personalizzata",
+  "exphardcore.config.main.enableCustomHeartsIcon.comment": "Usa un icona cuori diversa (richiede resource pack, non fornito al momento)",
   "exphardcore.config.respawn.respawnDistantHorizonsDisableSeconds.name": "Durata disattivazione Distant Horizons al respawn (secondi)",
   "exphardcore.config.respawn.respawnDistantHorizonsDisableSeconds.comment": "Con Distant Horizons: secondi per cui viene disattivato dopo un respawn. 0 disattiva questa funzione. Per non respawnare in un LoD"
 }

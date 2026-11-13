@@ -1,6 +1,7 @@
 package com.filloax.exphardcore.client
 
 import com.filloax.exphardcore.ExpeditionaryHardcore
+import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfig
 import net.minecraft.client.Minecraft
 import net.minecraft.data.AtlasIds
 import net.minecraft.resources.Identifier
@@ -22,12 +23,17 @@ object HeartGfx {
             return vanillaSprite
         }
 
-        val overrideId = overrideIds.getOrPut(vanillaSprite) {
-            Identifier.fromNamespaceAndPath(ExpeditionaryHardcore.MOD_ID, vanillaSprite.path)
+        if (ExpeditionaryHardcoreConfig.enableCustomHeartsIcon) {
+            val overrideId = overrideIds.getOrPut(vanillaSprite) {
+                Identifier.fromNamespaceAndPath(ExpeditionaryHardcore.MOD_ID, vanillaSprite.path)
+            }
+
+            // lookup without caching to handle resource reload
+            val atlas = Minecraft.getInstance().atlasManager.getAtlasOrThrow(AtlasIds.GUI)
+            if (atlas.getSprite(overrideId) !== atlas.missingSprite())
+                return overrideId
         }
-        // lookup without caching to handle resource reload
-        // TODO remove when we have our own texture always
-        val atlas = Minecraft.getInstance().atlasManager.getAtlasOrThrow(AtlasIds.GUI)
-        return if (atlas.getSprite(overrideId) !== atlas.missingSprite()) overrideId else vanillaSprite
+
+        return vanillaSprite
     }
 }
