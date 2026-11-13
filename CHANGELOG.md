@@ -12,6 +12,7 @@
 - `resetEnderChest` config, clears the player's ender chest on death (on by default)
 - New respawn center option: death position
 - Add mod icon
+- Update default settings for respawn
 - Fix player model crash with stuck arrows
 - Fix crash when Apibalego is not installed
 - Fix quirk description vanishing in the effect gfx
