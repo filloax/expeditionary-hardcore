@@ -23,7 +23,7 @@ object HeartGfx {
             return vanillaSprite
         }
 
-        if (ExpeditionaryHardcoreConfig.enableCustomHeartsIcon) {
+        if (ExpeditionaryHardcoreConfig.enableCustomHeartsIcon || ExpeditionaryHardcore.cydoniaMode) {
             val overrideId = overrideIds.getOrPut(vanillaSprite) {
                 Identifier.fromNamespaceAndPath(ExpeditionaryHardcore.MOD_ID, vanillaSprite.path)
             }
