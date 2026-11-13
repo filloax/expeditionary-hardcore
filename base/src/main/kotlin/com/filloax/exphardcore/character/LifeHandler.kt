@@ -95,6 +95,8 @@ object LifeHandler {
         val life = player.getExpeditionLifeOrNull() ?: return
 
         life.deathPoint = player.blockPosition()
+        life.deathGameTime = player.level().server.overworld().gameTime
+        life.deathRealTime = System.currentTimeMillis()
         life.setDirty()
         player.syncExpeditionLife()
 
