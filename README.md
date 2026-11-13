@@ -19,7 +19,7 @@ position, you may find a lost logbook...
 Many things from enabling specific features to specifics on how respawn location
 is picked can be configured (see below).
 
-See the [Modrinth](todo) or [Curseforge](todo) page, and the [WIKI](https://github.com/filloax/expeditionary-hardcore/wiki)
+See the [Modrinth](https://modrinth.com/mod/expeditionary-hardcore) or [Curseforge](https://www.curseforge.com/minecraft/mc-mods/expeditionary-hardcore/) page, and the [WIKI](https://github.com/filloax/expeditionary-hardcore/wiki)
 for more information. For bug reports check the [Issues](https://github.com/filloax/expeditionary-hardcore/issues).
 
 Originally made for a streaming series, [The Obsidian Expedition](todo). Check it out! Especially the
