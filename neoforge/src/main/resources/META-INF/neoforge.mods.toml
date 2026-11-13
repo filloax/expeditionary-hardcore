@@ -12,9 +12,10 @@ issueTrackerURL="https://github.com/filloax/expeditionary-hardcore/issues"
     version="${version_prefix}-neoforge"
     displayName="${mod_name}"
     displayURL="https://github.com/filloax/expeditionary-hardcore"
-    logoFile="${mod_icon}"
-    authors="Filloax"
-    description='''Expeditionary Hardcore.'''
+    iconFile="${mod_icon}"
+    bannerFile="assets/exphardcore/banner-exp-hardcore.png"
+    authors="Filloax (code); Reivaxelain, PunPunk, quowokka (gfx)"
+    description='''Respawn in a random position every death, with random traits.'''
 
 [[dependencies]]
     modId="neoforge"
