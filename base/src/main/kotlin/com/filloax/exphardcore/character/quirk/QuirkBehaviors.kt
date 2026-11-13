@@ -23,6 +23,9 @@ interface QuirkBehavior {
     /** [damage] is the vanilla fall damage result, only called when > 0; returns the replacement */
     fun onFallDamage(player: ServerPlayer, damage: Int): Int = damage
 
+    /** Called for every food exhaustion increase, returns replacement */
+    fun modifyFoodExhaustion(player: ServerPlayer, amount: Float): Float = amount
+
     fun onTick(player: ServerPlayer) = Unit
     val onTickPeriod: Int get() = 20
 }
@@ -30,6 +33,7 @@ interface QuirkBehavior {
 object LifeQuirkBehaviors {
     val FALL_IMPACT = id("fall_impact")
     val RANDOM_AMBIENT_SOUND = id("random_ambient_sound")
+    val HUNGER_MODIFIER = id("hunger_modifier")
 
     val factories: Map<Identifier, (JsonObject) -> QuirkBehavior> = mapOf(
         FALL_IMPACT to { params ->
@@ -37,6 +41,9 @@ object LifeQuirkBehaviors {
         },
         RANDOM_AMBIENT_SOUND to { params ->
             RandomAmbientSoundBehavior(Json.decodeFromJsonElement(RandomAmbientSoundBehavior.Params.serializer(), params))
+        },
+        HUNGER_MODIFIER to { params ->
+            HungerModifierBehavior(Json.decodeFromJsonElement(HungerModifierBehavior.Params.serializer(), params))
         },
     )
 }
@@ -103,4 +110,14 @@ class RandomAmbientSoundBehavior(private val params: Params) : QuirkBehavior {
             player.addEffect(MobEffectInstance(effect, params.applyEffectDurationTicks, 0))
         }
     }
+}
+
+/** Scales food exhaustion (aka hunger drain) */
+class HungerModifierBehavior(private val params: Params) : QuirkBehavior {
+    @Serializable
+    data class Params(
+        val exhaustionMultiplier: Float = 1.05f,
+    )
+
+    override fun modifyFoodExhaustion(player: ServerPlayer, amount: Float): Float = amount * params.exhaustionMultiplier
 }

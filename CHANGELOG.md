@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.0.0
+
+*First release*
+
+- New loadouts from the series
+- Adapt quirks from the series
+- Final character skins, replacing the placeholder ones
+- Hardcore hearts in the HUD
+- `enableCustomHeartsIcon` config to use a custom hearts icon from a resource pack (off by default)
+- `resetEnderChest` config, clears the player's ender chest on death (on by default)
+- New respawn center option: death position
+- Add mod icon
+- Update default settings for respawn
+- Fix player model crash with stuck arrows
+- Fix crash when Apibalego is not installed
+- Fix quirk description vanishing in the effect gfx
+- Fix loadout items going into the boots slot
+- Update bundled Apibalego and FilloaxLib (fixes a NeoForge warning), update KFF requirement
+- \[Cydonia mode] API entry to send events to Apibalego
+
 ## 0.4.2
 
 *Beta*

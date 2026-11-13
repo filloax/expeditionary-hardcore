@@ -1,3 +1,10 @@
+#   "chore: release": all targets
+#   "chore: release(modrinth)": only x platform (github, curseforge, modrinth)
+env:
+  # TODO: set when created projs
+  CURSEFORGE_ID: ""
+  MODRINTH_ID: ""
+
 on:
   workflow_dispatch:
   push:
@@ -12,10 +19,35 @@ jobs:
       contents: read
     outputs:
       version: ${{ steps.get_version.outputs.modVersion }}
+      version_type: ${{ steps.get_version_type.outputs.versionType }}
+      version_suffix: ${{ steps.get_version_type.outputs.versionSuffix }}
       java_version: ${{ steps.java_version.outputs.javaVersion }}
       mc_version: ${{ steps.mc_version.outputs.value }}
+      mc_version_range: ${{ steps.mc_version_range.outputs.value }}
+      github: ${{ steps.targets.outputs.github }}
+      curseforge: ${{ steps.targets.outputs.curseforge }}
+      modrinth: ${{ steps.targets.outputs.modrinth }}
 
     steps:
+    - name: Read release targets
+      id: targets
+      env:
+        COMMIT_MSG: ${{ github.event.head_commit.message }}
+      run: |
+        ALL="github curseforge modrinth"
+        TARGETS=$(grep -o -m1 'chore: release([^)]*)' <<< "$COMMIT_MSG" | sed 's/.*(\(.*\))/\1/' | tr ',' ' ' || true)
+        TARGETS=${TARGETS:-$ALL}
+        for t in $TARGETS; do
+          if ! grep -qw "$t" <<< "$ALL"; then
+            echo "::error::Unknown release target '$t' (valid: $ALL)"
+            exit 1
+          fi
+        done
+        for t in $ALL; do
+          if grep -qw "$t" <<< "$TARGETS"; then echo "$t=true" >> $GITHUB_OUTPUT; else echo "$t=false" >> $GITHUB_OUTPUT; fi
+        done
+        echo "Release targets: $TARGETS"
+
     - uses: actions/checkout@v4
 
     - name: "Read Java version"
@@ -32,12 +64,26 @@ jobs:
         file: 'gradle/libs.versions.toml'
         field: 'versions.minecraft'
 
+    - name: "Read MC version range"
+      uses: SebRollen/toml-action@v1.2.0
+      id: mc_version_range
+      with:
+        file: 'gradle/libs.versions.toml'
+        field: 'versions.minecraft-range'
+
     - name: "Read mod version"
       uses: BrycensRanch/read-properties-action@v1.0.4
       id: get_version
       with:
         file: gradle.properties
         property: modVersion
+
+    - name: "Read version type"
+      id: get_version_type
+      run: |
+        VERSION_TYPE=$(grep -m1 '^versionType' gradle.properties | cut -d'=' -f2 | xargs)
+        echo "versionType=${VERSION_TYPE:-release}" >> $GITHUB_OUTPUT
+        echo "versionSuffix=${VERSION_TYPE:+-$VERSION_TYPE}" >> $GITHUB_OUTPUT
 
     - name: Set up JDK
       uses: actions/setup-java@v4
@@ -72,9 +118,55 @@ jobs:
           neoforge/build/libs/*.jar
           latest_changelog.txt
 
+  build-cydonia:
+    name: Build (Cydonia mode)
+    needs: build
+    if: needs.build.outputs.github == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ needs.build.outputs.java_version }}
+        distribution: 'temurin'
+        settings-path: ${{ github.workspace }}
+
+    - name: Make Gradle Wrapper Executable
+      if: ${{ runner.os != 'Windows' }}
+      run: chmod +x ./gradlew
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
+
+    - name: Build with Gradle
+      run: ./gradlew fabric:build neoforge:build -PcydoniaMode=true
+      env:
+        GRADLE_OPTS: "-Djava.net.preferIPv4Stack=true"
+
+    - name: Rename jars
+      run: |
+        mkdir cydonia
+        for f in fabric/build/libs/*.jar neoforge/build/libs/*.jar; do
+          case "$f" in *-sources.jar|*-dev.jar|*-javadoc.jar) continue;; esac
+          cp "$f" "cydonia/$(basename "$f" .jar)-cydonia.jar"
+        done
+        ls cydonia
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: cydonia-artifacts
+        path: cydonia/*.jar
+
   release-github:
     name: Release (GitHub)
-    needs: build
+    needs: [build, build-cydonia]
+    if: needs.build.outputs.github == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -84,6 +176,12 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: build-artifacts
+
+    - name: Download Cydonia build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: cydonia-artifacts
+        path: cydonia
 
     - name: Append dependencies to release body
       run: |
@@ -104,7 +202,14 @@ jobs:
 
         *Included in current version*
         - [FilloaxLib](https://modrinth.com/mod/filloaxlib)
+        
+        *Included in Cydonia build*
         - [Apibalego](https://github.com/filloax/apibalego)
+        
+        > Cydonia build is the one for the streamed run, has features
+        > unsafe for normal play such as sending data to the API
+        > backend on death / logbook update. **Not recommended for**
+        > **players!**
         EOF
 
     - name: Publish (GitHub)
@@ -121,9 +226,58 @@ jobs:
           base/build/libs/*.jar
           fabric/build/libs/*.jar
           neoforge/build/libs/*.jar
+          cydonia/*.jar
 
     - name: Trigger Jitpack build
       if: steps.publish_github.outcome == 'success'
       run: |
         sleep 10s && curl --max-time 0 -L \
           https://jitpack.io/com/github/filloax/expeditionary-hardcore/expeditionary-hardcore-base/${{ needs.build.outputs.version }}-${{ needs.build.outputs.mc_version }}/expeditionary-hardcore-base-${{ needs.build.outputs.version }}-${{ needs.build.outputs.mc_version }}.pom
+
+  release-platform:
+    name: Publish (${{ matrix.name }})
+    needs: build
+    if: needs.build.outputs.curseforge == 'true' || needs.build.outputs.modrinth == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: neoforge
+            name: Neoforge
+            dependencies: |
+              resourceful-config(required)
+              kotlin-for-forge(required)
+          - platform: fabric
+            name: Fabric
+            dependencies: |
+              resourceful-config(required)
+              fabric-language-kotlin(required)
+              fabric-api(required)
+              modmenu(recommended)
+
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+
+    # mc-publish skips platforms without a token
+    - name: Publish
+      uses: Kir-Antipov/mc-publish@v3.3
+      with:
+        curseforge-token: ${{ needs.build.outputs.curseforge == 'true' && env.CURSEFORGE_ID != '' && secrets.TOKEN_CURSEFORGE || '' }}
+        curseforge-id: ${{ env.CURSEFORGE_ID }}
+        modrinth-token: ${{ needs.build.outputs.modrinth == 'true' && env.MODRINTH_ID != '' && secrets.TOKEN_MODRINTH || '' }}
+        modrinth-id: ${{ env.MODRINTH_ID }}
+        name: Expeditionary Hardcore ${{ needs.build.outputs.version }}${{ needs.build.outputs.version_suffix }} - ${{ needs.build.outputs.mc_version }} ${{ matrix.name }}
+        version: "${{ needs.build.outputs.version }}-${{ needs.build.outputs.mc_version }}${{ needs.build.outputs.version_suffix }}-${{ matrix.platform }}"
+        version-type: ${{ needs.build.outputs.version_type }}
+        files: |
+          ${{ matrix.platform }}/build/libs/!(*-@(dev|sources|javadoc)).jar
+          ${{ matrix.platform }}/build/libs/*-@(dev|sources|javadoc).jar
+        game-versions: ${{ needs.build.outputs.mc_version_range }}
+        dependencies: ${{ matrix.dependencies }}
+        java: ${{ needs.build.outputs.java_version }}
+        loaders: ${{ matrix.platform }}
+        changelog-file: latest_changelog.txt

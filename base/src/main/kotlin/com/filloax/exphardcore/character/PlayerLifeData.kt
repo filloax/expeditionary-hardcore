@@ -57,6 +57,10 @@ data class PlayerLifeData(
     var deathPoint: BlockPos? = null,
     @Serializable(with = IdentifierSerializer::class)
     var loadoutId: Identifier? = null,
+    var spawnGameTime: Long? = null,
+    var spawnRealTime: Long? = null,
+    var deathGameTime: Long? = null,
+    var deathRealTime: Long? = null,
 ) {
     @Transient
     lateinit var server: MinecraftServer
@@ -110,7 +114,9 @@ data class PlayerLifeData(
                 false,
                 null,
                 player.blockPosition(),
-                model
+                model,
+                spawnGameTime = player.level().server.overworld().gameTime,
+                spawnRealTime = System.currentTimeMillis(),
             ).also {
                 finalize(it, player.level().server)
                 allLives.add(it)

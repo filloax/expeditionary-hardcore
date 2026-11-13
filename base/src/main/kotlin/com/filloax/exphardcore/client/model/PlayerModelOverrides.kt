@@ -53,13 +53,13 @@ object PlayerModelOverrides {
     fun loadModel(id: Identifier, text: String) {
         try {
             val bbModel = BbModel.parse(text)
-            val root = BbModelConverter.convert(bbModel).bakeRoot()
+            val model = BbPlayerModel(BbModelConverter.convert(bbModel).bakeRoot())
             val texture = registerTexture(id, bbModel)
                 ?: run {
                     ExpeditionaryHardcore.LOGGER.warn("Player model {} has no embedded texture, skipping", id)
                     return
                 }
-            models[id] = PlayerModelOverride(id, PlayerModel(root, false), texture)
+            models[id] = PlayerModelOverride(id, model, texture)
             ExpeditionaryHardcore.LOGGER.info("Loaded player model {}", id)
         } catch (e: Exception) {
             ExpeditionaryHardcore.LOGGER.error("Failed to load player model {}", id, e)

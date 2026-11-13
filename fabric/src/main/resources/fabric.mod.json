@@ -5,7 +5,10 @@
   "name": "${mod_name}",
   "description": "Expeditionary Hardcore.",
   "authors": [
-    "Filloax"
+    "Filloax",
+    "Reivaxelain",
+    "PunPunk",
+    "quowokka"
   ],
   "contact": {
     "homepage": "https://github.com/filloax/expeditionary-hardcore",

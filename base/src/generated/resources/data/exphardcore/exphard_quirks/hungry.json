@@ -1,0 +1,10 @@
+{
+  "behavior": {
+    "type": "exphardcore:hunger_modifier"
+  },
+  "builtin": true,
+  "description": "effect.exphardcore.quirk.hungry.desc",
+  "icon": "minecraft:hunger",
+  "iconIsVanillaEffect": true,
+  "name": "effect.exphardcore.quirk.hungry"
+}

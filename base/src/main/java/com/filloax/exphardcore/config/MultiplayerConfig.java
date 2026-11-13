@@ -3,8 +3,10 @@ package com.filloax.exphardcore.config;
 import com.teamresourceful.resourcefulconfig.api.annotations.Category;
 import com.teamresourceful.resourcefulconfig.api.annotations.Comment;
 import com.teamresourceful.resourcefulconfig.api.annotations.ConfigEntry;
+import com.teamresourceful.resourcefulconfig.api.annotations.ConfigInfo;
 
 @Category("multiplayer")
+@ConfigInfo(title = "Multiplayer", titleTranslation = "exphardcore.config.multiplayer.title")
 public final class MultiplayerConfig {
     public static final String T_PREF = "exphardcore.config.multiplayer.";
 

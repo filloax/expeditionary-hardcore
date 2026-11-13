@@ -45,7 +45,9 @@ object LifeQuirksResolver {
                 )
 
     fun init() {
-        LifeQuirksApibalego.init()
+        if (ExpeditionaryHardcore.modCompat.isApibalegoLoaded) {
+            LifeQuirksApibalego.init()
+        }
     }
 }
 

@@ -110,9 +110,6 @@ dependencies {
 		if (cydoniaMode) {
 			implementation(it) {
 				exclude(module = "kotlin-stdlib")
-				// exclude modmenu from apibalego until it gets fixed on that side
-				// I say, as if I wasn't the one that should fix it
-				exclude(group = "com.terraformersmc", module = "modmenu")
 //				capabilities {
 //					requireCapability("com.github.filloax:apibalego-fabric")
 //				}

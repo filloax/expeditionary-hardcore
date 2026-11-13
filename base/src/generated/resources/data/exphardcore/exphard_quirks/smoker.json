@@ -1,0 +1,19 @@
+{
+  "attributeModifiers": [
+    {
+      "amount": -0.33,
+      "attribute": "minecraft:oxygen_bonus",
+      "operation": "add_multiplied_base"
+    },
+    {
+      "amount": 0.5,
+      "attribute": "minecraft:burning_time",
+      "operation": "add_multiplied_base"
+    }
+  ],
+  "builtin": true,
+  "description": "effect.exphardcore.quirk.smoker.desc",
+  "icon": "minecraft:wind_charged",
+  "iconIsVanillaEffect": true,
+  "name": "effect.exphardcore.quirk.smoker"
+}

@@ -4,6 +4,7 @@ import com.filloax.exphardcore.ExpeditionaryHardcore
 import com.filloax.exphardcore.character.quirk.LifeQuirkHandler
 import com.filloax.exphardcore.character.team.TeamManager
 import com.filloax.exphardcore.compat.DistantHorizonsWorldGenCompat
+import com.filloax.exphardcore.config.ExpeditionaryHardcoreConfig
 import com.filloax.exphardcore.cydonia.ApibalegoInfoSender
 import com.filloax.exphardcore.expedition.ExpeditionMode
 import com.filloax.exphardcore.item.*
@@ -27,6 +28,10 @@ object LifeHandler {
     @JvmStatic
     fun newLife(player: ServerPlayer, position: BlockPos) {
         if (!ExpeditionMode.enabled) return
+
+        if (ExpeditionaryHardcoreConfig.resetEnderChest) {
+            player.enderChestInventory.clearContent()
+        }
 
         val newLifeData = player.newExpeditionLife()
         newLifeData.spawnPoint = position
@@ -90,6 +95,8 @@ object LifeHandler {
         val life = player.getExpeditionLifeOrNull() ?: return
 
         life.deathPoint = player.blockPosition()
+        life.deathGameTime = player.level().server.overworld().gameTime
+        life.deathRealTime = System.currentTimeMillis()
         life.setDirty()
         player.syncExpeditionLife()
 
