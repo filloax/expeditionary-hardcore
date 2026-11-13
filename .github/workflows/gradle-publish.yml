@@ -208,7 +208,8 @@ jobs:
         
         > Cydonia build is the one for the streamed run, has features
         > unsafe for normal play such as sending data to the API
-        > backend on death / logbook update
+        > backend on death / logbook update. **Not recommended for**
+        > **players!**
         EOF
 
     - name: Publish (GitHub)
