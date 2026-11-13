@@ -91,6 +91,7 @@ This version is not recommended for players.
 More features I may add later
 - FTB Teams support
 - Limited lives (a thing in the series, but not handled by the mod itself)
+- Backport to 26.1 and 1.21.1
 
 
 ---
