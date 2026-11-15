@@ -22,7 +22,7 @@ is picked can be configured (see below).
 See the [Modrinth](https://modrinth.com/mod/expeditionary-hardcore) or [Curseforge](https://www.curseforge.com/minecraft/mc-mods/expeditionary-hardcore/) page, and the [WIKI](https://github.com/filloax/expeditionary-hardcore/wiki)
 for more information. For bug reports check the [Issues](https://github.com/filloax/expeditionary-hardcore/issues).
 
-Originally made for a streaming series, [The Obsidian Expedition](todo). Check it out! Especially the
+Originally made for a streaming series, [The Obsidian Expedition](https://youtu.be/5NDgW9jfsPM). Check it out! Especially the
 amazing [website](https://hardcore.projectegobalego.com/) with all the community fanart, animated
 opening, and contribution.
 
